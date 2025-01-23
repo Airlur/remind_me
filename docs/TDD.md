@@ -324,13 +324,23 @@ lib/
   - bugfix/*：修复分支
   - release/*：发布分支
 - 提交规范
-  - feat：新功能
-  - fix：修复bug
-  - docs：文档更新
-  - style：代码格式
-  - refactor：重构
-  - test：测试相关
-  - chore：构建相关
+  - feat: 新功能
+  - fix: 修复bug
+  - docs: 文档更新
+  - style: 代码格式（不影响功能的更改，如空格、格式化、缺少分号等）
+  - refactor: 重构（既不修复bug也不添加功能的代码更改）
+  - test: 测试相关（添加缺失的测试或更正现有测试）
+  - chore: 构建相关的更改（例如，依赖项的更新或其他非源代码的更改）
+  - perf: 性能优化
+  - build: 构建相关的更改（例如，构建工具或依赖项的更改）
+  - ci: 持续集成相关的更改（例如，CI配置文件的修改）
+  - revert: 撤销之前的提交
+  - wip: 进行中的工作（Work In Progress）
+  - config: 配置文件的更改
+  - security: 安全相关的更改
+  - lint: 代码检查和修复
+  - ui: 用户界面相关的更改
+  - locale: 国际化和本地化相关的更改
 - Code Review流程
   - 提交PR前自测
   - 至少1人Review通过
