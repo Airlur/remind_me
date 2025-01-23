@@ -8,6 +8,7 @@ import 'package:remind_me/core/routes.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/views/pages/home_page.dart';
 import 'package:remind_me/core/di.dart';
+import 'package:remind_me/theme/app_theme.dart';
 
 class RemindMeApp extends StatelessWidget {
   const RemindMeApp({super.key});
@@ -20,18 +21,19 @@ class RemindMeApp extends StatelessWidget {
         builder: (context, state) {
           return MaterialApp(
             title: 'Remind Me',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-              scaffoldBackgroundColor: AppColors.background,
-              useMaterial3: true,
+            theme: AppTheme.lightTheme.copyWith(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: AppColors.primary,
+                brightness: Brightness.light,
+              ),
             ),
-            themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
+            darkTheme: AppTheme.darkTheme.copyWith(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: AppColors.primary,
                 brightness: Brightness.dark,
               ),
             ),
+            themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
             onGenerateRoute: AppRouter.onGenerateRoute,
             localizationsDelegates: const [
               AppLocalizations.delegate,
