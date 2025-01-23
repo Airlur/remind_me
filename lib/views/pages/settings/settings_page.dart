@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:remind_me/utils/route_utils.dart';
+import 'package:remind_me/utils/common/route_utils.dart';
 import 'package:remind_me/views/widgets/common/settings_list_item.dart';
 import 'package:remind_me/views/pages/settings/personalization_page.dart';
 import 'package:remind_me/views/pages/settings/notification_page.dart';

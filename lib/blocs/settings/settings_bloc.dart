@@ -4,8 +4,8 @@ import 'package:remind_me/blocs/settings/settings_state.dart';
 
 class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
   SettingsBloc() : super(const SettingsState()) {
-    on<ToggleThemeEvent>((event, emit) {
-      emit(state.copyWith(isDarkMode: !state.isDarkMode));
+    on<UpdateThemeModeEvent>((event, emit) {
+      emit(state.copyWith(themeMode: event.themeMode));
     });
   }
 

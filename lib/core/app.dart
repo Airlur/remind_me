@@ -33,7 +33,7 @@ class RemindMeApp extends StatelessWidget {
                 brightness: Brightness.dark,
               ),
             ),
-            themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            themeMode: state.themeMode,
             onGenerateRoute: AppRouter.onGenerateRoute,
             localizationsDelegates: const [
               AppLocalizations.delegate,

@@ -1,15 +1,27 @@
+import 'package:flutter/material.dart';
+
 class SettingsState {
-  final bool isDarkMode;
+  final ThemeMode themeMode;
 
-  const SettingsState({this.isDarkMode = false});
+  const SettingsState({
+    this.themeMode = ThemeMode.system,
+  });
 
-  Map<String, dynamic> toJson() => {'isDarkMode': isDarkMode};
-
-  factory SettingsState.fromJson(Map<String, dynamic> json) {
-    return SettingsState(isDarkMode: json['isDarkMode'] as bool);
+  SettingsState copyWith({
+    ThemeMode? themeMode,
+  }) {
+    return SettingsState(
+      themeMode: themeMode ?? this.themeMode,
+    );
   }
 
-  SettingsState copyWith({bool? isDarkMode}) {
-    return SettingsState(isDarkMode: isDarkMode ?? this.isDarkMode);
+  Map<String, dynamic> toJson() => {
+    'themeMode': themeMode.index,
+  };
+
+  factory SettingsState.fromJson(Map<String, dynamic> json) {
+    return SettingsState(
+      themeMode: ThemeMode.values[json['themeMode'] as int? ?? 0],
+    );
   }
 }
