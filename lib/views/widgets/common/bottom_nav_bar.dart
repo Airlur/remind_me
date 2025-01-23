@@ -14,6 +14,7 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
@@ -31,7 +32,10 @@ class BottomNavBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
-                    color: currentIndex == 0 ? AppColors.primary : Colors.black54,
+                    color: currentIndex == 0 
+                      ? AppColors.primary 
+                      : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor 
+                          ?? Theme.of(context).textTheme.bodySmall?.color,
                   ),
                 ),
               ),
