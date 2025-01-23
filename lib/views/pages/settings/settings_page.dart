@@ -5,6 +5,7 @@ import 'package:remind_me/views/pages/settings/personalization_page.dart';
 import 'package:remind_me/views/pages/settings/notification_page.dart';
 import 'package:remind_me/views/pages/settings/help_feedback_page.dart';
 import 'package:remind_me/views/pages/settings/about_page.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -13,7 +14,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('设置'),
+        title: Text(context.l10n.settings),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -22,7 +23,7 @@ class SettingsPage extends StatelessWidget {
         children: [
           SettingsListItem(
             icon: Icons.palette,
-            title: '个性化',
+            title: context.l10n.personalization,
             onTap: () => Navigator.push(
               context,
               RouteUtils.buildPageRoute(page: const PersonalizationPage()),
@@ -30,7 +31,7 @@ class SettingsPage extends StatelessWidget {
           ),
           SettingsListItem(
             icon: Icons.notifications,
-            title: '通知',
+            title: context.l10n.notification,
             onTap: () => Navigator.push(
               context,
               RouteUtils.buildPageRoute(page: const NotificationPage()),
@@ -38,7 +39,7 @@ class SettingsPage extends StatelessWidget {
           ),
           SettingsListItem(
             icon: Icons.help_outline,
-            title: '帮助和反馈',
+            title: context.l10n.helpAndFeedback,
             onTap: () => Navigator.push(
               context,
               RouteUtils.buildPageRoute(page: const HelpFeedbackPage()),
@@ -46,7 +47,7 @@ class SettingsPage extends StatelessWidget {
           ),
           SettingsListItem(
             icon: Icons.info_outline,
-            title: '关于',
+            title: context.l10n.about,
             onTap: () => Navigator.push(
               context,
               RouteUtils.buildPageRoute(page: const AboutPage()),

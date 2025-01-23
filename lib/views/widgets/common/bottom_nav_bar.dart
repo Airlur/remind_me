@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:remind_me/constants/colors.dart';
 import 'package:remind_me/utils/datetime/date_utils.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -41,15 +42,15 @@ class BottomNavBar extends StatelessWidget {
               ),
             ],
           ),
-          label: '日期',
+          label: context.l10n.date,
         ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.access_time),
-          label: '时间',
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.access_time),
+          label: context.l10n.time,
         ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: '设置',
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.settings),
+          label: context.l10n.settings,
         ),
       ],
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remind_me/views/widgets/common/settings_list_item.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -8,7 +9,7 @@ class NotificationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('通知'),
+        title: Text(context.l10n.notification),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -17,7 +18,7 @@ class NotificationPage extends StatelessWidget {
         children: [
           SettingsListItem(
             icon: Icons.notifications_active,
-            title: '提醒通知',
+            title: context.l10n.reminderNotification,
             trailing: Switch(
               value: true,
               onChanged: (value) {
@@ -27,7 +28,7 @@ class NotificationPage extends StatelessWidget {
           ),
           SettingsListItem(
             icon: Icons.volume_up,
-            title: '声音',
+            title: context.l10n.sound,
             trailing: Switch(
               value: true,
               onChanged: (value) {

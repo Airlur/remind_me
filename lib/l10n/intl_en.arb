@@ -3,5 +3,130 @@
   "@appName": {
     "description": "The application name"
   },
+  "@date": {
+    "description": "Bottom navigation bar date label"
+  },
+  "date": "Date",
+
+  "@time": {
+    "description": "Bottom navigation bar time label"
+  },
+  "time": "Time",
+
+  "@settings": {
+    "description": "Bottom navigation bar settings label"
+  },
+  "settings": "Settings",
+
+  "@personalization": {
+    "description": "Settings page personalization item"
+  },
+  "personalization": "Personalization",
+
+  "@notification": {
+    "description": "Settings page notification item"
+  },
+  "notification": "Notification",
+
+  "@helpAndFeedback": {
+    "description": "Settings page help and feedback item"
+  },
+  "helpAndFeedback": "Help & Feedback",
+
+  "@about": {
+    "description": "Settings page about item"
+  },
+  "about": "About",
+
+  "@theme": {
+    "description": "Personalization page theme item"
+  },
+  "theme": "Theme",
+
+  "@followSystem": {
+    "description": "Theme follow system option"
+  },
+  "followSystem": "Follow System",
+
+  "@lightMode": {
+    "description": "Light theme mode"
+  },
+  "lightMode": "Light Mode",
+
+  "@darkMode": {
+    "description": "Dark theme mode"
+  },
+  "darkMode": "Dark Mode",
+
+  "@language": {
+    "description": "Personalization page language item"
+  },
+  "language": "Language",
+
+  "@dateSettings": {
+    "description": "Personalization page date settings item"
+  },
+  "dateSettings": "Date",
+
+  "@animation": {
+    "description": "Personalization page animation background item"
+  },
+  "animation": "Animation Background",
+
+  "@widgets": {
+    "description": "Personalization page widgets item"
+  },
+  "widgets": "Widgets",
+
+  "@reminderNotification": {
+    "description": "Notification page reminder notification item"
+  },
+  "reminderNotification": "Reminder Notification",
+
+  "@sound": {
+    "description": "Notification page sound item"
+  },
+  "sound": "Sound",
+
+  "@userHelp": {
+    "description": "Help and feedback page user help item"
+  },
+  "userHelp": "User Help",
+
+  "@feedback": {
+    "description": "Help and feedback page feedback item"
+  },
+  "feedback": "Feedback",
+
+  "@versionInfo": {
+    "description": "About page version info item"
+  },
+  "versionInfo": "Version Info",
+
+  "@privacyPolicy": {
+    "description": "About page privacy policy item"
+  },
+  "privacyPolicy": "Privacy Policy",
+
+  "@userAgreement": {
+    "description": "About page user agreement item"
+  },
+  "userAgreement": "User Agreement",
+
+  "@backupInfo": {
+    "description": "About page backup info item"
+  },
+  "backupInfo": "Backup Info",
+
+  "@chinese": {
+    "description": "Chinese language option"
+  },
+  "chinese": "Chinese",
+
+  "@english": {
+    "description": "English language option"
+  },
+  "english": "English",
+
   "@@locale": "en"
 }

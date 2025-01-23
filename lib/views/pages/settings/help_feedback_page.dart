@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remind_me/views/widgets/common/settings_list_item.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class HelpFeedbackPage extends StatelessWidget {
   const HelpFeedbackPage({super.key});
@@ -8,7 +9,7 @@ class HelpFeedbackPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('帮助和反馈'),
+        title: Text(context.l10n.helpAndFeedback),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -17,14 +18,14 @@ class HelpFeedbackPage extends StatelessWidget {
         children: [
           SettingsListItem(
             icon: Icons.help,
-            title: '使用帮助',
+            title: context.l10n.userHelp,
             onTap: () {
               // 处理点击
             },
           ),
           SettingsListItem(
             icon: Icons.feedback,
-            title: '意见反馈',
+            title: context.l10n.feedback,
             onTap: () {
               // 处理点击
             },

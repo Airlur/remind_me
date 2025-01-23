@@ -3,5 +3,130 @@
   "@appName": {
     "description": "The application name"
   },
+  "@date": {
+    "description": "Bottom navigation bar date label"
+  },
+  "date": "日期",
+
+  "@time": {
+    "description": "Bottom navigation bar time label"
+  },
+  "time": "时间",
+
+  "@settings": {
+    "description": "Bottom navigation bar settings label"
+  },
+  "settings": "设置",
+
+  "@personalization": {
+    "description": "Settings page personalization item"
+  },
+  "personalization": "个性化",
+
+  "@notification": {
+    "description": "Settings page notification item"
+  },
+  "notification": "通知",
+
+  "@helpAndFeedback": {
+    "description": "Settings page help and feedback item"
+  },
+  "helpAndFeedback": "帮助和反馈",
+
+  "@about": {
+    "description": "Settings page about item"
+  },
+  "about": "关于",
+
+  "@theme": {
+    "description": "Personalization page theme item"
+  },
+  "theme": "主题",
+
+  "@followSystem": {
+    "description": "Theme follow system option"
+  },
+  "followSystem": "跟随系统",
+
+  "@lightMode": {
+    "description": "Light theme mode"
+  },
+  "lightMode": "浅色模式",
+
+  "@darkMode": {
+    "description": "Dark theme mode"
+  },
+  "darkMode": "深色模式",
+
+  "@language": {
+    "description": "Personalization page language item"
+  },
+  "language": "语言",
+
+  "@dateSettings": {
+    "description": "Personalization page date settings item"
+  },
+  "dateSettings": "日期",
+
+  "@animation": {
+    "description": "Personalization page animation background item"
+  },
+  "animation": "动画背景",
+
+  "@widgets": {
+    "description": "Personalization page widgets item"
+  },
+  "widgets": "小组件",
+
+  "@reminderNotification": {
+    "description": "Notification page reminder notification item"
+  },
+  "reminderNotification": "提醒通知",
+
+  "@sound": {
+    "description": "Notification page sound item"
+  },
+  "sound": "声音",
+
+  "@userHelp": {
+    "description": "Help and feedback page user help item"
+  },
+  "userHelp": "使用帮助",
+
+  "@feedback": {
+    "description": "Help and feedback page feedback item"
+  },
+  "feedback": "意见反馈",
+
+  "@versionInfo": {
+    "description": "About page version info item"
+  },
+  "versionInfo": "版本信息",
+
+  "@privacyPolicy": {
+    "description": "About page privacy policy item"
+  },
+  "privacyPolicy": "隐私政策",
+
+  "@userAgreement": {
+    "description": "About page user agreement item"
+  },
+  "userAgreement": "用户协议",
+
+  "@backupInfo": {
+    "description": "About page backup info item"
+  },
+  "backupInfo": "备案信息",
+
+  "@chinese": {
+    "description": "Chinese language option"
+  },
+  "chinese": "中文",
+
+  "@english": {
+    "description": "English language option"
+  },
+  "english": "英文",
+
   "@@locale": "zh"
 }

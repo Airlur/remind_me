@@ -98,6 +98,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remind Me'**
   String get appName;
+
+  /// Bottom navigation bar date label
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// Bottom navigation bar time label
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
+
+  /// Bottom navigation bar settings label
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// Settings page personalization item
+  ///
+  /// In en, this message translates to:
+  /// **'Personalization'**
+  String get personalization;
+
+  /// Settings page notification item
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notification;
+
+  /// Settings page help and feedback item
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Feedback'**
+  String get helpAndFeedback;
+
+  /// Settings page about item
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// Personalization page theme item
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// Theme follow system option
+  ///
+  /// In en, this message translates to:
+  /// **'Follow System'**
+  String get followSystem;
+
+  /// Light theme mode
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
+  /// Dark theme mode
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// Personalization page language item
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// Personalization page date settings item
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get dateSettings;
+
+  /// Personalization page animation background item
+  ///
+  /// In en, this message translates to:
+  /// **'Animation Background'**
+  String get animation;
+
+  /// Personalization page widgets item
+  ///
+  /// In en, this message translates to:
+  /// **'Widgets'**
+  String get widgets;
+
+  /// Notification page reminder notification item
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Notification'**
+  String get reminderNotification;
+
+  /// Notification page sound item
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get sound;
+
+  /// Help and feedback page user help item
+  ///
+  /// In en, this message translates to:
+  /// **'User Help'**
+  String get userHelp;
+
+  /// Help and feedback page feedback item
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedback;
+
+  /// About page version info item
+  ///
+  /// In en, this message translates to:
+  /// **'Version Info'**
+  String get versionInfo;
+
+  /// About page privacy policy item
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// About page user agreement item
+  ///
+  /// In en, this message translates to:
+  /// **'User Agreement'**
+  String get userAgreement;
+
+  /// About page backup info item
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Info'**
+  String get backupInfo;
+
+  /// Chinese language option
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get chinese;
+
+  /// English language option
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
