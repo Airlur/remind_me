@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:remind_me/constants/colors.dart';
+import 'package:remind_me/utils/datetime/date_utils.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
-  final Function(int) onTap;
+  final ValueChanged<int> onTap;
 
   const BottomNavBar({
     super.key,
@@ -17,16 +18,32 @@ class BottomNavBar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: onTap,
       selectedItemColor: AppColors.primary,
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today),
+          icon: Stack(
+            alignment: Alignment.center,
+            children: [
+              const Icon(Icons.calendar_today),
+              Positioned(
+                top: 7,
+                child: Text(
+                  DateTimeUtils.getCurrentDayString(),
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    color: currentIndex == 0 ? AppColors.primary : Colors.black54,
+                  ),
+                ),
+              ),
+            ],
+          ),
           label: '日期',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.timer),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.access_time),
           label: '时间',
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.settings),
           label: '设置',
         ),
