@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:remind_me/blocs/settings/settings_bloc.dart';
 import 'package:remind_me/blocs/settings/settings_state.dart';
 import 'package:remind_me/constants/colors.dart';
 import 'package:remind_me/core/routes.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/views/pages/home_page.dart';
-import 'package:remind_me/core/di.dart';
 import 'package:remind_me/theme/app_theme.dart';
 import 'package:remind_me/blocs/settings/language_cubit.dart';
 import 'package:remind_me/generated/app_localizations.dart';

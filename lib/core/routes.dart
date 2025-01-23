@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:remind_me/views/pages/date/date_page.dart';
 import 'package:remind_me/views/pages/time/time_page.dart';
 import 'package:remind_me/views/pages/settings/settings_page.dart';
-import 'package:remind_me/views/pages/settings/personalization_page.dart';
-import 'package:remind_me/views/pages/settings/notification_page.dart';
-import 'package:remind_me/views/pages/settings/help_feedback_page.dart';
-import 'package:remind_me/views/pages/settings/about_page.dart';
+import 'package:remind_me/views/pages/settings/personalization/personalization_page.dart';
+import 'package:remind_me/views/pages/settings/notification/notification_page.dart';
+import 'package:remind_me/views/pages/settings/help_feedback/help_feedback_page.dart';
+import 'package:remind_me/views/pages/settings/about/about_page.dart';
+import 'package:remind_me/views/pages/settings/personalization/language_page.dart';
 
 /// 应用路由配置
 class AppRouter {
@@ -13,11 +14,12 @@ class AppRouter {
   static const String initial = '/';
   static const String date = '/date';
   static const String time = '/time';
-  static const String settings = '/settings';  // 改名为 settingsRoute
+  static const String settings = '/settings';
   static const String personalization = '/settings/personalization';
   static const String notification = '/settings/notification';
   static const String helpFeedback = '/settings/help-feedback';
   static const String about = '/settings/about';
+  static const String language = '/settings/personalization/language';
 
   /// 路由生成器
   static Route<dynamic> onGenerateRoute(RouteSettings routeSettings) {
@@ -49,6 +51,10 @@ class AppRouter {
 
     if (name == about) {
       return MaterialPageRoute(builder: (_) => const AboutPage());
+    }
+
+    if (name == language) {
+      return MaterialPageRoute(builder: (_) => const LanguagePage());
     }
 
     // 未定义的路由显示错误页面

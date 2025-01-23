@@ -6,6 +6,8 @@ import 'package:remind_me/blocs/settings/settings_event.dart';
 import 'package:remind_me/views/widgets/common/settings_list_item.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/blocs/settings/language_cubit.dart';
+import 'package:remind_me/utils/common/route_utils.dart';
+import 'package:remind_me/views/pages/settings/personalization/language_page.dart';
 
 class PersonalizationPage extends StatelessWidget {
   const PersonalizationPage({super.key});
@@ -91,62 +93,6 @@ class PersonalizationPage extends StatelessWidget {
     );
   }
 
-  void _showLanguageBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => BlocBuilder<LanguageCubit, LanguageMode>(
-        builder: (context, currentMode) {
-          return SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: Text(context.l10n.followSystem),
-                  trailing: Radio<LanguageMode>(
-                    value: LanguageMode.system,
-                    groupValue: currentMode,
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<LanguageCubit>().changeLanguage(value);
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: Text(context.l10n.chinese),
-                  trailing: Radio<LanguageMode>(
-                    value: LanguageMode.zh,
-                    groupValue: currentMode,
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<LanguageCubit>().changeLanguage(value);
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: Text(context.l10n.english),
-                  trailing: Radio<LanguageMode>(
-                    value: LanguageMode.en,
-                    groupValue: currentMode,
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<LanguageCubit>().changeLanguage(value);
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,7 +144,10 @@ class PersonalizationPage extends StatelessWidget {
                     );
                   },
                 ),
-                onTap: () => _showLanguageBottomSheet(context),
+                onTap: () => Navigator.push(
+                  context,
+                  RouteUtils.buildPageRoute(page: const LanguagePage()),
+                ),
               ),
               SettingsListItem(
                 icon: Icons.calendar_today,

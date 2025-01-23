@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:remind_me/utils/common/route_utils.dart';
 import 'package:remind_me/views/widgets/common/settings_list_item.dart';
-import 'package:remind_me/views/pages/settings/personalization_page.dart';
-import 'package:remind_me/views/pages/settings/notification_page.dart';
-import 'package:remind_me/views/pages/settings/help_feedback_page.dart';
-import 'package:remind_me/views/pages/settings/about_page.dart';
+import 'package:remind_me/views/pages/settings/personalization/personalization_page.dart';
+import 'package:remind_me/views/pages/settings/notification/notification_page.dart';
+import 'package:remind_me/views/pages/settings/help_feedback/help_feedback_page.dart';
+import 'package:remind_me/views/pages/settings/about/about_page.dart';
 import 'package:remind_me/l10n/l10n.dart';
 
 class SettingsPage extends StatelessWidget {
