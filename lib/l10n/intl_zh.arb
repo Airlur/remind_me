@@ -1,0 +1,7 @@
+{
+  "appName": "醒我",
+  "@appName": {
+    "description": "The application name"
+  },
+  "@@locale": "zh"
+}

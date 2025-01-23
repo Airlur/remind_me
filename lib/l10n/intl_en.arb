@@ -1,0 +1,7 @@
+{
+  "appName": "Remind Me",
+  "@appName": {
+    "description": "The application name"
+  },
+  "@@locale": "en"
+}
