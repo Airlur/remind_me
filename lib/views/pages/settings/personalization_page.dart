@@ -11,7 +11,11 @@ class PersonalizationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('个性化')),
+      appBar: AppBar(
+        title: const Text('个性化'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
           return ListView(

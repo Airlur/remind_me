@@ -7,7 +7,11 @@ class HelpFeedbackPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('帮助和反馈')),
+      appBar: AppBar(
+        title: const Text('帮助和反馈'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
