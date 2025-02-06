@@ -1,39 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/painting.dart';
 
-enum EventType {
-  countdown, // 倒数日
-  countup,   // 正数日
-}
+part 'event.g.dart';  // part 指令必须在所有导入之后，声明之前
 
-// 时间单位枚举
+@HiveType(typeId: 1)
 enum TimeUnit {
-  day,    // 天
-  month,  // 月/天
-  week    // 周/天
+  @HiveField(0)
+  day,
+  @HiveField(1)
+  month,
+  @HiveField(2)
+  week
 }
 
-// 背景类型枚举
+@HiveType(typeId: 2)
 enum BackgroundType {
-  color,      // 纯色背景
-  gradient,   // 渐变背景
-  image,      // 本地图片
-  animation   // 动画背景
+  @HiveField(0)
+  color,
+  @HiveField(1)
+  gradient,
+  @HiveField(2)
+  image,
+  @HiveField(3)
+  animation
 }
 
+@HiveType(typeId: 0)
 class Event extends Equatable {
+  @HiveField(0)
   final String id;
+  
+  @HiveField(1)
   final String title;
+  
+  @HiveField(2)
   final DateTime targetDate;
+  
+  @HiveField(3)
   final DateTime createdAt;
+  
+  @HiveField(4)
   final TimeUnit displayUnit;
+  
+  @HiveField(5)
   final bool isPinned;
   
-  // 背景相关
+  @HiveField(6)
   final BackgroundType backgroundType;
-  final Color? backgroundColor;
-  final List<Color>? gradientColors;
+  
+  @HiveField(7)
+  final int? backgroundColorValue;
+  
+  @HiveField(8)
+  final List<int>? gradientColorValues;
+  
+  @HiveField(9)
   final String? localImagePath;
+  
+  @HiveField(10)
   final String? animationType;
 
   const Event({
@@ -44,11 +69,17 @@ class Event extends Equatable {
     this.displayUnit = TimeUnit.day,
     this.isPinned = false,
     this.backgroundType = BackgroundType.color,
-    this.backgroundColor,
-    this.gradientColors,
+    this.backgroundColorValue,
+    this.gradientColorValues,
     this.localImagePath,
     this.animationType,
   });
+
+  Color? get backgroundColor => 
+      backgroundColorValue != null ? Color(backgroundColorValue!) : null;
+      
+  List<Color>? get gradientColors => 
+      gradientColorValues?.map((v) => Color(v)).toList();
 
   // 计算属性
   bool get isCountdown => targetDate.isAfter(DateTime.now());
@@ -108,8 +139,8 @@ class Event extends Equatable {
       displayUnit: displayUnit ?? this.displayUnit,
       isPinned: isPinned ?? this.isPinned,
       backgroundType: backgroundType ?? this.backgroundType,
-      backgroundColor: backgroundColor ?? this.backgroundColor,
-      gradientColors: gradientColors ?? this.gradientColors,
+      backgroundColorValue: backgroundColor?.value,
+      gradientColorValues: gradientColors?.map((c) => c.value).toList(),
       localImagePath: localImagePath ?? this.localImagePath,
       animationType: animationType ?? this.animationType,
     );
@@ -124,8 +155,8 @@ class Event extends Equatable {
     displayUnit,
     isPinned,
     backgroundType,
-    backgroundColor,
-    gradientColors,
+    backgroundColorValue,
+    gradientColorValues,
     localImagePath,
     animationType,
   ];

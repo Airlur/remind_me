@@ -40,10 +40,11 @@ dependencies:
   logger: ^2.0.2+1
   path_provider: ^2.1.1
   permission_handler: ^11.0.1
+  uuid: ^4.0.0
 
   # 滑动删除
   flutter_slidable: ^3.0.1
-  # 计算
+  # 值相等性比较
   equatable: ^2.0.5
 
 dev_dependencies:

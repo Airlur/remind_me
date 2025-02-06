@@ -2,7 +2,6 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
-import 'package:flutter/painting.dart';
 
 class EventBloc extends HydratedBloc<EventEvent, EventState> {
   EventBloc() : super(const EventState()) {
@@ -122,8 +121,8 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
         'displayUnit': e.displayUnit.index,
         'isPinned': e.isPinned,
         'backgroundType': e.backgroundType.index,
-        'backgroundColor': e.backgroundColor?.value,
-        'gradientColors': e.gradientColors?.map((c) => c.value).toList(),
+        'backgroundColorValue': e.backgroundColorValue,
+        'gradientColorValues': e.gradientColorValues,
         'localImagePath': e.localImagePath,
         'animationType': e.animationType,
       }).toList(),
@@ -142,12 +141,8 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
         displayUnit: TimeUnit.values[e['displayUnit']],
         isPinned: e['isPinned'],
         backgroundType: BackgroundType.values[e['backgroundType']],
-        backgroundColor: e['backgroundColor'] != null 
-            ? Color(e['backgroundColor']) 
-            : null,
-        gradientColors: e['gradientColors'] != null 
-            ? (e['gradientColors'] as List).map((c) => Color(c)).toList() 
-            : null,
+        backgroundColorValue: e['backgroundColorValue'],
+        gradientColorValues: e['gradientColorValues']?.cast<int>(),
         localImagePath: e['localImagePath'],
         animationType: e['animationType'],
       )).toList();

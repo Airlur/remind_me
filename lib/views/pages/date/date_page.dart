@@ -6,6 +6,8 @@ import 'package:remind_me/blocs/event/event_state.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/views/pages/date/calendar_page.dart';
 import 'package:remind_me/views/pages/date/components/event_card.dart';
+import 'package:remind_me/utils/common/route_utils.dart';
+import 'package:remind_me/views/pages/date/add_event_page.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -16,37 +18,35 @@ class DatePage extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 0, // 移除AppBar默认的padding
+          toolbarHeight: 0,
+          backgroundColor: Colors.transparent,  // 使用透明背景
+          elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
-            child: Container(
-              color: Colors.white,
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: TabBar(
-                      isScrollable: true, // 允许滚动
-                      tabAlignment: TabAlignment.start,
-                      tabs: [
-                        Tab(text: '全部'),
-                        Tab(text: '倒数日'),
-                        Tab(text: '正数日'), 
-                        Tab(text: '日历'),
-                      ],
-                      labelColor: Colors.blue,
-                      unselectedLabelColor: Colors.grey,
-                      indicatorSize: TabBarIndicatorSize.tab,// 设置指示器大小为标签大小
-                      indicatorColor: Colors.blue,// 设置指示器颜色与选中文字颜色一致
-                      dividerColor: Colors.transparent, // 移除TabBar底部线
-                    ),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: TabBar(
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    tabs: [
+                      Tab(text: '全部'),
+                      Tab(text: '倒数日'),
+                      Tab(text: '正数日'),
+                      Tab(text: '日历'),
+                    ],
+                    labelColor: Colors.blue,
+                    unselectedLabelColor: Colors.grey,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorColor: Colors.blue,
+                    dividerColor: Colors.transparent,
                   ),
-                  // 操作按钮
-                  IconButton(
-                    icon: const Icon(Icons.more_horiz),
-                    onPressed: () => _showOperationMenu(context),
-                  ),
-                ],
-              ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.more_horiz),
+                  onPressed: () => _showOperationMenu(context),
+                ),
+              ],
             ),
           ),
         ),
@@ -59,7 +59,10 @@ class DatePage extends StatelessWidget {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _addNewEvent(context),
+          onPressed: () => Navigator.push(
+            context,
+            RouteUtils.buildPageRoute(page: const AddEventPage()),
+          ),
           child: const Icon(Icons.add),
         ),
       ),
@@ -95,10 +98,6 @@ class DatePage extends StatelessWidget {
         );
       },
     );
-  }
-
-  void _addNewEvent(BuildContext context) {
-    // TODO: 实现添加事件逻辑
   }
 }
 
