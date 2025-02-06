@@ -7,8 +7,10 @@ import 'package:remind_me/core/routes.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/views/pages/home_page.dart';
 import 'package:remind_me/theme/app_theme.dart';
+import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/settings/language_cubit.dart';
 import 'package:remind_me/generated/app_localizations.dart';
+
 
 class RemindMeApp extends StatelessWidget {
   const RemindMeApp({super.key});
@@ -17,6 +19,7 @@ class RemindMeApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => EventBloc()),
         BlocProvider(create: (context) => SettingsBloc()),
         BlocProvider(create: (context) => LanguageCubit()),
       ],
@@ -25,6 +28,7 @@ class RemindMeApp extends StatelessWidget {
           return BlocBuilder<SettingsBloc, SettingsState>(
             builder: (context, settingsState) {
               return MaterialApp(
+                debugShowCheckedModeBanner: false,  // 关闭 "debug" 标签
                 title: 'Remind Me',
                 theme: AppTheme.lightTheme.copyWith(
                   colorScheme: ColorScheme.fromSeed(

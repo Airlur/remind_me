@@ -41,6 +41,11 @@ dependencies:
   path_provider: ^2.1.1
   permission_handler: ^11.0.1
 
+  # 滑动删除
+  flutter_slidable: ^3.0.1
+  # 计算
+  equatable: ^2.0.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

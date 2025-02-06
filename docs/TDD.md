@@ -63,8 +63,8 @@ lib/
 │   │   │   │   ├── event_form.dart    # 事件表单组件（新建/编辑用）
 │   │   │   │   ├── event_item.dart    # 事件列表项组件（标题、日期、天数）
 │   │   │   │   └── event_list.dart    # 事件列表容器组件
-│   │   │   ├── countdown_page.dart    # 倒数日页面
-│   │   │   ├── countup_page.dart      # 正数日页面
+│   │   │   ├── countdown_day_page.dart    # 倒数日页面
+│   │   │   ├── countup_day_page.dart      # 正数日页面
 │   │   │   └── date_page.dart        # 日期主页面
 │   │   ├── settings/     # 设置模块
 │   │   │   └── settings_page.dart     # 设置页面
