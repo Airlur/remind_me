@@ -128,5 +128,116 @@
   },
   "english": "English",
 
-  "@@locale": "en"
+  "@@locale": "en",
+
+  "all": "All",
+  "@all": {
+    "description": "All"
+  },
+  
+  "countdownDay": "CountDown",
+  "@countdownDay": {
+    "description": "CountDown Day"
+  },
+  
+  "countupDay": "CountUp",
+  "@countupDay": {
+    "description": "CountUp Day"
+  },
+  
+  "calendar": "Calendar",
+  "@calendar": {
+    "description": "Calendar"
+  },
+  
+  "daysLeft": "Days Left",
+  "@daysLeft": {
+    "description": "Days Left"
+  },
+  
+  "daysAgo": "Days Ago",
+  "@daysAgo": {
+    "description": "Days Ago"
+  },
+  
+  "days": "Days",
+  "@days": {
+    "description": "Day"
+  },
+  
+  "timeline": "Timeline",
+  "@timeline": {
+    "description": "Timeline"
+  },
+  
+  "unpin": "Unpin",
+  "@unpin": {
+    "description": "Unpin"
+  },
+  
+  "pin": "Pin",
+  "@pin": {
+    "description": "Pin"
+  },
+  
+  "addSpecialDay": "Add Special Day",
+  "@addSpecialDay": {
+    "description": "Add Special Day"
+  },
+  
+  "enterTitle": "Enter Title",
+  "@enterTitle": {
+    "description": "Enter Title"
+  },
+  
+  "targetDate": "Target Date",
+  "@targetDate": {
+    "description": "Target Date"
+  },
+  
+  "backgroundSettings": "Background Settings",
+  "@backgroundSettings": {
+    "description": "Background Settings"
+  },
+  
+  "preview": "Preview",
+  "@preview": {
+    "description": "Preview"
+  },
+
+  "year": "Year",
+  "@year": {
+    "description": "Year"
+  },
+  
+  "month": "Month",
+  "@month": {
+    "description": "Month"
+  },
+  
+  "week": "Week",
+  "@week": {
+    "description": "Week"
+  },
+
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm"
+  }
 }

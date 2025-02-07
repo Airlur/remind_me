@@ -6,6 +6,7 @@ import 'package:remind_me/models/event.dart';
 import 'package:remind_me/blocs/event/event_event.dart'; 
 import 'dart:io';
 import 'package:remind_me/theme/app_colors.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -34,7 +35,10 @@ class EventCard extends StatelessWidget {
               backgroundColor: AppColors.timelineAction,
               foregroundColor: AppColors.onActionColor,
               icon: Icons.timeline,
-              label: '时间线',
+              label: context.l10n.timeline,
+              spacing: 4, // 图标和文字间距
+              padding: EdgeInsets.zero, // 移除默认内边距
+              autoClose: true, // 点击后自动关闭
             ),
             SlidableAction(
               flex: 1,
@@ -42,7 +46,7 @@ class EventCard extends StatelessWidget {
               backgroundColor: AppColors.pinAction,
               foregroundColor: AppColors.onActionColor,
               icon: event.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-              label: event.isPinned ? '取消置顶' : '置顶',
+              label: event.isPinned ? context.l10n.unpin : context.l10n.pin,
               spacing: 4, // 图标和文字间距
               padding: EdgeInsets.zero, // 移除默认内边距
               autoClose: true, // 点击后自动关闭
@@ -59,7 +63,7 @@ class EventCard extends StatelessWidget {
               backgroundColor: AppColors.editAction,
               foregroundColor: AppColors.onActionColor,
               icon: Icons.edit,
-              label: '编辑',
+              label: context.l10n.edit,
               spacing: 4, // 图标和文字间距
               padding: EdgeInsets.zero, // 移除默认内边距
               autoClose: true, // 点击后自动关闭
@@ -70,7 +74,7 @@ class EventCard extends StatelessWidget {
               backgroundColor: AppColors.deleteAction,
               foregroundColor: AppColors.onActionColor,
               icon: Icons.delete,
-              label: '删除',
+              label: context.l10n.delete,
               spacing: 4, // 图标和文字间距
               padding: EdgeInsets.zero, // 移除默认内边距
               autoClose: true, // 点击后自动关闭

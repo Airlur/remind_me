@@ -8,6 +8,7 @@ import 'package:remind_me/views/pages/date/calendar_page.dart';
 import 'package:remind_me/views/pages/date/components/event_card.dart';
 import 'package:remind_me/utils/common/route_utils.dart';
 import 'package:remind_me/views/pages/date/add_event_page.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -29,15 +30,15 @@ class DatePage extends StatelessWidget {
             preferredSize: const Size.fromHeight(48),
             child: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: TabBar(
                     isScrollable: true,
                     tabAlignment: TabAlignment.start,
                     tabs: [
-                      Tab(text: '全部'),
-                      Tab(text: '倒数日'),
-                      Tab(text: '正数日'),
-                      Tab(text: '日历'),
+                      Tab(text: context.l10n.all),
+                      Tab(text: context.l10n.countdownDay),
+                      Tab(text: context.l10n.countupDay),
+                      Tab(text: context.l10n.calendar),
                     ],
                     labelColor: Colors.blue,
                     unselectedLabelColor: Colors.grey,

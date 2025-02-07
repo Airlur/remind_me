@@ -128,5 +128,116 @@
   },
   "english": "英文",
 
-  "@@locale": "zh"
+  "@@locale": "zh",
+
+  "all": "全部",
+  "@all": {
+    "description": "All"
+  },
+  
+  "countdownDay": "倒数日",
+  "@countdownDay": {
+    "description": "Countdown Day"
+  },
+  
+  "countupDay": "正数日",
+  "@countupDay": {
+    "description": "Count-up Day"
+  },
+  
+  "calendar": "日历",
+  "@calendar": {
+    "description": "Calendar"
+  },
+  
+  "daysLeft": "还有",
+  "@daysLeft": {
+    "description": "Days Left"
+  },
+  
+  "daysAgo": "已经",
+  "@daysAgo": {
+    "description": "Days Ago"
+  },
+  
+  "days": "天",
+  "@days": {
+    "description": "Day"
+  },
+  
+  "timeline": "时间线",
+  "@timeline": {
+    "description": "Timeline"
+  },
+  
+  "unpin": "取消置顶",
+  "@unpin": {
+    "description": "Unpin"
+  },
+  
+  "pin": "置顶",
+  "@pin": {
+    "description": "Pin"
+  },
+  
+  "addSpecialDay": "添加特殊日",
+  "@addSpecialDay": {
+    "description": "Add Special Day"
+  },
+  
+  "enterTitle": "请输入标题",
+  "@enterTitle": {
+    "description": "Enter Title"
+  },
+  
+  "targetDate": "目标日期",
+  "@targetDate": {
+    "description": "Target Date"
+  },
+  
+  "backgroundSettings": "背景设置",
+  "@backgroundSettings": {
+    "description": "Background Settings"
+  },
+  
+  "preview": "预览效果",
+  "@preview": {
+    "description": "Preview"
+  },
+
+  "year": "年",
+  "@year": {
+    "description": "Year"
+  },
+  
+  "month": "月",
+  "@month": {
+    "description": "Month"
+  },
+  
+  "week": "周",
+  "@week": {
+    "description": "Week"
+  },
+
+  "edit": "编辑",
+  "@edit": {
+    "description": "Edit"
+  },
+  "delete": "删除",
+  "@delete": {
+    "description": "Delete"
+  },
+  "save": "保存",
+  "@save": {
+    "description": "Save"
+  },
+  "cancel": "取消",
+  "@cancel": {
+    "description": "Cancel"
+  },
+  "confirm": "确定",
+  "@confirm": {
+    "description": "Confirm"
+  }
 }

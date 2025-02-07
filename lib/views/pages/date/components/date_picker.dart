@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class DatePickerWidget extends StatefulWidget {
   final DateTime initialDate;
@@ -50,7 +51,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    '取消',
+                    context.l10n.cancel,
                     style: TextStyle(color: theme.colorScheme.primary),
                   ),
                 ),
@@ -64,7 +65,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    '确定',
+                    context.l10n.confirm,
                     style: TextStyle(color: theme.colorScheme.primary),
                   ),
                 ),
@@ -79,7 +80,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
               child: Row(
                 children: [
                   _buildPickerColumn(
-                    items: List.generate(201, (index) => '${index + 1900}年'),
+                    items: List.generate(201, (index) => '${index + 1900} ${context.l10n.year}'),
                     initialItem: selectedYear - 1900,
                     onSelectedItemChanged: (index) {
                       setState(() {
@@ -88,7 +89,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                     },
                   ),
                   _buildPickerColumn(
-                    items: List.generate(12, (index) => '${index + 1}月'),
+                    items: List.generate(12, (index) => '${index + 1} ${context.l10n.month}'),
                     initialItem: selectedMonth - 1,
                     onSelectedItemChanged: (index) {
                       setState(() {
@@ -98,7 +99,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                   ),
                   _buildPickerColumn(
                     items: List.generate(_getDaysInMonth(selectedYear, selectedMonth), 
-                      (index) => '${index + 1}日'),
+                      (index) => '${index + 1} ${context.l10n.days}'),
                     initialItem: selectedDay - 1,
                     onSelectedItemChanged: (index) {
                       setState(() {

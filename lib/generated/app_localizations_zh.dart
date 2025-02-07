@@ -81,4 +81,73 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get english => '英文';
+
+  @override
+  String get all => '全部';
+
+  @override
+  String get countdownDay => '倒数日';
+
+  @override
+  String get countupDay => '正数日';
+
+  @override
+  String get calendar => '日历';
+
+  @override
+  String get daysLeft => '还有';
+
+  @override
+  String get daysAgo => '已经';
+
+  @override
+  String get days => '天';
+
+  @override
+  String get timeline => '时间线';
+
+  @override
+  String get unpin => '取消置顶';
+
+  @override
+  String get pin => '置顶';
+
+  @override
+  String get addSpecialDay => '添加特殊日';
+
+  @override
+  String get enterTitle => '请输入标题';
+
+  @override
+  String get targetDate => '目标日期';
+
+  @override
+  String get backgroundSettings => '背景设置';
+
+  @override
+  String get preview => '预览效果';
+
+  @override
+  String get year => '年';
+
+  @override
+  String get month => '月';
+
+  @override
+  String get week => '周';
+
+  @override
+  String get edit => '编辑';
+
+  @override
+  String get delete => '删除';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get confirm => '确定';
 }

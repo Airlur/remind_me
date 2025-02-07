@@ -248,6 +248,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get english;
+
+  /// All
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// CountDown Day
+  ///
+  /// In en, this message translates to:
+  /// **'CountDown'**
+  String get countdownDay;
+
+  /// CountUp Day
+  ///
+  /// In en, this message translates to:
+  /// **'CountUp'**
+  String get countupDay;
+
+  /// Calendar
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
+  /// Days Left
+  ///
+  /// In en, this message translates to:
+  /// **'Days Left'**
+  String get daysLeft;
+
+  /// Days Ago
+  ///
+  /// In en, this message translates to:
+  /// **'Days Ago'**
+  String get daysAgo;
+
+  /// Day
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get days;
+
+  /// Timeline
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get timeline;
+
+  /// Unpin
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get unpin;
+
+  /// Pin
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get pin;
+
+  /// Add Special Day
+  ///
+  /// In en, this message translates to:
+  /// **'Add Special Day'**
+  String get addSpecialDay;
+
+  /// Enter Title
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Title'**
+  String get enterTitle;
+
+  /// Target Date
+  ///
+  /// In en, this message translates to:
+  /// **'Target Date'**
+  String get targetDate;
+
+  /// Background Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Background Settings'**
+  String get backgroundSettings;
+
+  /// Preview
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get preview;
+
+  /// Year
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get year;
+
+  /// Month
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get month;
+
+  /// Week
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get week;
+
+  /// Edit
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// Delete
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Save
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Cancel
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Confirm
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

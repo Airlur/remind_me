@@ -5,6 +5,7 @@ import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:uuid/uuid.dart';
 import 'components/date_picker.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class AddEventPage extends StatefulWidget {
   const AddEventPage({super.key});
@@ -18,11 +19,11 @@ class _AddEventPageState extends State<AddEventPage> {
   DateTime _targetDate = DateTime.now();
   
   String get _previewText {
-    if (_titleController.text.isEmpty) return '预览效果';
+    if (_titleController.text.isEmpty) return context.l10n.preview;
     
     final difference = _targetDate.difference(DateTime.now()).inDays;
     final isCountdown = _targetDate.isAfter(DateTime.now());
-    final prefix = isCountdown ? '还有' : '已经';
+    final prefix = isCountdown ? context.l10n.daysLeft : context.l10n.daysAgo;
     
     return '${_titleController.text} $prefix ${difference.abs()}天';
   }
@@ -74,15 +75,13 @@ class _AddEventPageState extends State<AddEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final theme = Theme.of(context);
-    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('添加特殊日'),
+        title: Text(context.l10n.addSpecialDay),
         actions: [
           TextButton(
             onPressed: _saveEvent,
-            child: const Text('保存'),
+            child: Text(context.l10n.save),
           ),
         ],
       ),
@@ -99,9 +98,8 @@ class _AddEventPageState extends State<AddEventPage> {
                     leading: const Icon(Icons.title),
                     title: TextField(
                       controller: _titleController,
-                      decoration: const InputDecoration(
-                        // labelText: '标题',
-                        hintText: '请输入标题',
+                      decoration: InputDecoration(
+                        hintText: context.l10n.enterTitle,
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,  // 移除内边距
                         isDense: true,  // 使输入框更紧凑
@@ -111,7 +109,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.edit_calendar_rounded),
-                    title: const Text('目标日期'),
+                    title: Text(context.l10n.targetDate),
                     trailing: Text(
                       _targetDate.toString().split(' ')[0],
                       style: const TextStyle(fontSize: 16),
@@ -120,7 +118,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.palette),
-                    title: const Text('背景设置'),
+                    title: Text(context.l10n.backgroundSettings),
                     trailing: const Icon(Icons.keyboard_arrow_down),
                     onTap: () {
                       // TODO: 展开背景设置
@@ -131,9 +129,9 @@ class _AddEventPageState extends State<AddEventPage> {
             ),
             
             // 预览区域
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Text('预览效果', style: TextStyle(fontSize: 16)),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Text(context.l10n.preview, style: TextStyle(fontSize: 16)),
             ),
             Card(
               margin: const EdgeInsets.all(16),

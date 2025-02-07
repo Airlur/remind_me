@@ -81,4 +81,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get english => 'English';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get countdownDay => 'CountDown';
+
+  @override
+  String get countupDay => 'CountUp';
+
+  @override
+  String get calendar => 'Calendar';
+
+  @override
+  String get daysLeft => 'Days Left';
+
+  @override
+  String get daysAgo => 'Days Ago';
+
+  @override
+  String get days => 'Days';
+
+  @override
+  String get timeline => 'Timeline';
+
+  @override
+  String get unpin => 'Unpin';
+
+  @override
+  String get pin => 'Pin';
+
+  @override
+  String get addSpecialDay => 'Add Special Day';
+
+  @override
+  String get enterTitle => 'Enter Title';
+
+  @override
+  String get targetDate => 'Target Date';
+
+  @override
+  String get backgroundSettings => 'Background Settings';
+
+  @override
+  String get preview => 'Preview';
+
+  @override
+  String get year => 'Year';
+
+  @override
+  String get month => 'Month';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirm => 'Confirm';
 }
