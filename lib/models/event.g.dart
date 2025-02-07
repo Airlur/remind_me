@@ -80,8 +80,10 @@ class TimeUnitAdapter extends TypeAdapter<TimeUnit> {
       case 0:
         return TimeUnit.day;
       case 1:
-        return TimeUnit.month;
+        return TimeUnit.year;
       case 2:
+        return TimeUnit.month;
+      case 3:
         return TimeUnit.week;
       default:
         return TimeUnit.day;
@@ -94,11 +96,14 @@ class TimeUnitAdapter extends TypeAdapter<TimeUnit> {
       case TimeUnit.day:
         writer.writeByte(0);
         break;
-      case TimeUnit.month:
+      case TimeUnit.year:
         writer.writeByte(1);
         break;
-      case TimeUnit.week:
+      case TimeUnit.month:
         writer.writeByte(2);
+        break;
+      case TimeUnit.week:
+        writer.writeByte(3);
         break;
     }
   }

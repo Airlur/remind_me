@@ -9,8 +9,10 @@ enum TimeUnit {
   @HiveField(0)
   day,
   @HiveField(1)
-  month,
+  year,
   @HiveField(2)
+  month,
+  @HiveField(3)
   week
 }
 
@@ -86,35 +88,111 @@ class Event extends Equatable {
   
   String get displayPrefix => isCountdown ? '还有' : '已经';
   
-  int get daysLeft {
-    final difference = targetDate.difference(DateTime.now()).inDays;
-    return difference.abs(); // 取绝对值，因为可能是正数或负数
-  }
+  // 获取日期差值（保持正负号）
+  DateTime get _now => DateTime.now();
 
-  // 格式化显示数字
+  // 格式化日期差值
   String getFormattedNumber() {
+    final difference = targetDate.difference(_now);
+    final absDays = difference.inDays.abs();
+    
     switch (displayUnit) {
       case TimeUnit.day:
-        return '$daysLeft';
+        return '${absDays}天';
+        
+      case TimeUnit.year:
+        // 确保开始日期小于结束日期
+        final start = targetDate.isBefore(_now) ? targetDate : _now;
+        final end = targetDate.isBefore(_now) ? _now : targetDate;
+        
+        var years = end.year - start.year;
+        var months = end.month - start.month;
+        var days = end.day - start.day;
+        
+        // 处理天数为负的情况
+        if (days < 0) {
+          months--;
+          final lastDayOfPrevMonth = DateTime(end.year, end.month, 0).day;
+          days += lastDayOfPrevMonth;
+        }
+        
+        // 处理月份为负的情况
+        if (months < 0) {
+          years--;
+          months += 12;
+        }
+
+        // 如果不足一年，返回天数让 toggleUnit 跳过
+        if (years == 0) return '${absDays}天';
+
+        // 年月日显示
+        return [
+          '${years}年',
+          if (months > 0) '${months}个月',
+          if (days > 0) '${days}天',
+        ].join('');
+        
       case TimeUnit.month:
-        final months = daysLeft ~/ 30;
-        final remainingDays = daysLeft % 30;
-        return months > 0 
-            ? '$months月${remainingDays}天' 
-            : '$remainingDays天';
+        // 确保开始日期小于结束日期
+        final start = targetDate.isBefore(_now) ? targetDate : _now;
+        final end = targetDate.isBefore(_now) ? _now : targetDate;
+        
+        var totalMonths = (end.year - start.year) * 12 + (end.month - start.month);
+        var days = end.day - start.day;
+        
+        // 处理天数为负的情况
+        if (days < 0) {
+          totalMonths--;
+          final lastDayOfPrevMonth = DateTime(end.year, end.month, 0).day;
+          days += lastDayOfPrevMonth;
+        }
+
+        // 如果不足一个月，返回天数让 toggleUnit 跳过
+        if (totalMonths == 0) return '${absDays}天';
+
+        // 月日显示
+        return [
+          '${totalMonths}个月',
+          if (days > 0) '${days}天',
+        ].join('');
+        
       case TimeUnit.week:
-        final weeks = daysLeft ~/ 7;
-        final remainingDays = daysLeft % 7;
-        return weeks > 0 
-            ? '$weeks周${remainingDays}天' 
-            : '$remainingDays天';
+        final weeks = absDays ~/ 7;
+        final remainingDays = absDays % 7;
+        
+        // 如果不足一周，返回天数让 toggleUnit 跳过
+        if (weeks == 0) return '${absDays}天';
+        
+        return [
+          '${weeks}周',
+          if (remainingDays > 0) '${remainingDays}天',
+        ].join('');
     }
   }
 
   // 切换显示单位
   Event toggleUnit() {
     final units = TimeUnit.values;
-    final nextIndex = (units.indexOf(displayUnit) + 1) % units.length;
+    var nextIndex = (units.indexOf(displayUnit) + 1) % units.length;
+    
+    // 如果下一个单位的显示结果和当前一样，就跳过
+    while (nextIndex != units.indexOf(displayUnit)) {
+      final nextUnit = units[nextIndex];
+      final currentDisplay = getFormattedNumber();
+      
+      // 临时切换单位计算显示值
+      final tempEvent = copyWith(displayUnit: nextUnit);
+      final nextDisplay = tempEvent.getFormattedNumber();
+      
+      // 如果显示不同，就使用这个单位
+      if (currentDisplay != nextDisplay) {
+        break;
+      }
+      
+      // 否则继续尝试下一个单位
+      nextIndex = (nextIndex + 1) % units.length;
+    }
+    
     return copyWith(displayUnit: units[nextIndex]);
   }
 
