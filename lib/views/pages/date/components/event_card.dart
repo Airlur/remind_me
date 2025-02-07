@@ -5,6 +5,7 @@ import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/blocs/event/event_event.dart'; 
 import 'dart:io';
+import 'package:remind_me/theme/app_colors.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -17,45 +18,46 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0), // 添加上下和左右间距
       child: Slidable(
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
+          extentRatio: 0.6,
           children: [
             SlidableAction(
               flex: 1,
               onPressed: (_) {
                 // TODO: 进入时间线记录
               },
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: theme.colorScheme.onPrimary,
+              backgroundColor: AppColors.timelineAction,
+              foregroundColor: AppColors.onActionColor,
               icon: Icons.timeline,
               label: '时间线',
             ),
-          ],
-        ),
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          extentRatio: 0.75, // 控制滑出的宽度比例
-          children: [
             SlidableAction(
               flex: 1,
               onPressed: (_) => _togglePin(context),
-              backgroundColor: theme.colorScheme.secondary,
-              foregroundColor: theme.colorScheme.onSecondary,
+              backgroundColor: AppColors.pinAction,
+              foregroundColor: AppColors.onActionColor,
               icon: event.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
               label: event.isPinned ? '取消置顶' : '置顶',
               spacing: 4, // 图标和文字间距
               padding: EdgeInsets.zero, // 移除默认内边距
               autoClose: true, // 点击后自动关闭
             ),
+          ],
+        ),
+        endActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          extentRatio: 0.5, // 控制滑出的宽度比例
+          children: [
             SlidableAction(
               flex: 1,
               onPressed: (_) => _editEvent(context),
-              backgroundColor: theme.colorScheme.tertiary,
-              foregroundColor: theme.colorScheme.onTertiary,
+              backgroundColor: AppColors.editAction,
+              foregroundColor: AppColors.onActionColor,
               icon: Icons.edit,
               label: '编辑',
               spacing: 4, // 图标和文字间距
@@ -65,8 +67,8 @@ class EventCard extends StatelessWidget {
             SlidableAction(
               flex: 1,
               onPressed: (_) => _deleteEvent(context),
-              backgroundColor: theme.colorScheme.error,
-              foregroundColor: theme.colorScheme.onError,
+              backgroundColor: AppColors.deleteAction,
+              foregroundColor: AppColors.onActionColor,
               icon: Icons.delete,
               label: '删除',
               spacing: 4, // 图标和文字间距
@@ -143,10 +145,8 @@ class EventCard extends StatelessWidget {
   }
 
   BoxDecoration _buildBackgroundDecoration(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = isDark 
-        ? Theme.of(context).colorScheme.surfaceContainer
-        : Colors.white;
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    final defaultColor = Theme.of(context).colorScheme.surface;  // 统一使用主题色
 
     switch (event.backgroundType) {
       case BackgroundType.color:

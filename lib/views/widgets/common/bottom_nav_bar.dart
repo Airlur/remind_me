@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:remind_me/constants/colors.dart';
+// import 'package:remind_me/constants/colors.dart';
 import 'package:remind_me/utils/datetime/date_utils.dart';
 import 'package:remind_me/l10n/l10n.dart';
 
@@ -15,11 +15,11 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
-      selectedItemColor: AppColors.primary,
+      selectedItemColor: Theme.of(context).colorScheme.primary,
       items: [
         BottomNavigationBarItem(
           icon: Stack(
@@ -34,7 +34,7 @@ class BottomNavBar extends StatelessWidget {
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     color: currentIndex == 0 
-                      ? AppColors.primary 
+                      ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor 
                           ?? Theme.of(context).textTheme.bodySmall?.color,
                   ),

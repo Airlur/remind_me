@@ -14,12 +14,16 @@ class DatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return DefaultTabController(
       length: 4,
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
-          backgroundColor: Colors.transparent,  // 使用透明背景
+          backgroundColor: theme.brightness == Brightness.light 
+          ? Colors.white
+          : theme.colorScheme.surfaceContainer,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
@@ -63,6 +67,9 @@ class DatePage extends StatelessWidget {
             context,
             RouteUtils.buildPageRoute(page: const AddEventPage()),
           ),
+          shape: const CircleBorder(),
+          backgroundColor: theme.colorScheme.surface, // 设置背景色
+          foregroundColor: theme.colorScheme.onSurface, // 设置图标色
           child: const Icon(Icons.add),
         ),
       ),

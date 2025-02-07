@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remind_me/blocs/settings/settings_bloc.dart';
 import 'package:remind_me/blocs/settings/settings_state.dart';
-import 'package:remind_me/constants/colors.dart';
 import 'package:remind_me/core/routes.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/views/pages/home_page.dart';
@@ -30,18 +29,8 @@ class RemindMeApp extends StatelessWidget {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,  // 关闭 "debug" 标签
                 title: 'Remind Me',
-                theme: AppTheme.lightTheme.copyWith(
-                  colorScheme: ColorScheme.fromSeed(
-                    seedColor: AppColors.primary,
-                    brightness: Brightness.light,
-                  ),
-                ),
-                darkTheme: AppTheme.darkTheme.copyWith(
-                  colorScheme: ColorScheme.fromSeed(
-                    seedColor: AppColors.primary,
-                    brightness: Brightness.dark,
-                  ),
-                ),
+                theme: AppTheme.lightTheme,         // 使用我们的主题
+                darkTheme: AppTheme.darkTheme,      // 使用我们的暗色主题
                 themeMode: settingsState.themeMode,
                 locale: context.read<LanguageCubit>().locale,
                 onGenerateRoute: AppRouter.onGenerateRoute,
