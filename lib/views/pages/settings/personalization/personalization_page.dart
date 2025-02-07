@@ -34,56 +34,63 @@ class PersonalizationPage extends StatelessWidget {
     }
   }
 
-  void _showThemeModeBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+  void _showThemeModeDialog(BuildContext context) {
+    showDialog(
       context: context,
       builder: (context) => BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
-          return SafeArea(
-            child: Column(
+          final theme = Theme.of(context);
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            backgroundColor: theme.colorScheme.surface,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
                   leading: const Icon(Icons.brightness_auto),
                   title: Text(context.l10n.followSystem),
-                  trailing: Radio<ThemeMode>(
-                    value: ThemeMode.system,
-                    groupValue: state.themeMode,
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<SettingsBloc>().add(UpdateThemeModeEvent(value));
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
+                  selected: state.themeMode == ThemeMode.system,
+                  trailing: state.themeMode == ThemeMode.system 
+                      ? const Icon(Icons.check, size: 20) 
+                      : null,
+                  onTap: () {
+                    context.read<SettingsBloc>().add(UpdateThemeModeEvent(ThemeMode.system));
+                    Navigator.pop(context);
+                  },
+                  minLeadingWidth: 0,
+                  horizontalTitleGap: 12,
                 ),
                 ListTile(
                   leading: const Icon(Icons.light_mode),
                   title: Text(context.l10n.lightMode),
-                  trailing: Radio<ThemeMode>(
-                    value: ThemeMode.light,
-                    groupValue: state.themeMode,
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<SettingsBloc>().add(UpdateThemeModeEvent(value));
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
+                  selected: state.themeMode == ThemeMode.light,
+                  trailing: state.themeMode == ThemeMode.light 
+                      ? const Icon(Icons.check, size: 20) 
+                      : null,
+                  onTap: () {
+                    context.read<SettingsBloc>().add(UpdateThemeModeEvent(ThemeMode.light));
+                    Navigator.pop(context);
+                  },
+                  minLeadingWidth: 0,
+                  horizontalTitleGap: 12,
                 ),
                 ListTile(
                   leading: const Icon(Icons.dark_mode),
                   title: Text(context.l10n.darkMode),
-                  trailing: Radio<ThemeMode>(
-                    value: ThemeMode.dark,
-                    groupValue: state.themeMode,
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<SettingsBloc>().add(UpdateThemeModeEvent(value));
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
+                  selected: state.themeMode == ThemeMode.dark,
+                  trailing: state.themeMode == ThemeMode.dark 
+                      ? const Icon(Icons.check, size: 20) 
+                      : null,
+                  onTap: () {
+                    context.read<SettingsBloc>().add(UpdateThemeModeEvent(ThemeMode.dark));
+                    Navigator.pop(context);
+                  },
+                  minLeadingWidth: 0,
+                  horizontalTitleGap: 12,
                 ),
               ],
             ),
@@ -122,7 +129,7 @@ class PersonalizationPage extends StatelessWidget {
                     const Icon(Icons.chevron_right),
                   ],
                 ),
-                onTap: () => _showThemeModeBottomSheet(context),
+                onTap: () => _showThemeModeDialog(context),
               ),
               SettingsListItem(
                 icon: Icons.language,
