@@ -5,7 +5,7 @@ abstract class EventEvent extends Equatable {
   const EventEvent();
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
 class LoadEvents extends EventEvent {}
@@ -58,4 +58,8 @@ class EventReordered extends EventEvent {
 
   @override
   List<Object> get props => [oldIndex, newIndex];
+}
+
+class RefreshEvents extends EventEvent {
+  const RefreshEvents();
 }

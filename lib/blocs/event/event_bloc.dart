@@ -2,8 +2,11 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
+import 'dart:async';
 
 class EventBloc extends HydratedBloc<EventEvent, EventState> {
+  Timer? _midnightTimer;
+
   EventBloc() : super(const EventState()) {
     on<LoadEvents>(_onLoadEvents);
     on<AddEvent>(_onAddEvent);
@@ -12,6 +15,8 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     on<PinEvent>(_onPinEvent);
     on<UnpinEvent>(_onUnpinEvent);
     on<EventReordered>(_onEventReordered);
+    on<RefreshEvents>(_onRefreshEvents);
+    _scheduleMidnightUpdate();
   }
 
   void _onLoadEvents(LoadEvents event, Emitter<EventState> emit) async {
@@ -110,6 +115,23 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     }
   }
 
+  void _onRefreshEvents(RefreshEvents event, Emitter<EventState> emit) {
+    // 触发状态更新，由于使用了 getter，会重新计算所有日期
+    emit(state.copyWith(status: EventStatus.success));
+  }
+
+  void _scheduleMidnightUpdate() {
+    final now = DateTime.now();
+    final nextMidnight = DateTime(now.year, now.month, now.day + 1);
+    final duration = nextMidnight.difference(now);
+
+    _midnightTimer?.cancel();
+    _midnightTimer = Timer(duration, () {
+      add(const RefreshEvents());
+      _scheduleMidnightUpdate(); // 重新调度下一天的更新
+    });
+  }
+
   @override
   Map<String, dynamic>? toJson(EventState state) {
     return {
@@ -154,5 +176,11 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  Future<void> close() {
+    _midnightTimer?.cancel();
+    return super.close();
   }
 }

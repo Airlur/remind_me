@@ -7,6 +7,8 @@ import 'package:remind_me/blocs/event/event_event.dart';
 import 'dart:io';
 import 'package:remind_me/theme/app_colors.dart';
 import 'package:remind_me/l10n/l10n.dart';
+import 'package:remind_me/views/pages/date/edit_event_page.dart';
+import 'package:remind_me/utils/common/route_utils.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -196,7 +198,10 @@ class EventCard extends StatelessWidget {
   }
 
   void _editEvent(BuildContext context) {
-    // TODO: 实现编辑事件
+    Navigator.push(
+      context,
+      RouteUtils.buildPageRoute(page: EditEventPage(event: event)),
+    );
   }
 
   void _deleteEvent(BuildContext context) {

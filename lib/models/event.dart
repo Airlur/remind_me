@@ -83,18 +83,29 @@ class Event extends Equatable {
   List<Color>? get gradientColors => 
       gradientColorValues?.map((v) => Color(v)).toList();
 
-  // 计算属性
-  bool get isCountdown => targetDate.isAfter(DateTime.now());
-  
-  String get displayPrefix => isCountdown ? '还有' : '已经';
-  
-  // 获取日期差值（保持正负号）
   DateTime get _now => DateTime.now();
 
-  // 格式化日期差值
+  bool get isCountdown => targetDate.isAfter(_now);
+
+  bool get isToday {
+    final today = DateTime(_now.year, _now.month, _now.day);
+    final target = DateTime(targetDate.year, targetDate.month, targetDate.day);
+    return today.isAtSameMomentAs(target);
+  }
+
+  int get absDays {
+    final today = DateTime(_now.year, _now.month, _now.day);
+    final target = DateTime(targetDate.year, targetDate.month, targetDate.day);
+    return target.difference(today).inDays.abs();
+  }
+
+  String get displayPrefix {
+    if (isToday) return '就是';
+    return isCountdown ? '还有' : '已经';
+  }
+
   String getFormattedNumber() {
-    final difference = targetDate.difference(_now);
-    final absDays = difference.inDays.abs();
+    if (isToday) return '今天';
     
     switch (displayUnit) {
       case TimeUnit.day:
