@@ -16,14 +16,15 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     on<UnpinEvent>(_onUnpinEvent);
     on<EventReordered>(_onEventReordered);
     on<RefreshEvents>(_onRefreshEvents);
+    on<UpdatePinnedDisplayMode>(_onUpdatePinnedDisplayMode);
     _scheduleMidnightUpdate();
   }
 
   void _onLoadEvents(LoadEvents event, Emitter<EventState> emit) async {
     emit(state.copyWith(status: EventStatus.loading));
     try {
-      print('【Current events】: ${state.events.length}');
-      final updatedEvents = state.events.map((e) {
+        print('【Current events】: ${state.events.length}');
+        final updatedEvents = state.events.map((e) {
         print('【Event】: ${e.title}, targetDate: ${e.targetDate}, now: ${DateTime.now()}');
         return e;
       }).toList();
@@ -95,12 +96,44 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   }
 
   void _onPinEvent(PinEvent event, Emitter<EventState> emit) {
-    final eventToPin = state.events.firstWhere((e) => e.id == event.eventId);
-    emit(state.copyWith(pinnedEvent: eventToPin));
+    final events = [...state.events];
+    final index = events.indexWhere((e) => e.id == event.eventId);
+    
+    if (index != -1) {
+      if (state.pinnedDisplayMode == PinnedDisplayMode.single) {
+        // 单个置顶模式：取消其他置顶
+        for (var i = 0; i < events.length; i++) {
+          if (events[i].isPinned) {
+            events[i] = events[i].copyWith(
+              isPinned: false,
+              pinnedAt: null,
+            );
+          }
+        }
+      }
+      
+      // 置顶当前项
+      final updatedEvent = events[index].copyWith(
+        isPinned: true,
+        pinnedAt: DateTime.now(),
+      );
+      events[index] = updatedEvent;
+      emit(state.copyWith(events: events));
+    }
   }
 
   void _onUnpinEvent(UnpinEvent event, Emitter<EventState> emit) {
-    emit(state.copyWith(pinnedEvent: null));
+    final events = [...state.events];
+    final index = events.indexWhere((e) => e.id == event.eventId);
+    
+    if (index != -1) {
+      events[index] = events[index].copyWith(
+        isPinned: false,
+        pinnedAt: null,
+      );
+      
+      emit(state.copyWith(events: events));
+    }
   }
 
   void _onEventReordered(EventReordered event, Emitter<EventState> emit) {
@@ -129,6 +162,13 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     emit(state.copyWith(status: EventStatus.success));
   }
 
+  void _onUpdatePinnedDisplayMode(
+    UpdatePinnedDisplayMode event,
+    Emitter<EventState> emit,
+  ) {
+    emit(state.copyWith(pinnedDisplayMode: event.mode));
+  }
+
   void _scheduleMidnightUpdate() {
     final now = DateTime.now();
     final nextMidnight = DateTime(now.year, now.month, now.day + 1);
@@ -151,6 +191,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
         'createdAt': e.createdAt.toIso8601String(),
         'displayUnit': e.displayUnit.index,
         'isPinned': e.isPinned,
+        'pinnedAt': e.pinnedAt?.toIso8601String(),
         'backgroundType': e.backgroundType.index,
         'backgroundColorValue': e.backgroundColorValue,
         'gradientColorValues': e.gradientColorValues,
@@ -158,6 +199,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
         'animationType': e.animationType,
       }).toList(),
       'status': state.status.index,
+      'pinnedDisplayMode': state.pinnedDisplayMode.index,
     };
   }
 
@@ -171,6 +213,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
         createdAt: DateTime.parse(e['createdAt']),
         displayUnit: TimeUnit.values[e['displayUnit']],
         isPinned: e['isPinned'],
+        pinnedAt: e['pinnedAt'] != null ? DateTime.parse(e['pinnedAt']) : null,
         backgroundType: BackgroundType.values[e['backgroundType']],
         backgroundColorValue: e['backgroundColorValue'],
         gradientColorValues: e['gradientColorValues']?.cast<int>(),
@@ -181,6 +224,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       return EventState(
         events: events,
         status: EventStatus.values[json['status']],
+        pinnedDisplayMode: PinnedDisplayMode.values[json['pinnedDisplayMode']],
       );
     } catch (e) {
       return null;

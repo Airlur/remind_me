@@ -9,6 +9,8 @@ import 'package:remind_me/views/pages/date/components/event_card.dart';
 import 'package:remind_me/utils/common/route_utils.dart';
 import 'package:remind_me/views/pages/date/add_event_page.dart';
 import 'package:remind_me/l10n/l10n.dart';
+import 'dart:async';
+import 'package:remind_me/views/pages/date/components/custom_page_view.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -47,9 +49,58 @@ class DatePage extends StatelessWidget {
                     dividerColor: Colors.transparent,
                   ),
                 ),
-                IconButton(
+                PopupMenuButton<String>(
                   icon: const Icon(Icons.more_horiz),
-                  onPressed: () => _showOperationMenu(context),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  color: theme.colorScheme.surface,
+                  position: PopupMenuPosition.under,
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: const Row(
+                        children: [
+                          Icon(Icons.sort, size: 20),
+                          SizedBox(width: 12),
+                          // Text(context.l10n.sort),
+                          Text('排序'),
+                        ],
+                      ),
+                      onTap: () {
+                        // TODO: 实现排序逻辑
+                      },
+                    ),
+                    PopupMenuItem(
+                      child: const Row(
+                        children: [
+                          Icon(Icons.view_list, size: 20),
+                          SizedBox(width: 12),
+                          // Text(context.l10n.switchView),
+                          Text('切换视图'),
+                        ],
+                      ),
+                      onTap: () {
+                        // TODO: 实现视图切换逻辑
+                      },
+                    ),
+                    PopupMenuItem(
+                      child: const Row(
+                        children: [
+                          Icon(Icons.push_pin, size: 20),
+                          SizedBox(width: 12),
+                          // Text(context.l10n.pinnedMode),
+                          Text('置顶模式'),
+                        ],
+                      ),
+                      onTap: () {
+                        // 延迟执行，避免菜单关闭动画冲突
+                        Future.delayed(
+                          const Duration(milliseconds: 200),
+                          () => _showPinnedDisplayModeDialog(context),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -77,44 +128,111 @@ class DatePage extends StatelessWidget {
     );
   }
 
-  // 展示操作菜单
-  void _showOperationMenu(BuildContext context) {
-    showModalBottomSheet(
+  void _showPinnedDisplayModeDialog(BuildContext context) {
+    showDialog(
       context: context,
-      builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.sort),
-              title: const Text('按时间排序'),
-              onTap: () {
-                // TODO: 实现排序逻辑
-                Navigator.pop(context);
-              },
+      builder: (context) => BlocBuilder<EventBloc, EventState>(
+        builder: (context, state) {
+          final theme = Theme.of(context);
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            backgroundColor: theme.colorScheme.surface,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            ListTile(
-              leading: const Icon(Icons.view_list),
-              title: const Text('切换视图'),
-              onTap: () {
-                // TODO: 实现视图切换逻辑
-                Navigator.pop(context);
-              },
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.push_pin),
+                  title: const Text('单个置顶'),
+                  selected: state.pinnedDisplayMode == PinnedDisplayMode.single,
+                  trailing: state.pinnedDisplayMode == PinnedDisplayMode.single 
+                      ? const Icon(Icons.check, size: 20) 
+                      : null,
+                  onTap: () {
+                    context.read<EventBloc>().add(
+                      const UpdatePinnedDisplayMode(PinnedDisplayMode.single)
+                    );
+                    Navigator.pop(context);
+                  },
+                  minLeadingWidth: 0,
+                  horizontalTitleGap: 12,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.view_carousel),
+                  title: const Text('轮播展示'),
+                  selected: state.pinnedDisplayMode == PinnedDisplayMode.carousel,
+                  trailing: state.pinnedDisplayMode == PinnedDisplayMode.carousel 
+                      ? const Icon(Icons.check, size: 20) 
+                      : null,
+                  onTap: () {
+                    context.read<EventBloc>().add(
+                      const UpdatePinnedDisplayMode(PinnedDisplayMode.carousel)
+                    );
+                    Navigator.pop(context);
+                  },
+                  minLeadingWidth: 0,
+                  horizontalTitleGap: 12,
+                ),
+              ],
             ),
-            // 可以添加更多操作选项
-          ],
-        );
-      },
+          );
+        },
+      ),
     );
   }
-  
 }
 
 // 事件列表
-class _EventList extends StatelessWidget {
+class _EventList extends StatefulWidget {
   final bool Function(Event)? filter;
-
   const _EventList({this.filter});
+
+  @override
+  State<_EventList> createState() => _EventListState();
+}
+
+class _EventListState extends State<_EventList> {
+  late PageController _pageController;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: 1); // 从第二组的第一项开始
+    _startAutoPlay();
+  }
+
+  @override
+  void dispose() {
+    _stopAutoPlay();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startAutoPlay() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      final state = context.read<EventBloc>().state;
+      if (state.pinnedDisplayMode == PinnedDisplayMode.carousel &&
+          state.pinnedEvents.length > 1 &&
+          _pageController.hasClients) {
+        final nextPage = (_pageController.page?.round() ?? 0) + 1;
+        _pageController.animateToPage(
+          nextPage,  // 不需要取模，让它自然滑动到下一页
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  void _stopAutoPlay() {
+    _timer?.cancel();
+    _timer = null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,17 +242,24 @@ class _EventList extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final events = _filterEvents(state.events);
-        
+        // 根据当前分类筛选置顶事件
+        final pinnedEvents = widget.filter == null 
+            ? state.pinnedEvents  // "全部"分类显示所有置顶项
+            : state.pinnedEvents.where(widget.filter!).toList();  // 其他分类只显示对应的置顶项
+
+        // 过滤未置顶的事件
+        final filteredEvents = _filterEvents(state.events);
+
         return Column(
           children: [
-            if (state.pinnedEvent != null)
-              EventCard(event: state.pinnedEvent!),
-              
+            if (pinnedEvents.isNotEmpty) ...[
+              _buildPinnedArea(pinnedEvents, state.pinnedDisplayMode),
+            ],
+            
             Expanded(
               child: ReorderableListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: events.length,
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                itemCount: filteredEvents.length,
                 onReorder: (oldIndex, newIndex) {
                   context.read<EventBloc>().add(
                     EventReordered(oldIndex, newIndex)
@@ -142,8 +267,8 @@ class _EventList extends StatelessWidget {
                 },
                 itemBuilder: (context, index) {
                   return EventCard(
-                    key: ValueKey(events[index].id),
-                    event: events[index],
+                    key: ValueKey(filteredEvents[index].id),
+                    event: filteredEvents[index],
                   );
                 },
               ),
@@ -154,8 +279,48 @@ class _EventList extends StatelessWidget {
     );
   }
 
+  Widget _buildPinnedArea(List<Event> pinnedEvents, PinnedDisplayMode mode) {
+    if (pinnedEvents.isEmpty) return const SizedBox();
+    
+    // 如果是单个置顶模式或只有一个置顶项，不使用 PageView
+    if (mode == PinnedDisplayMode.single || pinnedEvents.length == 1) {
+      return SizedBox(
+        height: 100,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: EventCard(event: pinnedEvents.first),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 100,
+      child: CustomPageView(  // 使用自定义的 PageView
+        controller: _pageController,
+        physics: const BouncingScrollPhysics(),
+        onPageChanged: (page) {
+          final itemCount = pinnedEvents.length;
+          if (page == itemCount * 3 - 1) {
+            _pageController.jumpToPage(itemCount * 2 - 1);
+          } else if (page == 0) {
+            _pageController.jumpToPage(itemCount);
+          }
+        },
+        children: List.generate(
+          pinnedEvents.length * 3,
+          (index) => Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: EventCard(
+              event: pinnedEvents[index % pinnedEvents.length],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   List<Event> _filterEvents(List<Event> events) {
-    if (filter == null) return events;
-    return events.where(filter!).toList();
+    if (widget.filter == null) return events;
+    return events.where(widget.filter!).toList();
   }
 }

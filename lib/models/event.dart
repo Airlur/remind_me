@@ -62,6 +62,9 @@ class Event extends Equatable {
   
   @HiveField(10)
   final String? animationType;
+  
+  @HiveField(11)
+  final DateTime? pinnedAt;
 
   const Event({
     required this.id,
@@ -70,6 +73,7 @@ class Event extends Equatable {
     required this.createdAt,
     this.displayUnit = TimeUnit.day,
     this.isPinned = false,
+    this.pinnedAt,
     this.backgroundType = BackgroundType.color,
     this.backgroundColorValue,
     this.gradientColorValues,
@@ -224,6 +228,7 @@ class Event extends Equatable {
     List<Color>? gradientColors,
     String? localImagePath,
     String? animationType,
+    DateTime? pinnedAt,
   }) {
     return Event(
       id: id,
@@ -232,6 +237,7 @@ class Event extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       displayUnit: displayUnit ?? this.displayUnit,
       isPinned: isPinned ?? this.isPinned,
+      pinnedAt: pinnedAt ?? this.pinnedAt,
       backgroundType: backgroundType ?? this.backgroundType,
       backgroundColorValue: backgroundColor?.value,
       gradientColorValues: gradientColors?.map((c) => c.value).toList(),
@@ -248,6 +254,7 @@ class Event extends Equatable {
     createdAt,
     displayUnit,
     isPinned,
+    pinnedAt,
     backgroundType,
     backgroundColorValue,
     gradientColorValues,

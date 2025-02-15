@@ -14,8 +14,8 @@ class EventCard extends StatelessWidget {
   final Event event;
 
   const EventCard({
-    super.key,
     required this.event,
+    super.key,
   });
 
   @override
@@ -214,9 +214,11 @@ class EventCard extends StatelessWidget {
   }
 
   void _togglePin(BuildContext context) {
-    context.read<EventBloc>().add(
-      UpdateEvent(event.copyWith(isPinned: !event.isPinned))
-    );
+    if (event.isPinned) {
+      context.read<EventBloc>().add(UnpinEvent(event.id));
+    } else {
+      context.read<EventBloc>().add(PinEvent(event.id));
+    }
   }
 
   void _toggleDisplayUnit(BuildContext context) {

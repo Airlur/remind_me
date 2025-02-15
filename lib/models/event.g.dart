@@ -23,6 +23,7 @@ class EventAdapter extends TypeAdapter<Event> {
       createdAt: fields[3] as DateTime,
       displayUnit: fields[4] as TimeUnit,
       isPinned: fields[5] as bool,
+      pinnedAt: fields[11] as DateTime?,
       backgroundType: fields[6] as BackgroundType,
       backgroundColorValue: fields[7] as int?,
       gradientColorValues: (fields[8] as List?)?.cast<int>(),
@@ -34,7 +35,7 @@ class EventAdapter extends TypeAdapter<Event> {
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(9)
       ..write(obj.localImagePath)
       ..writeByte(10)
-      ..write(obj.animationType);
+      ..write(obj.animationType)
+      ..writeByte(11)
+      ..write(obj.pinnedAt);
   }
 
   @override

@@ -21,11 +21,18 @@ class _AddEventPageState extends State<AddEventPage> {
   String get _previewText {
     if (_titleController.text.isEmpty) return context.l10n.preview;
     
-    final difference = _targetDate.difference(DateTime.now()).inDays;
-    final isCountdown = _targetDate.isAfter(DateTime.now());
-    final prefix = isCountdown ? context.l10n.daysLeft : context.l10n.daysAgo;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final target = DateTime(_targetDate.year, _targetDate.month, _targetDate.day);
     
-    return '${_titleController.text} $prefix ${difference.abs()}天';
+    final isToday = today.isAtSameMomentAs(target);
+    final isCountdown = target.isAfter(today);
+    final absDays = target.difference(today).inDays.abs();
+    
+    final prefix = isToday ? '就是' : (isCountdown ? context.l10n.daysLeft : context.l10n.daysAgo);
+    final daysText = isToday ? '今天' : '${absDays}天';
+    
+    return '${_titleController.text} $prefix $daysText';
   }
 
   @override
@@ -131,7 +138,7 @@ class _AddEventPageState extends State<AddEventPage> {
             // 预览区域
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Text(context.l10n.preview, style: TextStyle(fontSize: 16)),
+              child: Text(context.l10n.preview, style: const TextStyle(fontSize: 16)),
             ),
             Card(
               margin: const EdgeInsets.all(16),
