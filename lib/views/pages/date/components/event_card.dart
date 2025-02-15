@@ -27,7 +27,7 @@ class EventCard extends StatelessWidget {
       child: Slidable(
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
-          extentRatio: 0.6,
+          extentRatio: 0.7, // 增加左侧滑块宽度比例
           children: [
             SlidableAction(
               flex: 1,
@@ -53,11 +53,25 @@ class EventCard extends StatelessWidget {
               padding: EdgeInsets.zero, // 移除默认内边距
               autoClose: true, // 点击后自动关闭
             ),
+            SlidableAction(
+              flex: 1,
+              onPressed: (_) {
+                // TODO: 显示详情
+              },
+              backgroundColor: AppColors.infoAction, // 紫色表示详情
+              foregroundColor: AppColors.onActionColor,
+              icon: Icons.info_outline,
+              // label: context.l10n.details,
+              label: '详情',
+              spacing: 4,
+              padding: EdgeInsets.zero,
+              autoClose: true,
+            ),
           ],
         ),
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
-          extentRatio: 0.5, // 控制滑出的宽度比例
+          extentRatio: 0.6, // 增加右侧滑块宽度比例
           children: [
             SlidableAction(
               flex: 1,
@@ -81,6 +95,20 @@ class EventCard extends StatelessWidget {
               padding: EdgeInsets.zero, // 移除默认内边距
               autoClose: true, // 点击后自动关闭
             ),
+            SlidableAction(
+              flex: 1,
+              onPressed: (_) {
+                // TODO: 分享功能
+              },
+              backgroundColor: AppColors.shareAction,
+              foregroundColor: AppColors.onActionColor,
+              icon: Icons.share,
+              // label: context.l10n.share,
+              label: '分享',
+              spacing: 4,
+              padding: EdgeInsets.zero,
+              autoClose: true,
+            ),
           ],
         ),
         child: Card(
@@ -92,7 +120,7 @@ class EventCard extends StatelessWidget {
           child: Container(
             decoration: _buildBackgroundDecoration(context),
             child: InkWell(
-              onDoubleTap: () => _toggleDisplayUnit(context),
+              onTap: () => _toggleDisplayUnit(context), // 改为单击切换
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // 调整内边距

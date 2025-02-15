@@ -38,6 +38,8 @@ abstract class AppColors {
   // 滑动操作相关颜色
   static const timelineAction = primary;        // 时间线使用主题蓝色
   static const pinAction = Color(0xFF9C27B0);   // 置顶使用紫色
+  static const infoAction = Color.fromARGB(255, 243, 60, 118);  // 详情使用粉色
+  static const shareAction = Color(0xFF4CAF50); // 分享使用绿色
   static const editAction = Color(0xFFFF9800);  // 编辑使用橙色
   static const deleteAction = error;            // 删除使用错误红色
   

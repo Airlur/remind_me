@@ -22,9 +22,18 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   void _onLoadEvents(LoadEvents event, Emitter<EventState> emit) async {
     emit(state.copyWith(status: EventStatus.loading));
     try {
-      // 这里可以添加从本地存储或网络加载数据的逻辑
-      emit(state.copyWith(status: EventStatus.success));
+      print('【Current events】: ${state.events.length}');
+      final updatedEvents = state.events.map((e) {
+        print('【Event】: ${e.title}, targetDate: ${e.targetDate}, now: ${DateTime.now()}');
+        return e;
+      }).toList();
+      
+      emit(state.copyWith(
+        events: updatedEvents,
+        status: EventStatus.success,
+      ));
     } catch (e) {
+      print('【LoadEvents error】: $e');
       emit(state.copyWith(
         status: EventStatus.failure,
         error: e.toString(),
@@ -168,7 +177,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
         localImagePath: e['localImagePath'],
         animationType: e['animationType'],
       )).toList();
-
+      
       return EventState(
         events: events,
         status: EventStatus.values[json['status']],

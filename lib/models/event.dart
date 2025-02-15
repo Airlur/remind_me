@@ -83,8 +83,13 @@ class Event extends Equatable {
   List<Color>? get gradientColors => 
       gradientColorValues?.map((v) => Color(v)).toList();
 
-  DateTime get _now => DateTime.now();
+  // DateTime get _now => DateTime.now();
 
+  DateTime get _now {
+  final now = DateTime.now();
+  // print('【Time Check】_now called for $title: $now');
+  return now;
+}
   bool get isCountdown => targetDate.isAfter(_now);
 
   bool get isToday {
@@ -100,8 +105,8 @@ class Event extends Equatable {
   }
 
   String get displayPrefix {
-    if (isToday) return '就是';
-    return isCountdown ? '还有' : '已经';
+    final prefix = isToday ? '就是' : (isCountdown ? '还有' : '已经');
+    return prefix;
   }
 
   String getFormattedNumber() {
