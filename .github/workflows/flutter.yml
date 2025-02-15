@@ -1,0 +1,45 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      APP_VERSION: 0.1.0  # 直接从 pubspec.yaml 复制版本号
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.2.3'
+          channel: 'stable'
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Analyze project source
+        run: flutter analyze
+        
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
+        
+      - name: Rename APKs
+        shell: bash
+        run: |
+          cd build/app/outputs/flutter-apk/
+          mv app-armeabi-v7a-release.apk "醒我_v${{ env.APP_VERSION }}_arm32.apk"
+          mv app-arm64-v8a-release.apk "醒我_v${{ env.APP_VERSION }}_arm64.apk"
+          mv app-x86_64-release.apk "醒我_v${{ env.APP_VERSION }}_x64.apk"
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: "醒我_v${{ env.APP_VERSION }}"
+          path: build/app/outputs/flutter-apk/醒我_v${{ env.APP_VERSION }}_*.apk

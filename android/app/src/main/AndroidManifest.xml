@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="remind_me"
+        android:label="醒我"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
