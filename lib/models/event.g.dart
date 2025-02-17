@@ -29,13 +29,14 @@ class EventAdapter extends TypeAdapter<Event> {
       gradientColorValues: (fields[8] as List?)?.cast<int>(),
       localImagePath: fields[9] as String?,
       animationType: fields[10] as String?,
+      isLunar: fields[12] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -59,7 +60,9 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(10)
       ..write(obj.animationType)
       ..writeByte(11)
-      ..write(obj.pinnedAt);
+      ..write(obj.pinnedAt)
+      ..writeByte(12)
+      ..write(obj.isLunar);
   }
 
   @override

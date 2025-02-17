@@ -47,6 +47,9 @@ dependencies:
   # 值相等性比较
   equatable: ^2.0.5
 
+  # 农历
+  lunar: ^1.6.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

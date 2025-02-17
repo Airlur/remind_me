@@ -65,6 +65,9 @@ class Event extends Equatable {
   
   @HiveField(11)
   final DateTime? pinnedAt;
+  
+  @HiveField(12)
+  final bool isLunar;
 
   const Event({
     required this.id,
@@ -79,6 +82,7 @@ class Event extends Equatable {
     this.gradientColorValues,
     this.localImagePath,
     this.animationType,
+    this.isLunar = false,
   });
 
   Color? get backgroundColor => 
@@ -229,6 +233,7 @@ class Event extends Equatable {
     String? localImagePath,
     String? animationType,
     DateTime? pinnedAt,
+    bool? isLunar,
   }) {
     return Event(
       id: id,
@@ -243,6 +248,7 @@ class Event extends Equatable {
       gradientColorValues: gradientColors?.map((c) => c.value).toList(),
       localImagePath: localImagePath ?? this.localImagePath,
       animationType: animationType ?? this.animationType,
+      isLunar: isLunar ?? this.isLunar,
     );
   }
 
@@ -260,5 +266,6 @@ class Event extends Equatable {
     gradientColorValues,
     localImagePath,
     animationType,
+    isLunar,
   ];
 }
