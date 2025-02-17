@@ -45,4 +45,6 @@ abstract class AppColors {
   
   // 操作按钮文字颜色（如果需要的话）
   static const onActionColor = Colors.white;    // 所有操作按钮的文字/图标颜色
+  static const iconGrayColor = Color(0xFF757175);  // 和Icon灰色相似的字体颜色
+
 } 

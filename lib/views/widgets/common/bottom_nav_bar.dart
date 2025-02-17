@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:remind_me/constants/colors.dart';
 import 'package:remind_me/utils/datetime/date_utils.dart';
 import 'package:remind_me/l10n/l10n.dart';
+import 'package:remind_me/theme/app_colors.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -15,10 +16,16 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
 
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
+      // backgroundColor: AppColors.surface,
+      backgroundColor: theme.brightness == Brightness.light 
+          ? AppColors.surface
+          : theme.colorScheme.surfaceContainer,
+      unselectedItemColor: AppColors.iconGrayColor,
       selectedItemColor: Theme.of(context).colorScheme.primary,
       items: [
         BottomNavigationBarItem(
@@ -35,8 +42,7 @@ class BottomNavBar extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: currentIndex == 0 
                       ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor 
-                          ?? Theme.of(context).textTheme.bodySmall?.color,
+                      : AppColors.iconGrayColor,
                   ),
                 ),
               ),
