@@ -1,10 +1,12 @@
-name: Flutter CI/CD
+# 自动触发的配置（已注释）
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+# 改为手动触发
+on: workflow_dispatch
 
 jobs:
   build:
@@ -39,18 +41,16 @@ jobs:
           echo "keyAlias=remind_me" >> android/key.properties
         
       - name: Build APK
-        run: flutter build apk --release --split-per-abi
+        run: flutter build apk --release --target-platform android-arm64
         
-      - name: Rename APKs
+      - name: Rename APK
         shell: bash
         run: |
           cd build/app/outputs/flutter-apk/
-          mv app-armeabi-v7a-release.apk "remind_me_v${{ env.APP_VERSION }}_arm32.apk"
-          mv app-arm64-v8a-release.apk "remind_me_v${{ env.APP_VERSION }}_arm64.apk"
-          mv app-x86_64-release.apk "remind_me_v${{ env.APP_VERSION }}_x64.apk"
+          mv app-release.apk "remind_me_v${{ env.APP_VERSION }}_arm64.apk"
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: "remind_me_v${{ env.APP_VERSION }}"
-          path: build/app/outputs/flutter-apk/remind_me_v${{ env.APP_VERSION }}_*.apk
+          name: "remind_me_v${{ env.APP_VERSION }}_arm64"
+          path: build/app/outputs/flutter-apk/remind_me_v${{ env.APP_VERSION }}_arm64.apk
