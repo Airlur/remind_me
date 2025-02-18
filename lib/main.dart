@@ -21,10 +21,16 @@ void main() async {
 
   // 初始化Hive数据库
   // Hive是一个轻量级的NoSQL数据库,用于本地数据存储
+  print('【Main】App document directory: ${appDocDir.path}');  // 打印应用文档目录
+
+  // 初始化Hive
   await Hive.initFlutter();
+  print('【Main】Hive initialized');
 
   // 注册所有依赖项(服务、bloc等)
   await initializeDependencies();
+  await initDependencies();  // 添加这行
+  print('【Main】Dependencies initialized');
 
   // 启动应用程序
   runApp(const RemindMeApp());

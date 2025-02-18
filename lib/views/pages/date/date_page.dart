@@ -201,8 +201,9 @@ class _EventListState extends State<_EventList> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 1); // 从第二组的第一项开始
+    _pageController = PageController(initialPage: 1);
     _startAutoPlay();
+    context.read<EventBloc>().add(LoadEvents());
   }
 
   @override

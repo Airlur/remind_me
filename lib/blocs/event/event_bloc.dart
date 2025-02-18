@@ -1,13 +1,18 @@
-import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
 import 'dart:async';
+import 'package:remind_me/repositories/event_repository.dart';
 
-class EventBloc extends HydratedBloc<EventEvent, EventState> {
+class EventBloc extends Bloc<EventEvent, EventState> {
+  final EventRepository _repository;
   Timer? _midnightTimer;
 
-  EventBloc() : super(const EventState()) {
+  EventBloc({
+    required EventRepository repository,
+  }) : _repository = repository,
+       super(const EventState()) {
     on<LoadEvents>(_onLoadEvents);
     on<AddEvent>(_onAddEvent);
     on<UpdateEvent>(_onUpdateEvent);
@@ -20,21 +25,17 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     _scheduleMidnightUpdate();
   }
 
-  void _onLoadEvents(LoadEvents event, Emitter<EventState> emit) async {
-    emit(state.copyWith(status: EventStatus.loading));
+  Future<void> _onLoadEvents(LoadEvents event, Emitter<EventState> emit) async {
     try {
-        print('【Current events】: ${state.events.length}');
-        final updatedEvents = state.events.map((e) {
-        print('【Event】: ${e.title}, targetDate: ${e.targetDate}, now: ${DateTime.now()}');
-        return e;
-      }).toList();
-      
+      emit(state.copyWith(status: EventStatus.loading));
+      final events = await _repository.getAllEvents();
+      print('Bloc LoadEvents: ${events.length}');
       emit(state.copyWith(
-        events: updatedEvents,
         status: EventStatus.success,
+        events: events,
       ));
     } catch (e) {
-      print('【LoadEvents error】: $e');
+      print('Bloc LoadEvents error: $e');
       emit(state.copyWith(
         status: EventStatus.failure,
         error: e.toString(),
@@ -42,13 +43,13 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     }
   }
 
-  void _onAddEvent(AddEvent event, Emitter<EventState> emit) {
-    emit(state.copyWith(status: EventStatus.loading));
+  Future<void> _onAddEvent(AddEvent event, Emitter<EventState> emit) async {
     try {
-      final updatedEvents = List<Event>.from(state.events)..add(event.event);
+      await _repository.saveEvent(event.event);
+      final events = await _repository.getAllEvents();
       emit(state.copyWith(
-        events: updatedEvents,
         status: EventStatus.success,
+        events: events,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -58,34 +59,13 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     }
   }
 
-  void _onUpdateEvent(UpdateEvent event, Emitter<EventState> emit) {
-    final updatedEvents = state.events.map((e) {
-      return e.id == event.event.id ? event.event : e;
-    }).toList();
-    
-    // 如果更新的是置顶事件，也要更新pinnedEvent
-    final updatedPinnedEvent = state.pinnedEvent?.id == event.event.id 
-        ? event.event 
-        : state.pinnedEvent;
-        
-    emit(state.copyWith(
-      events: updatedEvents,
-      pinnedEvent: updatedPinnedEvent,
-    ));
-  }
-
-  void _onDeleteEvent(DeleteEvent event, Emitter<EventState> emit) {
+  Future<void> _onUpdateEvent(UpdateEvent event, Emitter<EventState> emit) async {
     try {
-      final updatedEvents = state.events.where((e) => e.id != event.eventId).toList();
-      // 如果删除的是置顶事件，需要清除pinnedEvent
-      final updatedPinnedEvent = state.pinnedEvent?.id == event.eventId 
-          ? null 
-          : state.pinnedEvent;
-      
+      await _repository.updateEvent(event.event);
+      final events = await _repository.getAllEvents();
       emit(state.copyWith(
-        events: updatedEvents,
-        pinnedEvent: updatedPinnedEvent,
         status: EventStatus.success,
+        events: events,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -95,44 +75,61 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     }
   }
 
-  void _onPinEvent(PinEvent event, Emitter<EventState> emit) {
-    final events = [...state.events];
-    final index = events.indexWhere((e) => e.id == event.eventId);
-    
-    if (index != -1) {
-      if (state.pinnedDisplayMode == PinnedDisplayMode.single) {
-        // 单个置顶模式：取消其他置顶
-        for (var i = 0; i < events.length; i++) {
-          if (events[i].isPinned) {
-            events[i] = events[i].copyWith(
-              isPinned: false,
-              pinnedAt: null,
-            );
-          }
-        }
-      }
-      
-      // 置顶当前项
-      final updatedEvent = events[index].copyWith(
-        isPinned: true,
-        pinnedAt: DateTime.now(),
-      );
-      events[index] = updatedEvent;
-      emit(state.copyWith(events: events));
+  Future<void> _onDeleteEvent(DeleteEvent event, Emitter<EventState> emit) async {
+    try {
+      await _repository.deleteEvent(event.eventId);
+      final events = await _repository.getAllEvents();
+      emit(state.copyWith(
+        status: EventStatus.success,
+        events: events,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: EventStatus.failure,
+        error: e.toString(),
+      ));
     }
   }
 
-  void _onUnpinEvent(UnpinEvent event, Emitter<EventState> emit) {
-    final events = [...state.events];
-    final index = events.indexWhere((e) => e.id == event.eventId);
-    
-    if (index != -1) {
-      events[index] = events[index].copyWith(
-        isPinned: false,
-        pinnedAt: null,
-      );
+  Future<void> _onPinEvent(PinEvent event, Emitter<EventState> emit) async {
+    try {
+      await _repository.pinEvent(event.eventId);
+      final events = await _repository.getAllEvents();
       
-      emit(state.copyWith(events: events));
+      // 找到被置顶的事件
+      final pinnedEvent = events.firstWhere((e) => e.id == event.eventId);
+      
+      emit(state.copyWith(
+        status: EventStatus.success,
+        events: events,
+        pinnedEvent: pinnedEvent, // 更新置顶事件
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: EventStatus.failure,
+        error: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> _onUnpinEvent(UnpinEvent event, Emitter<EventState> emit) async {
+    try {
+      await _repository.unpinEvent(event.eventId);
+      final events = await _repository.getAllEvents();
+      
+      // 如果当前置顶的是这个事件，则清除置顶
+      final shouldClearPinned = state.pinnedEvent?.id == event.eventId;
+      
+      emit(state.copyWith(
+        status: EventStatus.success,
+        events: events,
+        pinnedEvent: shouldClearPinned ? null : state.pinnedEvent,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: EventStatus.failure,
+        error: e.toString(),
+      ));
     }
   }
 
@@ -157,9 +154,24 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     }
   }
 
-  void _onRefreshEvents(RefreshEvents event, Emitter<EventState> emit) {
-    // 触发状态更新，由于使用了 getter，会重新计算所有日期
-    emit(state.copyWith(status: EventStatus.success));
+  Future<void> _onRefreshEvents(RefreshEvents event, Emitter<EventState> emit) async {
+    try {
+      final events = await _repository.getAllEvents();
+      // 保持当前的置顶状态
+      final currentPinnedEvent = state.pinnedEvent;
+      final pinnedStillExists = events.any((e) => e.id == currentPinnedEvent?.id && e.isPinned);
+      
+      emit(state.copyWith(
+        status: EventStatus.success,
+        events: events,
+        pinnedEvent: pinnedStillExists ? currentPinnedEvent : null,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: EventStatus.failure,
+        error: e.toString(),
+      ));
+    }
   }
 
   void _onUpdatePinnedDisplayMode(
@@ -179,56 +191,6 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       add(const RefreshEvents());
       _scheduleMidnightUpdate(); // 重新调度下一天的更新
     });
-  }
-
-  @override
-  Map<String, dynamic>? toJson(EventState state) {
-    return {
-      'events': state.events.map((e) => {
-        'id': e.id,
-        'title': e.title,
-        'targetDate': e.targetDate.toIso8601String(),
-        'createdAt': e.createdAt.toIso8601String(),
-        'displayUnit': e.displayUnit.index,
-        'isPinned': e.isPinned,
-        'pinnedAt': e.pinnedAt?.toIso8601String(),
-        'backgroundType': e.backgroundType.index,
-        'backgroundColorValue': e.backgroundColorValue,
-        'gradientColorValues': e.gradientColorValues,
-        'localImagePath': e.localImagePath,
-        'animationType': e.animationType,
-      }).toList(),
-      'status': state.status.index,
-      'pinnedDisplayMode': state.pinnedDisplayMode.index,
-    };
-  }
-
-  @override
-  EventState? fromJson(Map<String, dynamic> json) {
-    try {
-      final events = (json['events'] as List).map((e) => Event(
-        id: e['id'],
-        title: e['title'],
-        targetDate: DateTime.parse(e['targetDate']),
-        createdAt: DateTime.parse(e['createdAt']),
-        displayUnit: TimeUnit.values[e['displayUnit']],
-        isPinned: e['isPinned'],
-        pinnedAt: e['pinnedAt'] != null ? DateTime.parse(e['pinnedAt']) : null,
-        backgroundType: BackgroundType.values[e['backgroundType']],
-        backgroundColorValue: e['backgroundColorValue'],
-        gradientColorValues: e['gradientColorValues']?.cast<int>(),
-        localImagePath: e['localImagePath'],
-        animationType: e['animationType'],
-      )).toList();
-      
-      return EventState(
-        events: events,
-        status: EventStatus.values[json['status']],
-        pinnedDisplayMode: PinnedDisplayMode.values[json['pinnedDisplayMode']],
-      );
-    } catch (e) {
-      return null;
-    }
   }
 
   @override

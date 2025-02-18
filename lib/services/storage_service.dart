@@ -17,13 +17,18 @@ class StorageService {
     _eventBox = await Hive.openBox<Event>(eventBoxName);
   }
 
+  // 获取存储路径
+  String? get storagePath => _eventBox.path;
+
   // 获取所有事件
   Future<List<Event>> getAllEvents() async {
+    print('Storage getAllEvents: ${_eventBox.values.length}'); // 添加日志
     return _eventBox.values.toList();
   }
 
   // 保存事件
   Future<void> saveEvent(Event event) async {
+    print('Storage saveEvent: ${event.id}'); // 添加日志
     await _eventBox.put(event.id, event);
   }
 

@@ -9,6 +9,7 @@ import 'package:remind_me/theme/app_theme.dart';
 import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/settings/language_cubit.dart';
 import 'package:remind_me/generated/app_localizations.dart';
+import 'package:remind_me/core/di.dart';
 
 
 class RemindMeApp extends StatelessWidget {
@@ -18,7 +19,9 @@ class RemindMeApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => EventBloc()),
+        BlocProvider<EventBloc>(
+          create: (context) => getIt<EventBloc>(),  // 直接获取 EventBloc 实例
+        ),
         BlocProvider(create: (context) => SettingsBloc()),
         BlocProvider(create: (context) => LanguageCubit()),
       ],
