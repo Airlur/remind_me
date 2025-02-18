@@ -55,30 +55,23 @@ class EventState extends Equatable {
   }
 
   List<Event> get sortedEvents {
-    final filtered = filteredEvents;  // 先筛选
+    final filtered = filteredEvents;
     
     switch (sortType) {
       case SortType.createTime:
         filtered.sort((a, b) => sortOrder == SortOrder.ascending 
           ? a.createdAt.compareTo(b.createdAt)
           : b.createdAt.compareTo(a.createdAt));
-        break;
       
       case SortType.remainingDays:
         filtered.sort((a, b) {
           final comparison = a.absDays.compareTo(b.absDays);
           return sortOrder == SortOrder.ascending ? comparison : -comparison;
         });
-        break;
       
       case SortType.custom:
-        filtered.sort((a, b) {
-          if (a.order == null && b.order == null) return 0;
-          if (a.order == null) return 1;
-          if (b.order == null) return -1;
-          return a.order!.compareTo(b.order!);
-        });
-        break;
+        // 自定义排序模式下，保持当前列表顺序，不做额外排序
+        return filtered;  // 直接返回，不进行排序
     }
     
     return filtered;

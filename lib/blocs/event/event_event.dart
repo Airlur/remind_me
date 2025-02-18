@@ -60,7 +60,10 @@ class EventReordered extends EventEvent {
   final int oldIndex;
   final int newIndex;
 
-  const EventReordered(this.oldIndex, this.newIndex);
+  const EventReordered({
+    required this.oldIndex,
+    required this.newIndex,
+  });
 
   @override
   List<Object?> get props => [oldIndex, newIndex];

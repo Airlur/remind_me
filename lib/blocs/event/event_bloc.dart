@@ -135,24 +135,14 @@ class EventBloc extends Bloc<EventEvent, EventState> {
   }
 
   void _onEventReordered(EventReordered event, Emitter<EventState> emit) {
-    try {
-      final updatedEvents = List<Event>.from(state.events);
-      final newIndex = event.newIndex > event.oldIndex 
-          ? event.newIndex - 1 
-          : event.newIndex;
-      final item = updatedEvents.removeAt(event.oldIndex);
-      updatedEvents.insert(newIndex, item);
-      
-      emit(state.copyWith(
-        events: updatedEvents,
-        status: EventStatus.success,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: EventStatus.failure,
-        error: e.toString(),
-      ));
-    }
+    final events = List<Event>.from(state.events);
+    final item = events.removeAt(event.oldIndex);
+    events.insert(event.newIndex, item);
+    
+    emit(state.copyWith(
+      events: events,
+      sortType: SortType.custom,
+    ));
   }
 
   Future<void> _onRefreshEvents(RefreshEvents event, Emitter<EventState> emit) async {

@@ -277,9 +277,13 @@ class _EventListState extends State<_EventList> {
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                 itemCount: filteredEvents.length,
                 onReorder: (oldIndex, newIndex) {
-                  context.read<EventBloc>().add(
-                    EventReordered(oldIndex, newIndex)
-                  );
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  context.read<EventBloc>().add(EventReordered(
+                    oldIndex: oldIndex,
+                    newIndex: newIndex,
+                  ));
                 },
                 itemBuilder: (context, index) {
                   return EventCard(
