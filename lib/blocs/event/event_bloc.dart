@@ -22,6 +22,7 @@ class EventBloc extends Bloc<EventEvent, EventState> {
     on<EventReordered>(_onEventReordered);
     on<RefreshEvents>(_onRefreshEvents);
     on<UpdatePinnedDisplayMode>(_onUpdatePinnedDisplayMode);
+    on<UpdateSortConfig>(_onUpdateSortConfig);
     _scheduleMidnightUpdate();
   }
 
@@ -179,6 +180,14 @@ class EventBloc extends Bloc<EventEvent, EventState> {
     Emitter<EventState> emit,
   ) {
     emit(state.copyWith(pinnedDisplayMode: event.mode));
+  }
+
+  void _onUpdateSortConfig(UpdateSortConfig event, Emitter<EventState> emit) {
+    emit(state.copyWith(
+      sortType: event.sortType ?? state.sortType,
+      sortOrder: event.sortOrder ?? state.sortOrder,
+      selectedCategory: event.selectedCategory,
+    ));
   }
 
   void _scheduleMidnightUpdate() {

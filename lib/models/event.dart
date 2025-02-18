@@ -69,6 +69,12 @@ class Event extends Equatable {
   @HiveField(12)
   final bool isLunar;
 
+  @HiveField(13)
+  final String? category;
+
+  @HiveField(14)
+  final int? order;
+
   const Event({
     required this.id,
     required this.title,
@@ -83,6 +89,8 @@ class Event extends Equatable {
     this.localImagePath,
     this.animationType,
     this.isLunar = false,
+    this.category,
+    this.order,
   });
 
   Color? get backgroundColor => 
@@ -234,6 +242,8 @@ class Event extends Equatable {
     String? animationType,
     DateTime? pinnedAt,
     bool? isLunar,
+    String? category,
+    int? order,
   }) {
     return Event(
       id: id,
@@ -249,6 +259,8 @@ class Event extends Equatable {
       localImagePath: localImagePath ?? this.localImagePath,
       animationType: animationType ?? this.animationType,
       isLunar: isLunar ?? this.isLunar,
+      category: category ?? this.category,
+      order: order ?? this.order,
     );
   }
 
@@ -267,5 +279,7 @@ class Event extends Equatable {
     localImagePath,
     animationType,
     isLunar,
+    category,
+    order,
   ];
 }

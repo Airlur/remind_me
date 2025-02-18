@@ -30,13 +30,15 @@ class EventAdapter extends TypeAdapter<Event> {
       localImagePath: fields[9] as String?,
       animationType: fields[10] as String?,
       isLunar: fields[12] as bool,
+      category: fields[13] as String?,
+      order: fields[14] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -62,7 +64,11 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(11)
       ..write(obj.pinnedAt)
       ..writeByte(12)
-      ..write(obj.isLunar);
+      ..write(obj.isLunar)
+      ..writeByte(13)
+      ..write(obj.category)
+      ..writeByte(14)
+      ..write(obj.order);
   }
 
   @override

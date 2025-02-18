@@ -78,3 +78,18 @@ class UpdatePinnedDisplayMode extends EventEvent {
   List<Object?> get props => [mode];
 }
 
+class UpdateSortConfig extends EventEvent {
+  final SortType? sortType;
+  final SortOrder? sortOrder;
+  final String? selectedCategory;
+
+  const UpdateSortConfig({
+    this.sortType,
+    this.sortOrder,
+    this.selectedCategory,
+  });
+
+  @override
+  List<Object?> get props => [sortType, sortOrder, selectedCategory];
+}
+

@@ -11,6 +11,7 @@ import 'package:remind_me/views/pages/date/add_event_page.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'dart:async';
 import 'package:remind_me/views/pages/date/components/custom_page_view.dart';
+import 'package:remind_me/views/pages/date/components/sort_dialog.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -67,7 +68,14 @@ class DatePage extends StatelessWidget {
                         ],
                       ),
                       onTap: () {
-                        // TODO: 实现排序逻辑
+                        // 延迟执行，避免菜单关闭动画冲突
+                        Future.delayed(
+                          const Duration(milliseconds: 200),
+                          () => showDialog(
+                            context: context,
+                            builder: (context) => const SortDialog(),
+                          ),
+                        );
                       },
                     ),
                     PopupMenuItem(
@@ -235,6 +243,13 @@ class _EventListState extends State<_EventList> {
     _timer = null;
   }
 
+  List<Event> _filterEvents(List<Event> events) {
+    if (widget.filter == null) {
+      return events;
+    }
+    return events.where(widget.filter!).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EventBloc, EventState>(
@@ -245,11 +260,11 @@ class _EventListState extends State<_EventList> {
 
         // 根据当前分类筛选置顶事件
         final pinnedEvents = widget.filter == null 
-            ? state.pinnedEvents  // "全部"分类显示所有置顶项
-            : state.pinnedEvents.where(widget.filter!).toList();  // 其他分类只显示对应的置顶项
+            ? state.pinnedEvents
+            : state.pinnedEvents.where(widget.filter!).toList();
 
-        // 过滤未置顶的事件
-        final filteredEvents = _filterEvents(state.events);
+        // 过滤未置顶的事件，使用 sortedEvents 排序
+        final filteredEvents = _filterEvents(state.sortedEvents);
 
         return Column(
           children: [
@@ -318,10 +333,5 @@ class _EventListState extends State<_EventList> {
         ),
       ),
     );
-  }
-
-  List<Event> _filterEvents(List<Event> events) {
-    if (widget.filter == null) return events;
-    return events.where(widget.filter!).toList();
   }
 }
