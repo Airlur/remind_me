@@ -271,7 +271,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
         return List.generate(201, (index) {
           final year = index + 1900;
           final lunar = Lunar.fromYmd(year, 1, 1);
-          return '$year ${lunar.getYearInGanZhi()}年';  // 例如：2025年 乙巳年
+          return '$year ${lunar.getYearInGanZhi()}年';
         });
       } else if (items.first.contains('月')) {
         // 月份转换 - 需要处理闰月
@@ -321,85 +321,109 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       final oldIsLeapMonth = isLeapMonth;
       selectedYear = index + 1900;
       
-      // 检查新年份的闰月情况
-      final oldLunarYear = LunarYear.fromYear(oldYear);
-      final newLunarYear = LunarYear.fromYear(selectedYear);
-      final oldLeapMonth = oldLunarYear.getLeapMonth();
-      final newLeapMonth = newLunarYear.getLeapMonth();
-      
-      // 保持月份名称一致性
-      if (newLeapMonth > 0) {
-        // 切换到有闰月的年份
-        if (oldMonth > newLeapMonth) {
-          // 如果原月份在新年份闰月之后，需要调整
-          selectedMonth = oldMonth + 1;
+      if (isLunar) {
+        // 只在农历模式下处理闰月逻辑
+        final oldLunarYear = LunarYear.fromYear(oldYear);
+        final newLunarYear = LunarYear.fromYear(selectedYear);
+        final oldLeapMonth = oldLunarYear.getLeapMonth();
+        final newLeapMonth = newLunarYear.getLeapMonth();
+        
+        if (newLeapMonth > 0) {
+          // 切换到有闰月的年份
+          if (oldLeapMonth == 0) {
+            // 从无闰月年切换到有闰月年
+            if (oldMonth > newLeapMonth) {
+              selectedMonth = oldMonth;
+            }
+          } else {
+            // 从有闰月年切换到有闰月年
+            if (oldIsLeapMonth) {
+              // 如果原来是闰月
+              if (newLeapMonth == oldMonth) {
+                // 如果新年份在同一个月有闰月，保持闰月
+                isLeapMonth = true;
+              } else {
+                // 否则转为下一个月
+                selectedMonth = oldMonth + 1;
+                isLeapMonth = false;
+              }
+            }
+          }
         } else {
-          selectedMonth = oldMonth;
+          // 切换到无闰月的年份
+          if (oldIsLeapMonth) {
+            // 如果原来是闰月，转为下一个月
+            selectedMonth = oldMonth + 1;
+            isLeapMonth = false;
+          } else if (oldLeapMonth > 0 && oldMonth > oldLeapMonth) {
+            // 如果原来在闰月之后，需要减一
+            selectedMonth = oldMonth - 1;
+          }
         }
-        isLeapMonth = false;  // 默认不选中闰月
-      } else {
-        // 切换到无闰月的年份
-        if (oldIsLeapMonth) {
-          // 如果原来是闰月，转为下一个月
-          selectedMonth = oldMonth + 1;
-        } else if (oldLeapMonth > 0 && oldMonth > oldLeapMonth) {
-          // 如果原来在闰月之后，需要减一
-          selectedMonth = oldMonth - 1;
-        } else {
-          selectedMonth = oldMonth;
-        }
-        isLeapMonth = false;
       }
       
       // 检查日期有效性
-      try {
-        // 尝试创建新的日期
-        Lunar.fromYmd(selectedYear, selectedMonth, selectedDay);
-      } catch (e) {
-        // 如果日期无效，调整到该月的最后一天
-        try {
-          // 先尝试29天
-          Lunar.fromYmd(selectedYear, selectedMonth, 29);
-          selectedDay = 29;
-        } catch (e) {
-          // 如果29天也无效，可能需要进一步处理
-          selectedDay = 1;  // 保底设置为1日
-        }
-      }
+      _adjustDayIfNeeded();
     });
   }
 
   // 同样在月份变化时也要检查
   void onMonthSelectedItemChanged(int index) {
     setState(() {
-      final lunarYear = LunarYear.fromYear(selectedYear);
-      final leapMonth = lunarYear.getLeapMonth();
-      
-      // 计算实际月份和闰月状态
-      if (leapMonth > 0 && index > leapMonth - 1) {
-        if (index == leapMonth) {
-          selectedMonth = leapMonth;
-          isLeapMonth = true;
+      if (!isLunar) {
+        // 公历月份直接使用index + 1
+        selectedMonth = index + 1;
+      } else {
+        // 农历月份需要处理闰月
+        final lunarYear = LunarYear.fromYear(selectedYear);
+        final leapMonth = lunarYear.getLeapMonth();
+        
+        if (leapMonth > 0) {
+          if (index <= leapMonth - 1) {
+            // 在闰月之前
+            selectedMonth = index + 1;
+            isLeapMonth = false;
+          } else if (index == leapMonth) {
+            // 闰月
+            selectedMonth = leapMonth;
+            isLeapMonth = true;
+          } else {
+            // 闰月之后
+            selectedMonth = index;
+            isLeapMonth = false;
+          }
         } else {
-          selectedMonth = index;
+          // 无闰月年份
+          selectedMonth = index + 1;
           isLeapMonth = false;
         }
-      } else {
-        selectedMonth = index + 1;
-        isLeapMonth = false;
       }
       
-      // 检查日期是否有效
-      try {
+      // 检查日期有效性
+      _adjustDayIfNeeded();
+    });
+  }
+
+  // 添加一个辅助方法来调整日期
+  void _adjustDayIfNeeded() {
+    try {
+      if (isLunar) {
         Lunar.fromYmd(selectedYear, selectedMonth, selectedDay);
-      } catch (e) {
+      } else {
+        DateTime(selectedYear, selectedMonth, selectedDay);
+      }
+    } catch (e) {
+      // 如果日期无效，调整到该月的最后一天
+      if (isLunar) {
         try {
           Lunar.fromYmd(selectedYear, selectedMonth, 29);
           selectedDay = 29;
         } catch (e) {
           selectedDay = 1;
         }
+      } else {
+        selectedDay = DateTime(selectedYear, selectedMonth + 1, 0).day;
       }
-    });
+    }
   }
 }
