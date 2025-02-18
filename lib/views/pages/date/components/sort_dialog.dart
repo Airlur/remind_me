@@ -47,10 +47,10 @@ class _SortDialogState extends State<SortDialog> {
               _buildSortOption(
                 context: context,
                 icon: Icons.calendar_today,
-                title: '剩余天数',
-                selected: state.sortType == SortType.remainingDays,
-                sortOrder: state.sortType == SortType.remainingDays ? state.sortOrder : null,
-                onTap: () => _updateSortType(context, SortType.remainingDays),
+                title: '天数跨度',
+                selected: state.sortType == SortType.dayCount,
+                sortOrder: state.sortType == SortType.dayCount ? state.sortOrder : null,
+                onTap: () => _updateSortType(context, SortType.dayCount),
                 onSortOrderTap: () => _toggleSortOrder(context, state),
               ),
               ListTile(

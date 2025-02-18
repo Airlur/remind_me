@@ -11,7 +11,7 @@ enum PinnedDisplayMode {
 
 enum SortType {
   createTime,    // 创建时间
-  remainingDays, // 剩余天数
+  dayCount, // 天数（包含倒数日和正数日）
   custom,        // 自定义（拖拽）排序
 }
 
@@ -63,7 +63,7 @@ class EventState extends Equatable {
           ? a.createdAt.compareTo(b.createdAt)
           : b.createdAt.compareTo(a.createdAt));
       
-      case SortType.remainingDays:
+      case SortType.dayCount:
         filtered.sort((a, b) {
           final comparison = a.absDays.compareTo(b.absDays);
           return sortOrder == SortOrder.ascending ? comparison : -comparison;
