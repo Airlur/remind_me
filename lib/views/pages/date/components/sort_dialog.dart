@@ -4,13 +4,26 @@ import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
 
-class SortDialog extends StatelessWidget {
+class SortDialog extends StatefulWidget {
   const SortDialog({super.key});
+
+  @override
+  State<SortDialog> createState() => _SortDialogState();
+}
+
+class _SortDialogState extends State<SortDialog> {
+  bool _showCategories = false;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EventBloc, EventState>(
       builder: (context, state) {
+        final categories = state.events
+            .map((e) => e.category)
+            .where((c) => c != null)
+            .toSet()
+            .toList();
+
         return AlertDialog(
           contentPadding: EdgeInsets.zero,
           backgroundColor: Theme.of(context).colorScheme.surface,
@@ -40,7 +53,69 @@ class SortDialog extends StatelessWidget {
                 onTap: () => _updateSortType(context, SortType.remainingDays),
                 onSortOrderTap: () => _toggleSortOrder(context, state),
               ),
-              _buildCategoryOption(context, state),
+              ListTile(
+                leading: const Icon(Icons.category),
+                title: const Text('分类'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      state.selectedCategory ?? '全部',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      _showCategories 
+                          ? Icons.keyboard_arrow_up 
+                          : Icons.keyboard_arrow_down,
+                      size: 20,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  setState(() {
+                    _showCategories = !_showCategories;
+                  });
+                },
+              ),
+              if (_showCategories) ...[
+                const Divider(height: 1),
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                  title: const Text('全部'),
+                  selected: state.selectedCategory == null,
+                  trailing: state.selectedCategory == null
+                      ? const Icon(Icons.check, size: 20)
+                      : null,
+                  onTap: () {
+                    context.read<EventBloc>().add(
+                      const UpdateSortConfig(selectedCategory: null),
+                    );
+                    setState(() {
+                      _showCategories = false;
+                    });
+                  },
+                ),
+                ...categories.map((category) => ListTile(
+                  contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                  title: Text(category!),
+                  selected: state.selectedCategory == category,
+                  trailing: state.selectedCategory == category
+                      ? const Icon(Icons.check, size: 20)
+                      : null,
+                  onTap: () {
+                    context.read<EventBloc>().add(
+                      UpdateSortConfig(selectedCategory: category),
+                    );
+                    setState(() {
+                      _showCategories = false;
+                    });
+                  },
+                )),
+              ],
             ],
           ),
         );
@@ -85,75 +160,8 @@ class SortDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryOption(BuildContext context, EventState state) {
-    return ListTile(
-      leading: const Icon(Icons.category),
-      title: Text(state.selectedCategory ?? '全部'),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () => _showCategoryDialog(context, state),
-    );
-  }
-
-  void _showCategoryDialog(BuildContext context, EventState state) {
-    // 获取所有不重复的分类
-    final categories = state.events
-        .map((e) => e.category)
-        .where((c) => c != null)
-        .toSet()
-        .toList();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        contentPadding: EdgeInsets.zero,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('全部'),
-              selected: state.selectedCategory == null,
-              trailing: state.selectedCategory == null
-                  ? const Icon(Icons.check, size: 20)
-                  : null,
-              onTap: () {
-                context.read<EventBloc>().add(
-                  const UpdateSortConfig(
-                    selectedCategory: null,
-                  ),
-                );
-                // Navigator.pop(context);
-                Navigator.pop(context);
-              },
-            ),
-            ...categories.map((category) => ListTile(
-              title: Text(category!),
-              selected: state.selectedCategory == category,
-              trailing: state.selectedCategory == category
-                  ? const Icon(Icons.check, size: 20)
-                  : null,
-              onTap: () {
-                context.read<EventBloc>().add(
-                  UpdateSortConfig(
-                    selectedCategory: category,
-                  ),
-                );
-                // Navigator.pop(context);
-                Navigator.pop(context);
-              },
-            )),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _updateSortType(BuildContext context, SortType sortType) {
     context.read<EventBloc>().add(UpdateSortConfig(sortType: sortType));
-    // Navigator.pop(context);
   }
 
   void _toggleSortOrder(BuildContext context, EventState state) {
