@@ -75,6 +75,18 @@ class Event extends Equatable {
   @HiveField(14)
   final int? order;
 
+  @HiveField(15)
+  final String? fontFamily;
+
+  @HiveField(16)
+  final String? iconName;
+
+  @HiveField(17)
+  final DateTime? reminderTime;
+
+  @HiveField(18, defaultValue: false)
+  final bool includeStartDay;
+
   const Event({
     required this.id,
     required this.title,
@@ -91,6 +103,10 @@ class Event extends Equatable {
     this.isLunar = false,
     this.category,
     this.order,
+    this.fontFamily,
+    this.iconName,
+    this.reminderTime,
+    this.includeStartDay = false,
   });
 
   Color? get backgroundColor => 
@@ -230,6 +246,7 @@ class Event extends Equatable {
 
   // 复制对象并修改部分属性
   Event copyWith({
+    String? id,
     String? title,
     DateTime? targetDate,
     DateTime? createdAt,
@@ -244,9 +261,13 @@ class Event extends Equatable {
     bool? isLunar,
     String? category,
     int? order,
+    String? fontFamily,
+    String? iconName,
+    DateTime? reminderTime,
+    bool? includeStartDay,
   }) {
     return Event(
-      id: id,
+      id: id ?? this.id,
       title: title ?? this.title,
       targetDate: targetDate ?? this.targetDate,
       createdAt: createdAt ?? this.createdAt,
@@ -254,13 +275,17 @@ class Event extends Equatable {
       isPinned: isPinned ?? this.isPinned,
       pinnedAt: pinnedAt ?? this.pinnedAt,
       backgroundType: backgroundType ?? this.backgroundType,
-      backgroundColorValue: backgroundColor?.value,
-      gradientColorValues: gradientColors?.map((c) => c.value).toList(),
+      backgroundColorValue: backgroundColor?.value ?? this.backgroundColorValue,
+      gradientColorValues: gradientColors?.map((c) => c.value).toList() ?? this.gradientColorValues,
       localImagePath: localImagePath ?? this.localImagePath,
       animationType: animationType ?? this.animationType,
       isLunar: isLunar ?? this.isLunar,
       category: category ?? this.category,
       order: order ?? this.order,
+      fontFamily: fontFamily ?? this.fontFamily,
+      iconName: iconName ?? this.iconName,
+      reminderTime: reminderTime ?? this.reminderTime,
+      includeStartDay: includeStartDay ?? this.includeStartDay,
     );
   }
 
@@ -281,5 +306,9 @@ class Event extends Equatable {
     isLunar,
     category,
     order,
+    fontFamily,
+    iconName,
+    reminderTime,
+    includeStartDay,
   ];
 }

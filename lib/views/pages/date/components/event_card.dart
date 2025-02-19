@@ -122,29 +122,57 @@ class EventCard extends StatelessWidget {
             child: InkWell(
               onTap: () => _toggleDisplayUnit(context), // 改为单击切换
               child: Padding(
-                padding: const EdgeInsets.all(16),
-                // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // 调整内边距
+                // padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // 调整内边距
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center, // 确保内容垂直居中
                   children: [
-                    Expanded(
-                      child: Text(
-                        event.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
+                    if (event.iconName != null)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Icon(
+                          IconData(
+                            int.parse(event.iconName!),
+                            fontFamily: 'MaterialIcons',
+                          ),
+                          size: 20,
+                          color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
                         ),
+                      ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            event.title,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${event.targetDate.year}-${event.targetDate.month.toString().padLeft(2, '0')}-${event.targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(event.targetDate)}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: event.backgroundColor != null 
+                                ? Colors.white
+                                : theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Container(
-                      width: 48, // 固定宽度，根据实际需求调整
+                      width: 48,
                       alignment: Alignment.centerLeft,
                       child: Text(
                         '${event.displayPrefix}',
                         style: TextStyle(
                           fontSize: 16,
-                          color: theme.colorScheme.onSurface,
+                          color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -153,14 +181,15 @@ class EventCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
+                        color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
                       ),
                     ),
+                    // TODO: getFormattedNumber方法返回的文本和_getDaysText方法，返回的文本以及国际化调整
                     Text(
                       _getDaysText(),
                       style: TextStyle(
                         fontSize: 16,
-                        color: theme.colorScheme.onSurface,
+                        color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -236,5 +265,10 @@ class EventCard extends StatelessWidget {
 
   void _deleteEvent(BuildContext context) {
     context.read<EventBloc>().add(DeleteEvent(event.id));
+  }
+
+  String _getWeekDay(DateTime date) {
+    final weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    return weekDays[date.weekday % 7];
   }
 }

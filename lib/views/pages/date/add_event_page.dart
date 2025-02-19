@@ -6,6 +6,7 @@ import 'package:remind_me/models/event.dart';
 import 'package:uuid/uuid.dart';
 import 'components/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
+import 'style_settings_page.dart';
 
 class AddEventPage extends StatefulWidget {
   const AddEventPage({super.key});
@@ -17,22 +18,46 @@ class AddEventPage extends StatefulWidget {
 class _AddEventPageState extends State<AddEventPage> {
   final _titleController = TextEditingController();
   DateTime _targetDate = DateTime.now();
+  String? _category;
+  bool _isPinned = false;
+  bool _includeStartDay = false;
+  String? _backgroundType;
+  String? _iconName;
   
-  String get _previewText {
-    if (_titleController.text.isEmpty) return context.l10n.preview;
-    
+  bool get _isToday {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final target = DateTime(_targetDate.year, _targetDate.month, _targetDate.day);
-    
-    final isToday = today.isAtSameMomentAs(target);
-    final isCountdown = target.isAfter(today);
-    final absDays = target.difference(today).inDays.abs();
-    
-    final prefix = isToday ? '就是' : (isCountdown ? context.l10n.daysLeft : context.l10n.daysAgo);
-    final daysText = isToday ? '今天' : '${absDays}天';
-    
-    return '${_titleController.text} $prefix $daysText';
+    return today.isAtSameMomentAs(target);
+  }
+
+  bool get _isCountdown {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final target = DateTime(_targetDate.year, _targetDate.month, _targetDate.day);
+    return target.isAfter(today);
+  }
+
+  int get _absDays {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final target = DateTime(_targetDate.year, _targetDate.month, _targetDate.day);
+    return target.difference(today).inDays.abs();
+  }
+
+  String get _prefix {
+    return _isToday ? '就是' : (_isCountdown ? context.l10n.daysLeft : context.l10n.daysAgo);
+  }
+
+  String get _previewText {
+    if (_titleController.text.isEmpty) return context.l10n.preview;
+    final daysText = _isToday ? '今天' : '${_absDays}天';
+    return '${_titleController.text} $_prefix $daysText';
+  }
+
+  String _getWeekDay(DateTime date) {
+    final weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    return weekDays[date.weekday % 7];
   }
 
   @override
@@ -54,6 +79,12 @@ class _AddEventPageState extends State<AddEventPage> {
       title: _titleController.text,
       targetDate: _targetDate,
       createdAt: DateTime.now(),
+      isPinned: _isPinned,
+      includeStartDay: _includeStartDay,
+      category: _category,
+      backgroundType: BackgroundType.color,
+      backgroundColorValue: _backgroundType != null ? int.parse(_backgroundType!, radix: 16) : null,
+      iconName: _iconName,
     );
 
     context.read<EventBloc>().add(AddEvent(event));
@@ -81,6 +112,10 @@ class _AddEventPageState extends State<AddEventPage> {
     );
   }
 
+  Future<void> _showCategoryPicker() async {
+    // TODO: Implement category picker
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,6 +133,7 @@ class _AddEventPageState extends State<AddEventPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 第一区域：基础信息
             Card(
               margin: EdgeInsets.zero,
               child: Column(
@@ -109,8 +145,8 @@ class _AddEventPageState extends State<AddEventPage> {
                       decoration: InputDecoration(
                         hintText: context.l10n.enterTitle,
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,  // 移除内边距
-                        isDense: true,  // 使输入框更紧凑
+                        contentPadding: EdgeInsets.zero,
+                        isDense: true,
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
@@ -120,37 +156,120 @@ class _AddEventPageState extends State<AddEventPage> {
                     title: Text(context.l10n.targetDate),
                     trailing: Text(
                       _targetDate.toString().split(' ')[0],
-                      style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16,color: Colors.blue),
                     ),
                     onTap: _showDatePicker,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.palette),
-                    title: Text(context.l10n.backgroundSettings),
-                    trailing: const Icon(Icons.keyboard_arrow_down),
+                    leading: const Icon(Icons.category),
+                    // title: Text(context.l10n.category),
+                    title: Text('分类'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(_category ?? context.l10n.all),
+                        const Icon(Icons.chevron_right, size: 20),
+                      ],
+                    ),
+                    onTap: _showCategoryPicker,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),  // 减小区域间距
+
+            // 第二区域：时间设置
+            Card(
+              margin: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.access_time),
+                    // title: Text(context.l10n.reminderTime),
+                    title: Text('提醒时间'),
+                    trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
-                      // TODO: 展开背景设置
+                      // TODO: 实现提醒时间选择
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.repeat),
+                    // title: Text(context.l10n.repeat),
+                    title: Text('重复'),
+                    trailing: const Icon(Icons.chevron_right, size: 20),
+                    onTap: () {
+                      // TODO: 实现重复规则选择
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.event_busy),
+                    // title: Text(context.l10n.endDate),
+                    title: Text('结束时间'),
+                    trailing: const Icon(Icons.chevron_right, size: 20),
+                    onTap: () {
+                      // TODO: 实现结束时间选择
                     },
                   ),
                 ],
               ),
             ),
-            
-            // 预览区域
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Text(context.l10n.preview, style: const TextStyle(fontSize: 16)),
-            ),
+            const SizedBox(height: 16),
+
+            // 第三区域：其他设置
             Card(
-              margin: const EdgeInsets.all(16),
-              child: Container(
-                height: 120,
-                width: double.infinity,
-                alignment: Alignment.center,
-                child: Text(
-                  _previewText,
-                  style: const TextStyle(fontSize: 18),
-                ),
+              margin: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    secondary: const Icon(Icons.push_pin),
+                    title: Text(context.l10n.pin),
+                    value: _isPinned,
+                    onChanged: (value) => setState(() => _isPinned = value),
+                  ),
+                  SwitchListTile(
+                    secondary: const Icon(Icons.plus_one),
+                    // title: Text(context.l10n.includeStartDay),
+                    title: Text('包含开始日期'),
+                    value: _includeStartDay,
+                    onChanged: (value) => setState(() => _includeStartDay = value),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // 第四区域：样式设置（简化为单个入口）
+            Card(
+              margin: EdgeInsets.zero,
+              child: ListTile(
+                leading: const Icon(Icons.palette),
+                // title: Text(context.l10n.style),  // "样式设置"
+                title: Text('样式设置'),
+                trailing: const Icon(Icons.chevron_right, size: 20),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => StyleSettingsPage(
+                        title: _titleController.text,
+                        dateText: '${_targetDate.year}-${_targetDate.month.toString().padLeft(2, '0')}-${_targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(_targetDate)}',
+                        prefix: _prefix,
+                        absDays: _absDays,
+                        backgroundType: _backgroundType,
+                        iconName: _iconName,
+                        onBackgroundChanged: (value) {
+                          setState(() {
+                            _backgroundType = value;
+                          });
+                        },
+                        onIconChanged: (value) {
+                          setState(() {
+                            _iconName = value;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],

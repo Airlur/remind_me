@@ -23,7 +23,7 @@ class StorageService {
   // 获取所有事件
   Future<List<Event>> getAllEvents() async {
     final events = _eventBox.values.toList();
-    print('Storage getAllEvents: ${events.length}');
+    // print('Storage getAllEvents: ${events.length}');
     
     // // 按 order 排序后打印
     // final sortedEvents = List<Event>.from(events)

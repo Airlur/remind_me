@@ -32,13 +32,17 @@ class EventAdapter extends TypeAdapter<Event> {
       isLunar: fields[12] as bool,
       category: fields[13] as String?,
       order: fields[14] as int?,
+      fontFamily: fields[15] as String?,
+      iconName: fields[16] as String?,
+      reminderTime: fields[17] as DateTime?,
+      includeStartDay: fields[18] == null ? false : fields[18] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -68,7 +72,15 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(13)
       ..write(obj.category)
       ..writeByte(14)
-      ..write(obj.order);
+      ..write(obj.order)
+      ..writeByte(15)
+      ..write(obj.fontFamily)
+      ..writeByte(16)
+      ..write(obj.iconName)
+      ..writeByte(17)
+      ..write(obj.reminderTime)
+      ..writeByte(18)
+      ..write(obj.includeStartDay);
   }
 
   @override

@@ -30,8 +30,17 @@ class RemindMeApp extends StatelessWidget {
           return BlocBuilder<SettingsBloc, SettingsState>(
             builder: (context, settingsState) {
               return MaterialApp(
+                builder: (context, child) {
+                  return Localizations.override(
+                    context: context,
+                    delegates: AppLocalizations.localizationsDelegates,
+                    child: Builder(
+                      builder: (context) => child ?? const SizedBox(),
+                    ),
+                  );
+                },
                 debugShowCheckedModeBanner: false,  // 关闭 "debug" 标签
-                title: 'Remind Me',
+                title: AppLocalizations.of(context)?.appName ?? '醒我',
                 theme: AppTheme.lightTheme,         // 使用我们的主题
                 darkTheme: AppTheme.darkTheme,      // 使用我们的暗色主题
                 themeMode: settingsState.themeMode,

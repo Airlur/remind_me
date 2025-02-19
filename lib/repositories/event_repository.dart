@@ -12,6 +12,8 @@ class EventRepository {
   Future<List<Event>> getAllEvents() async {
     final events = await _storage.getAllEvents();
     print('Repository getAllEvents: ${events.length}');
+    // 打印所有值
+    // print('Repository Events: ${events.toList()}');
     return events;
   }
   
