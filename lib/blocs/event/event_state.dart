@@ -49,19 +49,19 @@ class EventState extends Equatable {
 
   List<Event> get filteredEvents {
     if (selectedCategory == null) {
-      return events;  // 返回所有事件
+      return List<Event>.from(events);  // 返回可变副本而不是直接返回
     }
-    return events.where((e) => e.category == selectedCategory).toList();
+    return events.where((e) => e.category == selectedCategory).toList();  // where().toList() 已经创建了新列表
   }
 
   List<Event> get sortedEvents {
-    final filtered = filteredEvents;
+    final filtered = filteredEvents;  // 已经是可变副本
     
     switch (sortType) {
       case SortType.createTime:
-        filtered.sort((a, b) => sortOrder == SortOrder.ascending 
-          ? a.createdAt.compareTo(b.createdAt)
-          : b.createdAt.compareTo(a.createdAt));
+        filtered.sort((a, b) => sortOrder == SortOrder.ascending
+            ? a.createdAt.compareTo(b.createdAt)
+            : b.createdAt.compareTo(a.createdAt));
       
       case SortType.dayCount:
         filtered.sort((a, b) {
@@ -71,7 +71,7 @@ class EventState extends Equatable {
       
       case SortType.custom:
         // 自定义排序模式下，保持当前列表顺序，不做额外排序
-        return filtered;  // 直接返回，不进行排序
+        return filtered;
     }
     
     return filtered;

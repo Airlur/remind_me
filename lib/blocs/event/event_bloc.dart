@@ -1,11 +1,11 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
 import 'dart:async';
 import 'package:remind_me/repositories/event_repository.dart';
 
-class EventBloc extends Bloc<EventEvent, EventState> {
+class EventBloc extends HydratedBloc<EventEvent, EventState> {
   final EventRepository _repository;
   Timer? _midnightTimer;
 
@@ -196,5 +196,31 @@ class EventBloc extends Bloc<EventEvent, EventState> {
   Future<void> close() {
     _midnightTimer?.cancel();
     return super.close();
+  }
+
+  @override
+  EventState? fromJson(Map<String, dynamic> json) {
+    try {
+      return EventState(
+        status: EventStatus.initial,
+        events: const [],
+        pinnedDisplayMode: PinnedDisplayMode.values[json['pinnedDisplayMode'] ?? 0],
+        sortType: SortType.values[json['sortType'] ?? 0],
+        sortOrder: SortOrder.values[json['sortOrder'] ?? 0],
+        selectedCategory: json['selectedCategory'],
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(EventState state) {
+    return {
+      'pinnedDisplayMode': state.pinnedDisplayMode.index,
+      'sortType': state.sortType.index,
+      'sortOrder': state.sortOrder.index,
+      'selectedCategory': state.selectedCategory,
+    };
   }
 }
