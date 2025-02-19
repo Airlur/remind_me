@@ -33,6 +33,9 @@ class EventCard extends StatelessWidget {
               flex: 1,
               onPressed: (_) {
                 // TODO: 进入时间线记录
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('时间线记录功能正在开发中')),
+                );
               },
               backgroundColor: AppColors.timelineAction,
               foregroundColor: AppColors.onActionColor,
@@ -57,6 +60,9 @@ class EventCard extends StatelessWidget {
               flex: 1,
               onPressed: (_) {
                 // TODO: 显示详情
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('详情功能正在开发中')),
+                );
               },
               backgroundColor: AppColors.infoAction, // 紫色表示详情
               foregroundColor: AppColors.onActionColor,
@@ -99,6 +105,9 @@ class EventCard extends StatelessWidget {
               flex: 1,
               onPressed: (_) {
                 // TODO: 分享功能
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('分享功能正在开发中')),
+                );
               },
               backgroundColor: AppColors.shareAction,
               foregroundColor: AppColors.onActionColor,
