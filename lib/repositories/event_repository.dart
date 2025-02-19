@@ -11,12 +11,12 @@ class EventRepository {
   // 基础 CRUD
   Future<List<Event>> getAllEvents() async {
     final events = await _storage.getAllEvents();
-    print('Repository getAllEvents: ${events.length}'); // 添加日志
+    print('Repository getAllEvents: ${events.length}');
     return events;
   }
   
   Future<void> saveEvent(Event event) async {
-    print('Repository saveEvent: ${event.title}'); // 添加日志
+    print('Repository saveEvent: ${event.title}');
     await _storage.saveEvent(event);
   }
   
@@ -71,5 +71,13 @@ class EventRepository {
     final event = events.removeAt(oldIndex);
     events.insert(newIndex, event);
     await _storage.saveEvents(events);
+  }
+
+  // 添加批量更新方法
+  Future<void> updateEvents(List<Event> events) async {
+    // 一次性更新多个事件
+    await Future.wait(
+      events.map((e) => _storage.saveEvent(e))
+    );
   }
 } 

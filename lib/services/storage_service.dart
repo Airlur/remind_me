@@ -22,13 +22,24 @@ class StorageService {
 
   // 获取所有事件
   Future<List<Event>> getAllEvents() async {
-    print('Storage getAllEvents: ${_eventBox.values.length}'); // 添加日志
-    return _eventBox.values.toList();
+    final events = _eventBox.values.toList();
+    print('Storage getAllEvents: ${events.length}');
+    
+    // // 按 order 排序后打印
+    // final sortedEvents = List<Event>.from(events)
+    //   ..sort((a, b) => (a.order ?? 0).compareTo(b.order ?? 0));
+    
+    // print('【Storage getAllEvents】Sorted by order: ${sortedEvents.map((e) => 
+    //   '${e.title}(order: ${e.order})'
+    // ).toList()}');
+    
+    return events;
   }
 
   // 保存事件
   Future<void> saveEvent(Event event) async {
-    print('Storage saveEvent: ${event.id}'); // 添加日志
+    // print('Storage saveEvent ID: ${event.id}');
+    // print('【Storage saveEvent】Title: ${event.title} Order: ${event.order}');
     await _eventBox.put(event.id, event);
   }
 

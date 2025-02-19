@@ -134,15 +134,30 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     }
   }
 
-  void _onEventReordered(EventReordered event, Emitter<EventState> emit) {
-    final events = List<Event>.from(state.events);
-    final item = events.removeAt(event.oldIndex);
-    events.insert(event.newIndex, item);
+  void _onEventReordered(EventReordered event, Emitter<EventState> emit) async {
+    // 先更新UI，保证拖拽动画流畅
+    final currentEvents = state.sortedEvents.toList();
+    final movedEvent = currentEvents[event.oldIndex];
+    currentEvents.removeAt(event.oldIndex);
+    currentEvents.insert(event.newIndex, movedEvent);
     
     emit(state.copyWith(
-      events: events,
+      events: currentEvents,
       sortType: SortType.custom,
     ));
+
+    // 批量收集需要更新的事件
+    final updates = <Event>[];
+    for (int i = 0; i < currentEvents.length; i++) {
+      if (currentEvents[i].order != i) {  // 只更新order变化的事件
+        updates.add(currentEvents[i].copyWith(order: i));
+      }
+    }
+    
+    // 使用批量更新方法
+    if (updates.isNotEmpty) {
+      await _repository.updateEvents(updates);
+    }
   }
 
   Future<void> _onRefreshEvents(RefreshEvents event, Emitter<EventState> emit) async {
