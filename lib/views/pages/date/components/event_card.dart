@@ -178,7 +178,7 @@ class EventCard extends StatelessWidget {
                       width: 48,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        '${event.displayPrefix}',
+                        event.displayPrefix,
                         style: TextStyle(
                           fontSize: 16,
                           color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,

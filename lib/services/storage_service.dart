@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:remind_me/models/event.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class StorageService {
   static const String eventBoxName = 'events';
@@ -23,25 +24,13 @@ class StorageService {
   // 获取所有事件
   Future<List<Event>> getAllEvents() async {
     final events = _eventBox.values.toList();
-    // print('Storage getAllEvents: ${events.length}');
-    
-    // // 按 order 排序后打印
-    // final sortedEvents = List<Event>.from(events)
-    //   ..sort((a, b) => (a.order ?? 0).compareTo(b.order ?? 0));
-    
-    // print('【Storage getAllEvents】Sorted by order: ${sortedEvents.map((e) => 
-    //   '${e.title}(order: ${e.order})'
-    // ).toList()}');
-
-    // 打印所有数据
-    // print('【Storage getAllEvents】: ${events.toList()}');
+    LoggerUtils.i('获取所有事件: ${events.length}', 'Storage');
     return events;
   }
 
   // 保存事件
   Future<void> saveEvent(Event event) async {
-    // print('Storage saveEvent ID: ${event.id}');
-    // print('【Storage saveEvent】Title: ${event.title} Order: ${event.order}');
+    LoggerUtils.i('保存事件 - Title: ${event.title}, Order: ${event.order}', 'Storage');
     await _eventBox.put(event.id, event);
   }
 

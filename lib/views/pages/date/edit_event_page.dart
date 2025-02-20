@@ -165,7 +165,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.category),
-                    title: Text('分类'),
+                    title: const Text('分类'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -186,7 +186,7 @@ class _EditEventPageState extends State<EditEventPage> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.access_time),
-                    title: Text('提醒时间'),
+                    title: const Text('提醒时间'),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现提醒时间选择
@@ -194,7 +194,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.repeat),
-                    title: Text('重复'),
+                    title: const Text('重复'),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现重复规则选择
@@ -202,7 +202,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.event_busy),
-                    title: Text('结束时间'),
+                    title: const Text('结束时间'),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现结束时间选择
@@ -225,7 +225,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                   SwitchListTile(
                     secondary: const Icon(Icons.plus_one),
-                    title: Text('包含开始日期'),
+                    title: const Text('包含开始日期'),
                     value: _includeStartDay,
                     onChanged: (value) => setState(() => _includeStartDay = value),
                   ),
@@ -238,7 +238,7 @@ class _EditEventPageState extends State<EditEventPage> {
               margin: EdgeInsets.zero,
               child: ListTile(
                 leading: const Icon(Icons.palette),
-                title: Text('样式设置'),
+                title: const Text('样式设置'),
                 trailing: const Icon(Icons.chevron_right, size: 20),
                 onTap: () {
                   Navigator.of(context).push(

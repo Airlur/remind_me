@@ -1,5 +1,6 @@
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/services/storage_service.dart';
+// import 'package:remind_me/utils/common/logger_utils.dart';
 
 class EventRepository {
   final StorageService _storage;
@@ -11,14 +12,16 @@ class EventRepository {
   // 基础 CRUD
   Future<List<Event>> getAllEvents() async {
     final events = await _storage.getAllEvents();
-    print('Repository getAllEvents: ${events.length}');
+    // print('Repository getAllEvents: ${events.length}');
+    // LoggerUtils.i('Repository getAllEvents: ${events.length}', 'EventRepository');
+    
     // 打印所有值
-    // print('Repository Events: ${events.toList()}');
+    // LoggerUtils.i('Repository Events: ${events.toList()}', 'EventRepository');
     return events;
   }
   
   Future<void> saveEvent(Event event) async {
-    print('Repository saveEvent: ${event.title}');
+    // LoggerUtils.i('Repository saveEvent: ${event.title}', 'EventRepository');
     await _storage.saveEvent(event);
   }
   

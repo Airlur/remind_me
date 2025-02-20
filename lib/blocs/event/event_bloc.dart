@@ -4,6 +4,7 @@ import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
 import 'dart:async';
 import 'package:remind_me/repositories/event_repository.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class EventBloc extends HydratedBloc<EventEvent, EventState> {
   final EventRepository _repository;
@@ -33,13 +34,14 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     try {
       emit(state.copyWith(status: EventStatus.loading));
       final events = await _repository.getAllEvents();
-      print('Bloc LoadEvents: ${events.length}');
+      LoggerUtils.i('Bloc LoadEvents: ${events.length}', 'EventBloc');
+
       emit(state.copyWith(
         status: EventStatus.success,
         events: events,
       ));
     } catch (e) {
-      print('Bloc LoadEvents error: $e');
+      LoggerUtils.e('Bloc LoadEvents error: $e', 'EventBloc');
       emit(state.copyWith(
         status: EventStatus.failure,
         error: e.toString(),

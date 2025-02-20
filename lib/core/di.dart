@@ -3,6 +3,7 @@ import 'package:remind_me/blocs/settings/settings_bloc.dart';
 import 'package:remind_me/services/storage_service.dart';
 import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/repositories/event_repository.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 final getIt = GetIt.instance;
 
@@ -12,10 +13,11 @@ Future<void> initializeDependencies() async {
 }
 
 Future<void> initDependencies() async {
-  print('【DI】Starting storage initialization...');
+  LoggerUtils.i('Starting storage initialization...', 'DI');
+
   final storage = StorageService();
   await storage.init();
-  print('【DI】Storage path: ${storage.storagePath}');  // 在注册为单例前打印
+  LoggerUtils.i('Storage path: ${storage.storagePath}', 'DI');  // 在注册为单例前打印
   
   getIt.registerSingleton<StorageService>(storage);
   getIt.registerSingleton<EventRepository>(

@@ -49,11 +49,11 @@ class _AddEventPageState extends State<AddEventPage> {
     return _isToday ? '就是' : (_isCountdown ? context.l10n.daysLeft : context.l10n.daysAgo);
   }
 
-  String get _previewText {
-    if (_titleController.text.isEmpty) return context.l10n.preview;
-    final daysText = _isToday ? '今天' : '${_absDays}天';
-    return '${_titleController.text} $_prefix $daysText';
-  }
+  // String get _previewText {
+  //   if (_titleController.text.isEmpty) return context.l10n.preview;
+  //   final daysText = _isToday ? '今天' : '${_absDays}天';
+  //   return '${_titleController.text} $_prefix $daysText';
+  // }
 
   String _getWeekDay(DateTime date) {
     final weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -163,7 +163,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ListTile(
                     leading: const Icon(Icons.category),
                     // title: Text(context.l10n.category),
-                    title: Text('分类'),
+                    title: const Text('分类'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -186,7 +186,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ListTile(
                     leading: const Icon(Icons.access_time),
                     // title: Text(context.l10n.reminderTime),
-                    title: Text('提醒时间'),
+                    title: const Text('提醒时间'),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现提醒时间选择
@@ -195,7 +195,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ListTile(
                     leading: const Icon(Icons.repeat),
                     // title: Text(context.l10n.repeat),
-                    title: Text('重复'),
+                    title: const Text('重复'),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现重复规则选择
@@ -204,7 +204,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ListTile(
                     leading: const Icon(Icons.event_busy),
                     // title: Text(context.l10n.endDate),
-                    title: Text('结束时间'),
+                    title: const Text('结束时间'),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现结束时间选择
@@ -229,7 +229,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   SwitchListTile(
                     secondary: const Icon(Icons.plus_one),
                     // title: Text(context.l10n.includeStartDay),
-                    title: Text('包含开始日期'),
+                    title: const Text('包含开始日期'),
                     value: _includeStartDay,
                     onChanged: (value) => setState(() => _includeStartDay = value),
                   ),
@@ -244,7 +244,7 @@ class _AddEventPageState extends State<AddEventPage> {
               child: ListTile(
                 leading: const Icon(Icons.palette),
                 // title: Text(context.l10n.style),  // "样式设置"
-                title: Text('样式设置'),
+                title: const Text('样式设置'),
                 trailing: const Icon(Icons.chevron_right, size: 20),
                 onTap: () {
                   Navigator.of(context).push(

@@ -119,7 +119,7 @@ class Event extends Equatable {
 
   DateTime get _now {
   final now = DateTime.now();
-  // print('【Time Check】_now called for $title: $now');
+  // LoggerUtils.i('【Time Check】_now called for $title: $now', 'Event');
   return now;
 }
   bool get isCountdown => targetDate.isAfter(_now);
@@ -146,7 +146,7 @@ class Event extends Equatable {
     
     switch (displayUnit) {
       case TimeUnit.day:
-        return '${absDays}天';
+        return '$absDays天';
         
       case TimeUnit.year:
         // 确保开始日期小于结束日期
@@ -171,13 +171,13 @@ class Event extends Equatable {
         }
 
         // 如果不足一年，返回天数让 toggleUnit 跳过
-        if (years == 0) return '${absDays}天';
+        if (years == 0) return '$absDays天';
 
         // 年月日显示
         return [
-          '${years}年',
-          if (months > 0) '${months}个月',
-          if (days > 0) '${days}天',
+          '$years年',
+          if (months > 0) '$months个月',
+          if (days > 0) '$days天',
         ].join('');
         
       case TimeUnit.month:
@@ -196,12 +196,12 @@ class Event extends Equatable {
         }
 
         // 如果不足一个月，返回天数让 toggleUnit 跳过
-        if (totalMonths == 0) return '${absDays}天';
+        if (totalMonths == 0) return '$absDays天';
 
         // 月日显示
         return [
-          '${totalMonths}个月',
-          if (days > 0) '${days}天',
+          '$totalMonths个月',
+          if (days > 0) '$days天',
         ].join('');
         
       case TimeUnit.week:
@@ -209,18 +209,18 @@ class Event extends Equatable {
         final remainingDays = absDays % 7;
         
         // 如果不足一周，返回天数让 toggleUnit 跳过
-        if (weeks == 0) return '${absDays}天';
+        if (weeks == 0) return '$absDays天';
         
         return [
-          '${weeks}周',
-          if (remainingDays > 0) '${remainingDays}天',
+          '$weeks周',
+          if (remainingDays > 0) '$remainingDays天',
         ].join('');
     }
   }
 
   // 切换显示单位
   Event toggleUnit() {
-    final units = TimeUnit.values;
+    const units = TimeUnit.values;
     var nextIndex = (units.indexOf(displayUnit) + 1) % units.length;
     
     // 如果下一个单位的显示结果和当前一样，就跳过
@@ -275,8 +275,8 @@ class Event extends Equatable {
       isPinned: isPinned ?? this.isPinned,
       pinnedAt: pinnedAt ?? this.pinnedAt,
       backgroundType: backgroundType ?? this.backgroundType,
-      backgroundColorValue: backgroundColor?.value ?? this.backgroundColorValue,
-      gradientColorValues: gradientColors?.map((c) => c.value).toList() ?? this.gradientColorValues,
+      backgroundColorValue: backgroundColor?.value ?? backgroundColorValue,
+      gradientColorValues: gradientColors?.map((c) => c.value).toList() ?? gradientColorValues,
       localImagePath: localImagePath ?? this.localImagePath,
       animationType: animationType ?? this.animationType,
       isLunar: isLunar ?? this.isLunar,

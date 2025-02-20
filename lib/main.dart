@@ -5,7 +5,7 @@ import 'package:remind_me/core/di.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:remind_me/utils/common/logger_utils.dart';
 /// 应用程序入口
 void main() async {
   // 确保Flutter绑定初始化
@@ -21,16 +21,15 @@ void main() async {
 
   // 初始化Hive数据库
   // Hive是一个轻量级的NoSQL数据库,用于本地数据存储
-  print('【Main】App document directory: ${appDocDir.path}');  // 打印应用文档目录
-
+  LoggerUtils.i('App document directory: ${appDocDir.path}', 'Main');
   // 初始化Hive
   await Hive.initFlutter();
-  print('【Main】Hive initialized');
+  LoggerUtils.i('Hive initialized', 'Main');
 
   // 注册所有依赖项(服务、bloc等)
   await initializeDependencies();
   await initDependencies();  // 添加这行
-  print('【Main】Dependencies initialized');
+  LoggerUtils.i('Dependencies initialized', 'Main');
 
   // 启动应用程序
   runApp(const RemindMeApp());

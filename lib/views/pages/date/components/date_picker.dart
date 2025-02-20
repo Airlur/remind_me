@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lunar/lunar.dart';
 import 'package:remind_me/l10n/l10n.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class DatePickerWidget extends StatefulWidget {
   final DateTime initialDate;
@@ -282,11 +283,11 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
         final monthList = <String>[];
         for (int i = 1; i <= 12; i++) {
           final lunar = Lunar.fromYmd(selectedYear, i, 1);
-          monthList.add(lunar.getMonthInChinese() + '月');
+          monthList.add('${lunar.getMonthInChinese()}月');
           
           // 如果当前月是闰月，在当前月后添加闰月
           if (i == leapMonth) {
-            monthList.add('闰' + lunar.getMonthInChinese() + '月');
+            monthList.add('闰${lunar.getMonthInChinese()}月');
           }
         }
         return monthList;
@@ -308,7 +309,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
         }
       }
     } catch (e) {
-      print('Error in _getLunarItems: $e');
+      LoggerUtils.e('Error in _getLunarItems: $e', 'DatePickerWidget');
       return items;
     }
   }

@@ -289,7 +289,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('样式设置'),
+        title: const Text('样式设置'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -304,7 +304,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('背景', style: const TextStyle(fontSize: 14)),
+                  const Text('背景', style: TextStyle(fontSize: 14)),
                   TabBar(
                     controller: _tabController,
                     labelStyle: const TextStyle(fontSize: 13),
@@ -333,7 +333,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('字体', style: const TextStyle(fontSize: 14)),
+                  const Text('字体', style: TextStyle(fontSize: 14)),
                   const SizedBox(height: 8),
                   SizedBox(
                     height: 45,  // 减小高度
@@ -369,7 +369,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('图标', style: const TextStyle(fontSize: 14)),
+                  const Text('图标', style: TextStyle(fontSize: 14)),
                   const SizedBox(height: 8),
                   _buildIconOptions(),
                 ],
