@@ -5,6 +5,7 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// 读取 local.properties 配置
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
@@ -13,26 +14,28 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+// 从 local.properties 中读取版本号
 def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
 if (flutterVersionCode == null) {
     flutterVersionCode = "1"
 }
 
+// 从 local.properties 中读取版本名
 def flutterVersionName = localProperties.getProperty("flutter.versionName")
 if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+// 读取签名配置
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
+def useSigningConfig = keystorePropertiesFile.exists()
+if (useSigningConfig) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-def useSigningConfig = keystorePropertiesFile.exists()
-
 android {
-    namespace = "com.example.remind_me"
+    namespace = "com.airlur.remind_me"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -42,16 +45,14 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.airlur.remind_me"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
 
+    // 签名配置
     signingConfigs {
         if (useSigningConfig) {
             release {
@@ -63,13 +64,14 @@ android {
         }
     }
 
+    // 构建类型配置
     buildTypes {
         release {
             if (useSigningConfig) {
                 signingConfig signingConfigs.release
             }
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled true // 启用代码混淆
+            shrinkResources true // 启用资源压缩
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
