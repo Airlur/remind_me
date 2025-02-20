@@ -60,7 +60,10 @@ class StorageService {
 
   // 批量更新事件
   Future<void> updateEvents(List<Event> events) async {
-    LoggerUtils.i('拖拽排序-批量更新事件 - 数量: ${events.length}', 'StorageService');
+    LoggerUtils.i(
+      '批量更新事件 - 数量: ${events.length}, 事件列表:\n${events.map((e) => '  ${e.title}(order: ${e.order})').join(',\n')}',
+      'StorageService'
+    );
     final batch = events.fold<Map<String, Event>>({}, (map, event) {
       map[event.id] = event;
       return map;

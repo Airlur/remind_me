@@ -77,9 +77,7 @@ class EventRepository {
 
   // 添加批量更新方法
   Future<void> updateEvents(List<Event> events) async {
-    // 一次性更新多个事件
-    await Future.wait(
-      events.map((e) => _storage.saveEvent(e))
-    );
+    // 使用 storage 的批量更新方法
+    await _storage.updateEvents(events);
   }
 } 
