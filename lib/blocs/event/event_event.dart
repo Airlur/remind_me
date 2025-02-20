@@ -96,3 +96,12 @@ class UpdateSortConfig extends EventEvent {
   List<Object?> get props => [sortType, sortOrder, selectedCategory];
 }
 
+class InitiateEventDelete extends EventEvent {
+  final Event event;
+  const InitiateEventDelete(this.event);
+}
+
+class CancelEventDelete extends EventEvent {
+  const CancelEventDelete();
+}
+

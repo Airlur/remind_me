@@ -8,6 +8,7 @@ import 'package:remind_me/repositories/event_repository.dart';
 class EventBloc extends HydratedBloc<EventEvent, EventState> {
   final EventRepository _repository;
   Timer? _midnightTimer;
+  Timer? _deleteTimer;
 
   EventBloc({
     required EventRepository repository,
@@ -23,6 +24,8 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     on<RefreshEvents>(_onRefreshEvents);
     on<UpdatePinnedDisplayMode>(_onUpdatePinnedDisplayMode);
     on<UpdateSortConfig>(_onUpdateSortConfig);
+    on<InitiateEventDelete>(_onInitiateEventDelete);
+    on<CancelEventDelete>(_onCancelEventDelete);
     _scheduleMidnightUpdate();
   }
 
@@ -193,6 +196,21 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       sortOrder: event.sortOrder ?? state.sortOrder,
       selectedCategory: event.selectedCategory,
     ));
+  }
+
+  void _onInitiateEventDelete(InitiateEventDelete event, Emitter<EventState> emit) {
+    _deleteTimer?.cancel();
+    emit(state.copyWith(pendingDeleteEvent: event.event));
+    
+    _deleteTimer = Timer(const Duration(seconds: 5), () {
+      add(DeleteEvent(event.event.id));
+      add(const CancelEventDelete());
+    });
+  }
+
+  void _onCancelEventDelete(CancelEventDelete event, Emitter<EventState> emit) {
+    _deleteTimer?.cancel();
+    emit(state.copyWith(pendingDeleteEvent: null));
   }
 
   void _scheduleMidnightUpdate() {

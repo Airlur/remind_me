@@ -32,7 +32,9 @@ class StorageService {
     // print('【Storage getAllEvents】Sorted by order: ${sortedEvents.map((e) => 
     //   '${e.title}(order: ${e.order})'
     // ).toList()}');
-    
+
+    // 打印所有数据
+    // print('【Storage getAllEvents】: ${events.toList()}');
     return events;
   }
 

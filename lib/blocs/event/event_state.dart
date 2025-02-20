@@ -29,6 +29,8 @@ class EventState extends Equatable {
   final SortType sortType;
   final SortOrder sortOrder;
   final String? selectedCategory;  // 分类筛选条件
+  final Event? pendingDeleteEvent; // 待删除的事件
+  final DateTime? deleteStartTime;  // 删除开始时间
 
   const EventState({
     this.events = const [],
@@ -39,6 +41,8 @@ class EventState extends Equatable {
     this.sortType = SortType.createTime,
     this.sortOrder = SortOrder.descending,
     this.selectedCategory,
+    this.pendingDeleteEvent,
+    this.deleteStartTime,
   });
 
   List<Event> get pinnedEvents => events
@@ -55,7 +59,9 @@ class EventState extends Equatable {
   }
 
   List<Event> get sortedEvents {
-    final filtered = filteredEvents;  // 已经是可变副本
+    final filtered = filteredEvents.where(
+      (e) => e != pendingDeleteEvent
+    ).toList();  // 过滤掉待删除的事件
     
     switch (sortType) {
       case SortType.createTime:
@@ -86,6 +92,8 @@ class EventState extends Equatable {
     SortType? sortType,
     SortOrder? sortOrder,
     String? selectedCategory,
+    Event? pendingDeleteEvent,
+    DateTime? deleteStartTime,
   }) {
     return EventState(
       events: events ?? this.events,
@@ -96,6 +104,8 @@ class EventState extends Equatable {
       sortType: sortType ?? this.sortType,
       sortOrder: sortOrder ?? this.sortOrder,
       selectedCategory: selectedCategory ?? this.selectedCategory,
+      pendingDeleteEvent: pendingDeleteEvent,
+      deleteStartTime: deleteStartTime,
     );
   }
 
@@ -109,5 +119,7 @@ class EventState extends Equatable {
     sortType,
     sortOrder,
     selectedCategory,
+    pendingDeleteEvent,
+    deleteStartTime,
   ];
 }

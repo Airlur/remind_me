@@ -273,7 +273,7 @@ class EventCard extends StatelessWidget {
   }
 
   void _deleteEvent(BuildContext context) {
-    context.read<EventBloc>().add(DeleteEvent(event.id));
+    context.read<EventBloc>().add(InitiateEventDelete(event));
   }
 
   String _getWeekDay(DateTime date) {

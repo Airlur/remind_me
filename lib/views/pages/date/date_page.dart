@@ -12,6 +12,7 @@ import 'package:remind_me/l10n/l10n.dart';
 import 'dart:async';
 import 'package:remind_me/views/pages/date/components/custom_page_view.dart';
 import 'package:remind_me/views/pages/date/components/sort_dialog.dart';
+import 'package:remind_me/theme/app_colors.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -122,15 +123,45 @@ class DatePage extends StatelessWidget {
             const CalendarPage(),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.push(
-            context,
-            RouteUtils.buildPageRoute(page: const AddEventPage()),
-          ),
-          shape: const CircleBorder(),
-          backgroundColor: theme.colorScheme.surface, // 设置背景色
-          foregroundColor: theme.colorScheme.onSurface, // 设置图标色
-          child: const Icon(Icons.add),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: BlocBuilder<EventBloc, EventState>(
+          builder: (context, state) {
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                if (state.pendingDeleteEvent != null)
+                  Positioned(
+                    left: 32,  // 调整左边距，和右边 FAB 保持对称
+                    bottom: 0,  // 保持和右边 FAB 相同的底部边距
+                    child: FloatingActionButton(
+                      heroTag: 'undo',
+                      onPressed: () => context.read<EventBloc>().add(
+                        const CancelEventDelete()
+                      ),
+                      shape: const CircleBorder(),
+                      backgroundColor: AppColors.deleteAction,
+                      foregroundColor: AppColors.onActionColor,
+                      child: const Icon(Icons.undo, size: 32),
+                    ),
+                  ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: FloatingActionButton(
+                    heroTag: 'add',
+                    onPressed: () => Navigator.push(
+                      context,
+                      RouteUtils.buildPageRoute(page: const AddEventPage()),
+                    ),
+                    shape: const CircleBorder(),
+                    backgroundColor: theme.colorScheme.surface,
+                    foregroundColor: theme.colorScheme.onSurface,
+                    child: const Icon(Icons.add, size: 32),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
