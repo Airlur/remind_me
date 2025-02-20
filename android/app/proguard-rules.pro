@@ -12,7 +12,7 @@
 -keep class com.google.android.** { *; }
 
 # Hive 数据库
--keep class com.example.remind_me.** { *; }
+-keep class com.airlur.remind_me.** { *; }
 -keep class hive.** { *; }
 
 # bloc

@@ -13,11 +13,11 @@ Future<void> initializeDependencies() async {
 }
 
 Future<void> initDependencies() async {
-  LoggerUtils.i('Starting storage initialization...', 'DI');
+  LoggerUtils.i('开始初始化依赖项', 'DI');
 
   final storage = StorageService();
   await storage.init();
-  LoggerUtils.i('Storage path: ${storage.storagePath}', 'DI');  // 在注册为单例前打印
+  LoggerUtils.i('存储路径: ${storage.storagePath}', 'DI');  // 在注册为单例前打印
   
   getIt.registerSingleton<StorageService>(storage);
   getIt.registerSingleton<EventRepository>(

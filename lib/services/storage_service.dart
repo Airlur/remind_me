@@ -1,21 +1,32 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class StorageService {
   static const String eventBoxName = 'events';
+  static const String customStoragePath = 'remind_me_data';  // 保持和 main.dart 一致
+
   late Box<Event> _eventBox;
 
   Future<void> init() async {
-    await Hive.initFlutter();
+    final appDir = await getApplicationDocumentsDirectory();
+    final storagePath = '${appDir.path}/$customStoragePath';
+    
+    // 确保存储目录存在
+    await Directory(storagePath).create(recursive: true);
+    
+    // 初始化 Hive
+    await Hive.initFlutter(customStoragePath);  // 只传入相对路径
     
     // 注册适配器
     Hive.registerAdapter(EventAdapter());
     Hive.registerAdapter(TimeUnitAdapter());
     Hive.registerAdapter(BackgroundTypeAdapter());
     
-    // 打开盒子
     _eventBox = await Hive.openBox<Event>(eventBoxName);
+    LoggerUtils.i('事件存储初始化完成，路径: ${_eventBox.path}', 'StorageService');
   }
 
   // 获取存储路径
