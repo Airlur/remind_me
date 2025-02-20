@@ -20,12 +20,9 @@ class EventRepository {
     return events;
   }
   
-  Future<void> saveEvent(Event event) async {
-    // LoggerUtils.i('Repository saveEvent: ${event.title}', 'EventRepository');
-    await _storage.saveEvent(event);
-  }
+  Future<void> saveEvent(Event event) => _storage.saveEvent(event);
   
-  Future<void> updateEvent(Event event) => _storage.saveEvent(event);
+  Future<void> updateEvent(Event event) => _storage.updateEvent(event);
   
   Future<void> deleteEvent(String id) => _storage.deleteEvent(id);
   
@@ -75,7 +72,7 @@ class EventRepository {
     final events = await getAllEvents();
     final event = events.removeAt(oldIndex);
     events.insert(newIndex, event);
-    await _storage.saveEvents(events);
+    await _storage.updateEvents(events);
   }
 
   // 添加批量更新方法

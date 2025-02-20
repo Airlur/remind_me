@@ -34,7 +34,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     try {
       emit(state.copyWith(status: EventStatus.loading));
       final events = await _repository.getAllEvents();
-      LoggerUtils.i('Bloc LoadEvents: ${events.length}', 'EventBloc');
+      // LoggerUtils.i('Bloc LoadEvents: ${events.length}', 'EventBloc');
 
       emit(state.copyWith(
         status: EventStatus.success,

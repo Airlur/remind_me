@@ -24,17 +24,23 @@ class StorageService {
   // 获取所有事件
   Future<List<Event>> getAllEvents() async {
     final events = _eventBox.values.toList();
-    LoggerUtils.i('获取所有事件: ${events.length}', 'Storage');
+    LoggerUtils.i('获取所有事件: ${events.length}', 'StorageService');
     return events;
   }
 
   // 保存事件
   Future<void> saveEvent(Event event) async {
-    LoggerUtils.i('保存事件 - Title: ${event.title}, Order: ${event.order}', 'Storage');
+    LoggerUtils.i('新建事件 - Title: ${event.title}, Order: ${event.order}', 'StorageService');
     await _eventBox.put(event.id, event);
   }
 
-  // 批量保存事件
+  // 更新事件
+  Future<void> updateEvent(Event event) async {
+    LoggerUtils.i('更新事件 - Title: ${event.title}, Order: ${event.order}', 'StorageService');
+    await _eventBox.put(event.id, event);
+  }
+
+  // 批量保存事件【原拖拽排序使用的方法，已废弃】
   Future<void> saveEvents(List<Event> events) async {
     final Map<String, Event> eventMap = {
       for (var event in events) event.id: event
@@ -50,5 +56,15 @@ class StorageService {
   // 清空所有事件
   Future<void> clearEvents() async {
     await _eventBox.clear();
+  }
+
+  // 批量更新事件
+  Future<void> updateEvents(List<Event> events) async {
+    LoggerUtils.i('拖拽排序-批量更新事件 - 数量: ${events.length}', 'StorageService');
+    final batch = events.fold<Map<String, Event>>({}, (map, event) {
+      map[event.id] = event;
+      return map;
+    });
+    await _eventBox.putAll(batch);
   }
 }
