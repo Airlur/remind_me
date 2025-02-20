@@ -7,6 +7,8 @@ import 'package:uuid/uuid.dart';
 import 'components/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'style_settings_page.dart';
+import 'components/category_select_page.dart';
+import 'package:remind_me/models/category.dart';
 
 class AddEventPage extends StatefulWidget {
   const AddEventPage({super.key});
@@ -113,7 +115,19 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   Future<void> _showCategoryPicker() async {
-    // TODO: Implement category picker
+    final result = await Navigator.push<Category>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CategorySelectPage(
+          selectedCategory: _category,
+        ),
+      ),
+    );
+    
+    setState(() {
+      _category = result?.name;
+      _iconName = result?.iconName;
+    });
   }
 
   @override
@@ -162,12 +176,26 @@ class _AddEventPageState extends State<AddEventPage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.category),
-                    // title: Text(context.l10n.category),
                     title: const Text('分类'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(_category ?? context.l10n.all),
+                        if (_category != null) Icon(
+                          _iconName != null 
+                              ? IconData(int.parse(_iconName!), fontFamily: 'MaterialIcons')
+                              : Icons.folder_outlined,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        if (_category != null) const SizedBox(width: 4),
+                        Text(
+                          _category ?? context.l10n.all, 
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 16
+                          )
+                        ),
+                        const SizedBox(width: 4),
                         const Icon(Icons.chevron_right, size: 20),
                       ],
                     ),

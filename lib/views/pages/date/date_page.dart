@@ -39,13 +39,35 @@ class DatePage extends StatelessWidget {
                     isScrollable: true,
                     tabAlignment: TabAlignment.start,
                     tabs: [
-                      Tab(text: context.l10n.all),
-                      Tab(text: context.l10n.countdownDay),
-                      Tab(text: context.l10n.countupDay),
-                      Tab(text: context.l10n.calendar),
+                      Tab(
+                        child: Text(
+                          context.l10n.all,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          context.l10n.countdownDay,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          context.l10n.countupDay,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          context.l10n.calendar,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
                     ],
                     labelColor: Colors.blue,
                     unselectedLabelColor: Colors.grey,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.normal),
+                    unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicatorColor: Colors.blue,
                     dividerColor: Colors.transparent,
@@ -233,16 +255,23 @@ class _EventList extends StatefulWidget {
   State<_EventList> createState() => _EventListState();
 }
 
-class _EventListState extends State<_EventList> {
+class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMixin {
   late PageController _pageController;
   Timer? _timer;
+
+  // 保持状态，避免切换tab重新加载
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 1);
     _startAutoPlay();
-    context.read<EventBloc>().add(LoadEvents());
+    // 只在第一次加载时获取事件
+    if (context.read<EventBloc>().state.status == EventStatus.initial) {
+      context.read<EventBloc>().add(LoadEvents());
+    }
   }
 
   @override
@@ -283,6 +312,7 @@ class _EventListState extends State<_EventList> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);  // 必须调用
     return BlocBuilder<EventBloc, EventState>(
       builder: (context, state) {
         if (state.status == EventStatus.loading) {

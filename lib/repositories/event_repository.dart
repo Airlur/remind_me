@@ -1,4 +1,5 @@
 import 'package:remind_me/models/event.dart';
+import 'package:remind_me/models/category.dart';
 import 'package:remind_me/services/storage_service.dart';
 // import 'package:remind_me/utils/common/logger_utils.dart';
 
@@ -79,5 +80,27 @@ class EventRepository {
   Future<void> updateEvents(List<Event> events) async {
     // 使用 storage 的批量更新方法
     await _storage.updateEvents(events);
+  }
+
+  // 【分类相关方法】
+
+  // 获取所有分类
+  Future<List<Category>> getCategories() async {
+    return _storage.getAllCategories();
+  }
+
+  // 新增分类
+  Future<void> addCategory(Category category) async {
+    await _storage.addCategory(category);
+  }
+
+  // 修改分类
+  Future<void> updateCategory(Category category, {String? oldName}) async {
+    await _storage.updateCategory(category, oldName: oldName);
+  }
+
+  // 删除分类
+  Future<void> deleteCategory(String name) async {
+    await _storage.deleteCategory(name);
   }
 } 

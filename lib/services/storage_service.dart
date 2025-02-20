@@ -1,14 +1,17 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:remind_me/models/event.dart';
+import 'package:remind_me/models/category.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 class StorageService {
   static const String eventBoxName = 'events';
+  static const String categoryBoxName = 'categories';
   static const String customStoragePath = 'remind_me_data';  // 保持和 main.dart 一致
 
   late Box<Event> _eventBox;
+  late Box<Category> _categoryBox;
 
   Future<void> init() async {
     final appDir = await getApplicationDocumentsDirectory();
@@ -24,8 +27,10 @@ class StorageService {
     Hive.registerAdapter(EventAdapter());
     Hive.registerAdapter(TimeUnitAdapter());
     Hive.registerAdapter(BackgroundTypeAdapter());
+    Hive.registerAdapter(CategoryAdapter());
     
     _eventBox = await Hive.openBox<Event>(eventBoxName);
+    _categoryBox = await Hive.openBox<Category>(categoryBoxName);
     LoggerUtils.i('事件存储初始化完成，路径: ${_eventBox.path}', 'StorageService');
   }
 
@@ -80,5 +85,43 @@ class StorageService {
       return map;
     });
     await _eventBox.putAll(batch);
+  }
+
+  /// 分类相关方法
+  
+  // 获取所有分类
+  Future<List<Category>> getAllCategories() async {
+    return _categoryBox.values.toList();
+  }
+
+  // 新增分类
+  Future<void> addCategory(Category category) async {
+    await _categoryBox.add(category);
+  }
+
+  // 更新分类
+  Future<void> updateCategory(Category category, {String? oldName}) async {
+    LoggerUtils.i('Updating category - oldName: $oldName, newName: ${category.name}', 'StorageService');
+    
+    final categories = _categoryBox.values.toList();
+    // 使用 oldName 查找要更新的分类
+    final index = categories.indexWhere((c) => c.name == oldName);
+    
+    if (index != -1) {
+      LoggerUtils.i('Found category at index $index, updating...', 'StorageService');
+      await _categoryBox.putAt(index, category);
+      final updatedCategories = await getAllCategories();
+      LoggerUtils.i('Categories after update: ${updatedCategories.map((c) => c.name)}', 'StorageService');
+    } else {
+      LoggerUtils.e('Category not found with oldName: $oldName', 'StorageService');
+    }
+  }
+
+  // 删除分类
+  Future<void> deleteCategory(String name) async {
+    final index = _categoryBox.values.toList().indexWhere((c) => c.name == name);
+    if (index != -1) {
+      await _categoryBox.deleteAt(index);
+    }
   }
 }

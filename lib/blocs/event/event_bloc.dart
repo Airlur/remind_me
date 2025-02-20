@@ -27,6 +27,10 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     on<UpdateSortConfig>(_onUpdateSortConfig);
     on<InitiateEventDelete>(_onInitiateEventDelete);
     on<CancelEventDelete>(_onCancelEventDelete);
+    on<LoadCategories>(_onLoadCategories);
+    on<AddCategory>(_onAddCategory);
+    on<UpdateCategory>(_onUpdateCategory);
+    on<DeleteCategory>(_onDeleteCategory);
     _scheduleMidnightUpdate();
   }
 
@@ -257,5 +261,44 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       'sortOrder': state.sortOrder.index,
       'selectedCategory': state.selectedCategory,
     };
+  }
+
+  Future<void> _onLoadCategories(LoadCategories event, Emitter<EventState> emit) async {
+    try {
+      final categories = await _repository.getCategories();
+      emit(state.copyWith(categories: categories));
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> _onAddCategory(AddCategory event, Emitter<EventState> emit) async {
+    try {
+      await _repository.addCategory(event.category);
+      final categories = await _repository.getCategories();
+      emit(state.copyWith(categories: categories));
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateCategory(UpdateCategory event, Emitter<EventState> emit) async {
+    try {
+      await _repository.updateCategory(event.category, oldName: event.oldName);
+      final categories = await _repository.getCategories();
+      emit(state.copyWith(categories: categories));
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteCategory(DeleteCategory event, Emitter<EventState> emit) async {
+    try {
+      await _repository.deleteCategory(event.name);
+      final categories = await _repository.getCategories();
+      emit(state.copyWith(categories: categories));
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
   }
 }

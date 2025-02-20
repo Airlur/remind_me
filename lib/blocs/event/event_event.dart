@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
+import 'package:remind_me/models/category.dart';
 
 abstract class EventEvent extends Equatable {
   const EventEvent();
@@ -103,5 +104,36 @@ class InitiateEventDelete extends EventEvent {
 
 class CancelEventDelete extends EventEvent {
   const CancelEventDelete();
+}
+
+// 加载分类
+class LoadCategories extends EventEvent {
+  const LoadCategories();
+}
+
+// 添加分类
+class AddCategory extends EventEvent {
+  final Category category;
+  const AddCategory(this.category);
+}
+
+// 更新分类
+class UpdateCategory extends EventEvent {
+  final Category category;
+  final String oldName;
+
+  const UpdateCategory({
+    required this.category,
+    required this.oldName,
+  });
+
+  @override
+  List<Object?> get props => [category, oldName];
+}
+
+// 删除分类
+class DeleteCategory extends EventEvent {
+  final String name;
+  const DeleteCategory(this.name);
 }
 

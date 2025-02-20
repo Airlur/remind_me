@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:remind_me/models/event.dart';
+import 'package:remind_me/models/category.dart';
 
 enum EventStatus { initial, loading, success, failure }
 
@@ -22,18 +23,20 @@ enum SortOrder {
 
 class EventState extends Equatable {
   final List<Event> events;
+  final List<Category> categories;
   final Event? pinnedEvent;
   final EventStatus status;
   final String? error;
   final PinnedDisplayMode pinnedDisplayMode;
   final SortType sortType;
   final SortOrder sortOrder;
-  final String? selectedCategory;  // 分类筛选条件
-  final Event? pendingDeleteEvent; // 待删除的事件
-  final DateTime? deleteStartTime;  // 删除开始时间
+  final String? selectedCategory;
+  final Event? pendingDeleteEvent;
+  final DateTime? deleteStartTime;
 
   const EventState({
     this.events = const [],
+    this.categories = const [],
     this.pinnedEvent,
     this.status = EventStatus.initial,
     this.error,
@@ -85,6 +88,7 @@ class EventState extends Equatable {
 
   EventState copyWith({
     List<Event>? events,
+    List<Category>? categories,
     Event? pinnedEvent,
     EventStatus? status,
     String? error,
@@ -97,6 +101,7 @@ class EventState extends Equatable {
   }) {
     return EventState(
       events: events ?? this.events,
+      categories: categories ?? this.categories,
       pinnedEvent: pinnedEvent ?? this.pinnedEvent,
       status: status ?? this.status,
       error: error ?? this.error,
@@ -112,6 +117,7 @@ class EventState extends Equatable {
   @override
   List<Object?> get props => [
     events,
+    categories,
     pinnedEvent,
     status,
     error,
