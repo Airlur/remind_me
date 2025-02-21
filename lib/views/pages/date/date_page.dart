@@ -13,9 +13,13 @@ import 'dart:async';
 import 'package:remind_me/views/pages/date/components/custom_page_view.dart';
 import 'package:remind_me/views/pages/date/components/sort_dialog.dart';
 import 'package:remind_me/theme/app_colors.dart';
+import 'package:remind_me/views/pages/date/components/empty_state.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
+
+  static bool countdownFilter(Event event) => event.isCountdown;
+  static bool countupFilter(Event event) => !event.isCountdown;
 
   @override
   Widget build(BuildContext context) {
@@ -137,12 +141,12 @@ class DatePage extends StatelessWidget {
             ),
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
-            const _EventList(filter: null),  // 全部
-            _EventList(filter: (event) => event.isCountdown),  // 倒数日
-            _EventList(filter: (event) => !event.isCountdown), // 正数日
-            const CalendarPage(),
+            _EventList(filter: null),  // 全部
+            _EventList(filter: countdownFilter),  // 倒数日
+            _EventList(filter: countupFilter),   // 正数日
+            CalendarPage(),
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -310,6 +314,44 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     return events.where(widget.filter!).toList();
   }
 
+  String _getEmptyMessage(EventState state) {
+    if (state.selectedCategory != null) {
+      return '【${state.selectedCategory}】分类下暂无${widget.filter == DatePage.countdownFilter ? '倒数日' : widget.filter == DatePage.countupFilter ? '正数日' : '事件'}';
+    }
+    return widget.filter == DatePage.countdownFilter 
+        ? '暂无倒数日' 
+        : widget.filter == DatePage.countupFilter 
+            ? '暂无正数日' 
+            : '开始添加你的第一个事件吧';
+  }
+
+  IconData _getEmptyIcon(EventState state) {
+    if (state.selectedCategory != null) {
+      // 从分类列表中查找对应的分类
+      try {
+        final category = state.categories.firstWhere(
+          (c) => c.name == state.selectedCategory
+        );
+        // 如果该分类有图标，则使用分类的图标
+        if (category.iconName != null) {
+          return IconData(
+            int.parse(category.iconName!), 
+            fontFamily: 'MaterialIcons'
+          );
+        }
+      } catch (_) {}
+      // 如果找不到分类或分类没有图标，使用默认图标
+      return Icons.folder_outlined;
+    }
+    
+    // 非分类情况的图标保持不变
+    return widget.filter == DatePage.countdownFilter 
+        ? Icons.timer 
+        : widget.filter == DatePage.countupFilter 
+            ? Icons.event_available 
+            : Icons.add_circle_outline;
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);  // 必须调用
@@ -326,6 +368,13 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
 
         // 过滤未置顶的事件，使用 sortedEvents 排序
         final filteredEvents = _filterEvents(state.sortedEvents);
+
+        if (filteredEvents.isEmpty) {
+          return EmptyState(
+            message: _getEmptyMessage(state),
+            icon: _getEmptyIcon(state),
+          );
+        }
 
         return Column(
           children: [
@@ -398,5 +447,10 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
         ),
       ),
     );
+  }
+
+  String _getFilterName() {
+    if (widget.filter == null) return '事件';
+    return widget.filter == DatePage.countdownFilter ? '倒数日' : '正数日';
   }
 }

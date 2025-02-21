@@ -122,14 +122,18 @@ class SortDialog extends StatelessWidget {
   }
 
   void _updateSortType(BuildContext context, SortType sortType) {
-    context.read<EventBloc>().add(UpdateSortConfig(sortType: sortType));
+    context.read<EventBloc>().add(UpdateSortConfig(
+      sortType: sortType,
+    ));
   }
 
   void _toggleSortOrder(BuildContext context, EventState state) {
     final newOrder = state.sortOrder == SortOrder.ascending
         ? SortOrder.descending
         : SortOrder.ascending;
-    context.read<EventBloc>().add(UpdateSortConfig(sortOrder: newOrder));
+    context.read<EventBloc>().add(UpdateSortConfig(
+      sortOrder: newOrder,
+    ));
   }
 
   Future<void> _showCategoryPicker(BuildContext context, String? selectedCategory) async {

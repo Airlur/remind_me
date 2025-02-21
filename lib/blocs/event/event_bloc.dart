@@ -200,7 +200,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     emit(state.copyWith(
       sortType: event.sortType ?? state.sortType,
       sortOrder: event.sortOrder ?? state.sortOrder,
-      selectedCategory: event.selectedCategory,
+      selectedCategory: event.selectedCategory ?? state.selectedCategory,
     ));
   }
 
