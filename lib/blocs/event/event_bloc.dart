@@ -200,7 +200,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     emit(state.copyWith(
       sortType: event.sortType ?? state.sortType,
       sortOrder: event.sortOrder ?? state.sortOrder,
-      selectedCategory: event.selectedCategory ?? state.selectedCategory,
+      selectedCategory: event.selectedCategory,
     ));
   }
 
@@ -276,9 +276,16 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     try {
       await _repository.addCategory(event.category);
       final categories = await _repository.getCategories();
-      emit(state.copyWith(categories: categories));
+      emit(state.copyWith(
+        categories: categories,
+        error: null,
+        status: EventStatus.success,
+      ));
     } catch (e) {
-      emit(state.copyWith(error: e.toString()));
+      emit(state.copyWith(
+        error: e.toString(),
+        status: EventStatus.failure,
+      ));
     }
   }
 
@@ -286,9 +293,16 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     try {
       await _repository.updateCategory(event.category, oldName: event.oldName);
       final categories = await _repository.getCategories();
-      emit(state.copyWith(categories: categories));
+      emit(state.copyWith(
+        categories: categories,
+        error: null,
+        status: EventStatus.success,
+      ));
     } catch (e) {
-      emit(state.copyWith(error: e.toString()));
+      emit(state.copyWith(
+        error: e.toString(),
+        status: EventStatus.failure,
+      ));
     }
   }
 

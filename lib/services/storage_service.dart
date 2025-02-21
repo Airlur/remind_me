@@ -94,26 +94,32 @@ class StorageService {
     return _categoryBox.values.toList();
   }
 
-  // 新增分类
+  Future<bool> isCategoryNameExists(String name, {String? excludeName}) async {
+    final categories = await getAllCategories();
+    final exists = categories.any((c) => 
+      c.name.toLowerCase() == name.toLowerCase() && c.name != excludeName
+    );
+    return exists;
+  }
+
   Future<void> addCategory(Category category) async {
+   if (await isCategoryNameExists(category.name)) {
+      throw '分类"${category.name}"已存在';
+    }
     await _categoryBox.add(category);
   }
 
-  // 更新分类
   Future<void> updateCategory(Category category, {String? oldName}) async {
-    LoggerUtils.i('Updating category - oldName: $oldName, newName: ${category.name}', 'StorageService');
+    if (await isCategoryNameExists(category.name, excludeName: oldName)) {
+      throw '分类"${category.name}"已存在';
+    }
     
     final categories = _categoryBox.values.toList();
-    // 使用 oldName 查找要更新的分类
     final index = categories.indexWhere((c) => c.name == oldName);
     
     if (index != -1) {
-      LoggerUtils.i('Found category at index $index, updating...', 'StorageService');
       await _categoryBox.putAt(index, category);
-      final updatedCategories = await getAllCategories();
-      LoggerUtils.i('Categories after update: ${updatedCategories.map((c) => c.name)}', 'StorageService');
-    } else {
-      LoggerUtils.e('Category not found with oldName: $oldName', 'StorageService');
+      throw Exception('未找到要更新的分类');
     }
   }
 
