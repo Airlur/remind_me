@@ -4,6 +4,7 @@ import 'package:remind_me/models/category.dart';
 import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
+import 'package:remind_me/theme/app_colors.dart';
 
 class AddCategoryDialog extends StatefulWidget {
   const AddCategoryDialog({super.key});
@@ -59,6 +60,12 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
         ),
         child: Container(
           padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(16),
+            ),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -121,14 +128,26 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
               ),
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(
+                  OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('取消'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    child: const Text(
+                      '取消',
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
+                  FilledButton(
                     onPressed: () {
                       if (_controller.text.isNotEmpty) {
                         final category = Category(
@@ -138,7 +157,16 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
                         context.read<EventBloc>().add(AddCategory(category));
                       }
                     },
-                    child: const Text('确定'),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      '确定',
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
                 ],
               ),
