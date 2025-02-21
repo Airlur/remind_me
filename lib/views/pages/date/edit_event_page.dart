@@ -190,10 +190,10 @@ class _EditEventPageState extends State<EditEventPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (_category != null) Icon(
-                              selectedCategory.iconName != null 
-                                  ? IconData(int.parse(selectedCategory.iconName!), 
-                                           fontFamily: 'MaterialIcons')
-                                  : Icons.folder_outlined,
+                              IconData(
+                                int.parse(selectedCategory.iconName!),
+                                fontFamily: 'MaterialIcons',
+                              ),
                               size: 20,
                               color: Theme.of(context).colorScheme.primary,
                             ),

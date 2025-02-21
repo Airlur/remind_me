@@ -13,7 +13,10 @@ class SortDialog extends StatelessWidget {
     try {
       final category = categories.firstWhere((c) => c.name == categoryName);
       if (category.iconName != null) {
-        return IconData(int.parse(category.iconName!), fontFamily: 'MaterialIcons');
+        return IconData(
+          int.parse(category.iconName!), // 确保 category.iconName 是有效的字符串
+          fontFamily: 'MaterialIcons',
+        );
       }
     } catch (_) {}
     return Icons.folder_outlined;

@@ -104,9 +104,10 @@ class _CategorySelectPageState extends State<CategorySelectPage> {
                       ),
                       child: ListTile(
                         leading: Icon(
-                          category.iconName != null 
-                              ? IconData(int.parse(category.iconName!), fontFamily: 'MaterialIcons')
-                              : Icons.folder_outlined,
+                          IconData(
+                            int.parse(category.iconName!),
+                            fontFamily: 'MaterialIcons',
+                          ),
                         ),
                         title: Text(
                           category.name,

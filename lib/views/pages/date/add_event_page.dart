@@ -180,9 +180,10 @@ class _AddEventPageState extends State<AddEventPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (_category != null) Icon(
-                          _iconName != null 
-                              ? IconData(int.parse(_iconName!), fontFamily: 'MaterialIcons')
-                              : Icons.folder_outlined,
+                          IconData(
+                            int.parse(_iconName!), // 确保 _iconName 是有效的字符串
+                            fontFamily: 'MaterialIcons',
+                          ),
                           size: 20,
                           color: Theme.of(context).colorScheme.primary,
                         ),
