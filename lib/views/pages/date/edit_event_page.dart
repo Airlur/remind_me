@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
+import 'package:remind_me/blocs/event/event_state.dart';
 import 'package:remind_me/models/event.dart';
 import 'components/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
@@ -107,7 +108,6 @@ class _EditEventPageState extends State<EditEventPage> {
     
     setState(() {
       _category = result?.name;
-      _iconName = result?.iconName;
     });
   }
 
@@ -180,27 +180,36 @@ class _EditEventPageState extends State<EditEventPage> {
                   ListTile(
                     leading: const Icon(Icons.category),
                     title: const Text('分类'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (_category != null) Icon(
-                          _iconName != null 
-                              ? IconData(int.parse(_iconName!), fontFamily: 'MaterialIcons')
-                              : Icons.folder_outlined,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        if (_category != null) const SizedBox(width: 4),
-                        Text(
-                          _category ?? context.l10n.all, 
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 16
-                          )
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.chevron_right, size: 20),
-                      ],
+                    trailing: BlocBuilder<EventBloc, EventState>(
+                      builder: (context, state) {
+                        final selectedCategory = state.categories
+                            .firstWhere((c) => c.name == _category, 
+                                        orElse: () => Category(name: ''));
+                        
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_category != null) Icon(
+                              selectedCategory.iconName != null 
+                                  ? IconData(int.parse(selectedCategory.iconName!), 
+                                           fontFamily: 'MaterialIcons')
+                                  : Icons.folder_outlined,
+                              size: 20,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            if (_category != null) const SizedBox(width: 4),
+                            Text(
+                              _category ?? context.l10n.all, 
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 16
+                              )
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.chevron_right, size: 20),
+                          ],
+                        );
+                      },
                     ),
                     onTap: _showCategoryPicker,
                   ),

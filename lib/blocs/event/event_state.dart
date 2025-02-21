@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/models/category.dart';
+import 'package:remind_me/blocs/event/event_event.dart';
 
 enum EventStatus { initial, loading, success, failure }
 
@@ -33,6 +34,7 @@ class EventState extends Equatable {
   final String? selectedCategory;
   final Event? pendingDeleteEvent;
   final DateTime? deleteStartTime;
+  final EventEvent? lastEvent;
 
   const EventState({
     this.events = const [],
@@ -46,6 +48,7 @@ class EventState extends Equatable {
     this.selectedCategory,
     this.pendingDeleteEvent,
     this.deleteStartTime,
+    this.lastEvent,
   });
 
   List<Event> get pinnedEvents {
@@ -103,6 +106,7 @@ class EventState extends Equatable {
     String? selectedCategory,
     Event? pendingDeleteEvent,
     DateTime? deleteStartTime,
+    EventEvent? lastEvent,
   }) {
     return EventState(
       events: events ?? this.events,
@@ -116,6 +120,7 @@ class EventState extends Equatable {
       selectedCategory: selectedCategory,
       pendingDeleteEvent: pendingDeleteEvent,
       deleteStartTime: deleteStartTime,
+      lastEvent: lastEvent,
     );
   }
 
@@ -132,5 +137,6 @@ class EventState extends Equatable {
     selectedCategory,
     pendingDeleteEvent,
     deleteStartTime,
+    lastEvent,
   ];
 }

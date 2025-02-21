@@ -126,7 +126,6 @@ class _AddEventPageState extends State<AddEventPage> {
     
     setState(() {
       _category = result?.name;
-      _iconName = result?.iconName;
     });
   }
 

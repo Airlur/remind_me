@@ -52,8 +52,15 @@ class StorageService {
 
   // 更新事件
   Future<void> updateEvent(Event event) async {
-    LoggerUtils.i('更新事件 - Title: ${event.title}, Order: ${event.order}', 'StorageService');
-    await _eventBox.put(event.id, event);
+    LoggerUtils.i('开始更新事件 - Title: ${event.title}, Category: ${event.category}', 'StorageService');
+    final events = _eventBox.values.toList();
+    final index = events.indexWhere((e) => e.id == event.id);
+    if (index != -1) {
+      await _eventBox.putAt(index, event);
+      LoggerUtils.i('事件更新成功 - Title: ${event.title}, Category: ${event.category}', 'StorageService');
+    } else {
+      LoggerUtils.e('未找到要更新的事件 - ID: ${event.id}', 'StorageService');
+    }
   }
 
   // 批量保存事件【原拖拽排序使用的方法，已废弃】
@@ -94,6 +101,7 @@ class StorageService {
     return _categoryBox.values.toList();
   }
 
+  // 检查分类名称是否存在
   Future<bool> isCategoryNameExists(String name, {String? excludeName}) async {
     final categories = await getAllCategories();
     final exists = categories.any((c) => 
@@ -102,13 +110,15 @@ class StorageService {
     return exists;
   }
 
+  // 添加分类
   Future<void> addCategory(Category category) async {
-   if (await isCategoryNameExists(category.name)) {
+    if (await isCategoryNameExists(category.name)) {
       throw '分类"${category.name}"已存在';
     }
     await _categoryBox.add(category);
   }
 
+  // 更新分类
   Future<void> updateCategory(Category category, {String? oldName}) async {
     if (await isCategoryNameExists(category.name, excludeName: oldName)) {
       throw '分类"${category.name}"已存在';
@@ -119,15 +129,19 @@ class StorageService {
     
     if (index != -1) {
       await _categoryBox.putAt(index, category);
+    } else {
       throw Exception('未找到要更新的分类');
     }
   }
 
   // 删除分类
   Future<void> deleteCategory(String name) async {
-    final index = _categoryBox.values.toList().indexWhere((c) => c.name == name);
-    if (index != -1) {
-      await _categoryBox.deleteAt(index);
+    final categories = _categoryBox.values.toList();
+    final categoryIndex = categories.indexWhere((c) => c.name == name);
+    if (categoryIndex != -1) {
+      await _categoryBox.deleteAt(categoryIndex);
+    } else {
+      throw Exception('未找到要删除的分类');
     }
   }
 }

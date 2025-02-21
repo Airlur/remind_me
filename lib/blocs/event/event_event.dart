@@ -134,6 +134,10 @@ class UpdateCategory extends EventEvent {
 // 删除分类
 class DeleteCategory extends EventEvent {
   final String name;
+
   const DeleteCategory(this.name);
+
+  @override
+  List<Object?> get props => [name];
 }
 

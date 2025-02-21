@@ -308,11 +308,39 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
 
   Future<void> _onDeleteCategory(DeleteCategory event, Emitter<EventState> emit) async {
     try {
+      // 1. 更新所有使用该分类的事件
+      final updatedEvents = <Event>[];
+      for (final e in state.events) {
+        if (e.category == event.name) {
+          // 先创建新的事件对象，确保 category 为 null
+          final updatedEvent = e.copyWith(category: null);
+          // 再更新存储
+          await _repository.updateEvent(updatedEvent);
+          updatedEvents.add(updatedEvent);
+        } else {
+          updatedEvents.add(e);
+        }
+      }
+      
+      // 2. 删除分类
       await _repository.deleteCategory(event.name);
+      
+      // 3. 获取更新后的分类列表
       final categories = await _repository.getCategories();
-      emit(state.copyWith(categories: categories));
+      
+      // 4. 发出新状态
+      emit(state.copyWith(
+        events: updatedEvents,
+        categories: categories,
+        selectedCategory: null,
+        status: EventStatus.success,
+        lastEvent: event,
+      ));
     } catch (e) {
-      emit(state.copyWith(error: e.toString()));
+      emit(state.copyWith(
+        error: e.toString(),
+        status: EventStatus.failure,
+      ));
     }
   }
 }
