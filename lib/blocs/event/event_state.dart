@@ -48,11 +48,16 @@ class EventState extends Equatable {
     this.deleteStartTime,
   });
 
-  List<Event> get pinnedEvents => events
-    .where((e) => e.isPinned)
-    .toList()
-    ..sort((a, b) => (b.pinnedAt ?? b.createdAt)
-        .compareTo(a.pinnedAt ?? a.createdAt));
+  List<Event> get pinnedEvents {
+    final filtered = events.where((e) => 
+      e.isPinned && 
+      (selectedCategory == null || e.category == selectedCategory)  // 添加分类过滤
+    ).toList()
+      ..sort((a, b) => (b.pinnedAt ?? b.createdAt)
+          .compareTo(a.pinnedAt ?? a.createdAt));
+    
+    return filtered;
+  }
 
   List<Event> get filteredEvents {
     if (selectedCategory == null) {
@@ -108,7 +113,7 @@ class EventState extends Equatable {
       pinnedDisplayMode: pinnedDisplayMode ?? this.pinnedDisplayMode,
       sortType: sortType ?? this.sortType,
       sortOrder: sortOrder ?? this.sortOrder,
-      selectedCategory: selectedCategory ?? this.selectedCategory,
+      selectedCategory: selectedCategory,
       pendingDeleteEvent: pendingDeleteEvent,
       deleteStartTime: deleteStartTime,
     );

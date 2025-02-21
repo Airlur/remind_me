@@ -5,8 +5,8 @@ import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/models/category.dart';
-import 'package:remind_me/views/pages/date/components/add_category_dialog.dart';
-import 'package:remind_me/views/pages/date/components/edit_category_dialog.dart';
+import 'package:remind_me/views/pages/date/components/category/add_category_dialog.dart';
+import 'package:remind_me/views/pages/date/components/category/edit_category_dialog.dart';
 
 class CategorySelectPage extends StatelessWidget {
   final String? selectedCategory;
@@ -18,6 +18,11 @@ class CategorySelectPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 在页面构建时加载分类数据
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<EventBloc>().add(const LoadCategories());
+    });
+
     final theme = Theme.of(context);
     
     return Scaffold(

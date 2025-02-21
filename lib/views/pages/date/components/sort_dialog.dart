@@ -3,27 +3,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
+import 'package:remind_me/views/pages/date/components/category/category_select_page.dart';
+import 'package:remind_me/models/category.dart';
 
-class SortDialog extends StatefulWidget {
+class SortDialog extends StatelessWidget {
   const SortDialog({super.key});
 
-  @override
-  State<SortDialog> createState() => _SortDialogState();
-}
-
-class _SortDialogState extends State<SortDialog> {
-  bool _showCategories = false;
+  IconData _getCategoryIcon(List<Category> categories, String? categoryName) {
+    try {
+      final category = categories.firstWhere((c) => c.name == categoryName);
+      if (category.iconName != null) {
+        return IconData(int.parse(category.iconName!), fontFamily: 'MaterialIcons');
+      }
+    } catch (_) {}
+    return Icons.folder_outlined;
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EventBloc, EventState>(
       builder: (context, state) {
-        final categories = state.events
-            .map((e) => e.category)
-            .where((c) => c != null)
-            .toSet()
-            .toList();
-
         return AlertDialog(
           contentPadding: EdgeInsets.zero,
           backgroundColor: Theme.of(context).colorScheme.surface,
@@ -59,6 +58,12 @@ class _SortDialogState extends State<SortDialog> {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (state.selectedCategory != null) Icon(
+                      _getCategoryIcon(state.categories, state.selectedCategory),
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    if (state.selectedCategory != null) const SizedBox(width: 4),
                     Text(
                       state.selectedCategory ?? '全部',
                       style: TextStyle(
@@ -67,55 +72,11 @@ class _SortDialogState extends State<SortDialog> {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Icon(
-                      _showCategories 
-                          ? Icons.keyboard_arrow_up 
-                          : Icons.keyboard_arrow_down,
-                      size: 20,
-                    ),
+                    const Icon(Icons.chevron_right, size: 20),
                   ],
                 ),
-                onTap: () {
-                  setState(() {
-                    _showCategories = !_showCategories;
-                  });
-                },
+                onTap: () => _showCategoryPicker(context, state.selectedCategory),
               ),
-              if (_showCategories) ...[
-                const Divider(height: 1),
-                ListTile(
-                  contentPadding: const EdgeInsets.only(left: 56, right: 16),
-                  title: const Text('全部'),
-                  selected: state.selectedCategory == null,
-                  trailing: state.selectedCategory == null
-                      ? const Icon(Icons.check, size: 20)
-                      : null,
-                  onTap: () {
-                    context.read<EventBloc>().add(
-                      const UpdateSortConfig(selectedCategory: null),
-                    );
-                    setState(() {
-                      _showCategories = false;
-                    });
-                  },
-                ),
-                ...categories.map((category) => ListTile(
-                  contentPadding: const EdgeInsets.only(left: 56, right: 16),
-                  title: Text(category!),
-                  selected: state.selectedCategory == category,
-                  trailing: state.selectedCategory == category
-                      ? const Icon(Icons.check, size: 20)
-                      : null,
-                  onTap: () {
-                    context.read<EventBloc>().add(
-                      UpdateSortConfig(selectedCategory: category),
-                    );
-                    setState(() {
-                      _showCategories = false;
-                    });
-                  },
-                )),
-              ],
             ],
           ),
         );
@@ -169,5 +130,22 @@ class _SortDialogState extends State<SortDialog> {
         ? SortOrder.descending
         : SortOrder.ascending;
     context.read<EventBloc>().add(UpdateSortConfig(sortOrder: newOrder));
+  }
+
+  Future<void> _showCategoryPicker(BuildContext context, String? selectedCategory) async {
+    final result = await Navigator.push<Category>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CategorySelectPage(
+          selectedCategory: selectedCategory,
+        ),
+      ),
+    );
+    
+    if (context.mounted) {
+      context.read<EventBloc>().add(
+        UpdateSortConfig(selectedCategory: result?.name),
+      );
+    }
   }
 } 

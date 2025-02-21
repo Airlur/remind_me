@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'components/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'style_settings_page.dart';
-import 'components/category_select_page.dart';
+import 'components/category/category_select_page.dart';
 import 'package:remind_me/models/category.dart';
 
 class AddEventPage extends StatefulWidget {

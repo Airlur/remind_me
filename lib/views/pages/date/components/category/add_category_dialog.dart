@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remind_me/models/category.dart';
+
 class AddCategoryDialog extends StatefulWidget {
   const AddCategoryDialog({super.key});
 

@@ -6,6 +6,8 @@ import 'package:remind_me/models/event.dart';
 import 'components/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'style_settings_page.dart';
+import 'components/category/category_select_page.dart';
+import 'package:remind_me/models/category.dart';
 
 class EditEventPage extends StatefulWidget {
   final Event event;
@@ -94,18 +96,30 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   Future<void> _showCategoryPicker() async {
-    // TODO: 实现分类选择器
+    final result = await Navigator.push<Category>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CategorySelectPage(
+          selectedCategory: _category,
+        ),
+      ),
+    );
+    
+    setState(() {
+      _category = result?.name;
+      _iconName = result?.iconName;
+    });
   }
 
   void _saveEvent() {
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.enterTitle)),
+        const SnackBar(content: Text('请输入标题')),
       );
       return;
     }
 
-    final updatedEvent = widget.event.copyWith(
+    final event = widget.event.copyWith(
       title: _titleController.text,
       targetDate: _targetDate,
       isPinned: _isPinned,
@@ -116,7 +130,7 @@ class _EditEventPageState extends State<EditEventPage> {
       iconName: _iconName,
     );
 
-    context.read<EventBloc>().add(UpdateEvent(updatedEvent));
+    context.read<EventBloc>().add(UpdateEvent(event));
     Navigator.of(context).pop();
   }
 
@@ -169,7 +183,22 @@ class _EditEventPageState extends State<EditEventPage> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(_category ?? context.l10n.all),
+                        if (_category != null) Icon(
+                          _iconName != null 
+                              ? IconData(int.parse(_iconName!), fontFamily: 'MaterialIcons')
+                              : Icons.folder_outlined,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        if (_category != null) const SizedBox(width: 4),
+                        Text(
+                          _category ?? context.l10n.all, 
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 16
+                          )
+                        ),
+                        const SizedBox(width: 4),
                         const Icon(Icons.chevron_right, size: 20),
                       ],
                     ),
