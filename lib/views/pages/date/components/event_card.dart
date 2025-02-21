@@ -12,9 +12,19 @@ import 'package:remind_me/utils/common/route_utils.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
+  final double? iconSize;
+  final TextStyle? titleStyle;
+  final TextStyle? dateWeekStyle;
+  final TextStyle? prefixStyle;
+  final TextStyle? numberDayStyle;
 
   const EventCard({
     required this.event,
+    this.iconSize,
+    this.titleStyle,
+    this.dateWeekStyle,
+    this.prefixStyle,
+    this.numberDayStyle,
     super.key,
   });
 
@@ -131,7 +141,6 @@ class EventCard extends StatelessWidget {
             child: InkWell(
               onTap: () => _toggleDisplayUnit(context), // 改为单击切换
               child: Padding(
-                // padding: const EdgeInsets.all(16),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // 调整内边距
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center, // 确保内容垂直居中
@@ -144,7 +153,7 @@ class EventCard extends StatelessWidget {
                             int.parse(event.iconName!),
                             fontFamily: 'MaterialIcons',
                           ),
-                          size: 20,
+                          size: iconSize ?? 20,  // 使用传入的图标大小
                           color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
                         ),
                       ),
@@ -155,7 +164,7 @@ class EventCard extends StatelessWidget {
                         children: [
                           Text(
                             event.title,
-                            style: TextStyle(
+                            style: titleStyle ?? TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
@@ -164,7 +173,7 @@ class EventCard extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             '${event.targetDate.year}-${event.targetDate.month.toString().padLeft(2, '0')}-${event.targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(event.targetDate)}',
-                            style: TextStyle(
+                            style: dateWeekStyle ?? TextStyle(
                               fontSize: 12,
                               color: event.backgroundColor != null 
                                 ? Colors.white
@@ -179,7 +188,7 @@ class EventCard extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         event.displayPrefix,
-                        style: TextStyle(
+                        style: prefixStyle ?? TextStyle(
                           fontSize: 16,
                           color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
                         ),
@@ -187,7 +196,7 @@ class EventCard extends StatelessWidget {
                     ),
                     Text(
                       event.getFormattedNumber(),
-                      style: TextStyle(
+                      style: numberDayStyle ?? TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,

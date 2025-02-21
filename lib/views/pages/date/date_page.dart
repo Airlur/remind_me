@@ -193,6 +193,7 @@ class DatePage extends StatelessWidget {
     );
   }
 
+  // 置顶模式
   void _showPinnedDisplayModeDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -259,6 +260,7 @@ class _EventList extends StatefulWidget {
   State<_EventList> createState() => _EventListState();
 }
 
+// 事件列表状态
 class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMixin {
   late PageController _pageController;
   Timer? _timer;
@@ -285,6 +287,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     super.dispose();
   }
 
+  // 置顶项轮播图自动播放
   void _startAutoPlay() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
@@ -314,6 +317,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     return events.where(widget.filter!).toList();
   }
 
+  // 获取空状态消息
   String _getEmptyMessage(EventState state) {
     if (state.selectedCategory != null) {
       return '【${state.selectedCategory}】分类下暂无${widget.filter == DatePage.countdownFilter ? '倒数日' : widget.filter == DatePage.countupFilter ? '正数日' : '事件'}';
@@ -325,6 +329,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
             : '开始添加你的第一个事件吧';
   }
 
+  // 获取空状态图标
   IconData _getEmptyIcon(EventState state) {
     if (state.selectedCategory != null) {
       // 从分类列表中查找对应的分类
@@ -352,6 +357,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
             : Icons.add_circle_outline;
   }
 
+  // 构建事件列表
   @override
   Widget build(BuildContext context) {
     super.build(context);  // 必须调用
@@ -376,10 +382,12 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
           );
         }
 
+        // 构建事件列表
         return Column(
           children: [
             if (pinnedEvents.isNotEmpty) ...[
               _buildPinnedArea(pinnedEvents, state.pinnedDisplayMode),
+              const SizedBox(height: 4),  // 固定间距
             ],
             
             Expanded(
@@ -409,6 +417,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     );
   }
 
+  // 构建置顶区域
   Widget _buildPinnedArea(List<Event> pinnedEvents, PinnedDisplayMode mode) {
     if (pinnedEvents.isEmpty) return const SizedBox();
     
@@ -418,11 +427,35 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
         height: 100,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: EventCard(event: pinnedEvents.first),
+          child: EventCard(
+            event: pinnedEvents.first,
+            iconSize: 28,  // 增加图标大小
+            titleStyle: const TextStyle(
+              fontSize: 20, // 增加文字大小
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            dateWeekStyle: const TextStyle(
+              fontSize: 16, // 增加文字大小
+              // fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            prefixStyle: const TextStyle(
+              fontSize: 20, // 增加文字大小
+              // fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            numberDayStyle: const TextStyle(
+              fontSize: 24, // 增加文字大小
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       );
     }
 
+    // 轮播图
     return SizedBox(
       height: 100,
       child: CustomPageView(  // 使用自定义的 PageView
@@ -449,6 +482,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     );
   }
 
+  // 获取过滤名称
   String _getFilterName() {
     if (widget.filter == null) return '事件';
     return widget.filter == DatePage.countdownFilter ? '倒数日' : '正数日';

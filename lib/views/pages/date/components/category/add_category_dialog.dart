@@ -62,7 +62,7 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
           padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
             color: AppColors.surface,
-            borderRadius: const BorderRadius.vertical(
+            borderRadius: BorderRadius.vertical(
               top: Radius.circular(16),
             ),
           ),
