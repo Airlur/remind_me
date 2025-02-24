@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/models/category.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 enum EventStatus { initial, loading, success, failure }
 
@@ -70,10 +71,18 @@ class EventState extends Equatable {
   }
 
   List<Event> get sortedEvents {
-    final filtered = filteredEvents.where(
-      (e) => e != pendingDeleteEvent
-    ).toList();  // 过滤掉待删除的事件
-    
+    // 先按分类过滤
+    final filtered = selectedCategory != null 
+        ? events.where((e) => e.category == selectedCategory).toList()
+        : events.toList();
+        
+    LoggerUtils.i('''【EventState】获取排序后事件:
+      分类: ${selectedCategory ?? "全部"}
+      排序类型: $sortType
+      事件数量: ${filtered.length}
+    ''', 'EventState');
+
+    // 然后排序
     switch (sortType) {
       case SortType.createTime:
         filtered.sort((a, b) => sortOrder == SortOrder.ascending
@@ -87,8 +96,7 @@ class EventState extends Equatable {
         });
       
       case SortType.custom:
-        // 自定义排序模式下，保持当前列表顺序，不做额外排序
-        return filtered;
+        return filtered..sort((a, b) => (a.order ?? 0).compareTo(b.order ?? 0));
     }
     
     return filtered;

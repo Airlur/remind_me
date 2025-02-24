@@ -6,6 +6,7 @@ import 'package:remind_me/blocs/event/event_state.dart';
 import 'package:remind_me/views/pages/date/components/category/category_select_page.dart';
 import 'package:remind_me/models/category.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class SortDialog extends StatelessWidget {
   const SortDialog({super.key});
@@ -123,6 +124,7 @@ class SortDialog extends StatelessWidget {
   }
 
   void _updateSortType(BuildContext context, SortType sortType) {
+    LoggerUtils.i('【SortDialog】切换排序类型: $sortType, 当前分类: ${context.read<EventBloc>().state.selectedCategory ?? "全部"}', 'SortDialog');
     context.read<EventBloc>().add(UpdateSortConfig(
       sortType: sortType,
     ));
@@ -132,12 +134,14 @@ class SortDialog extends StatelessWidget {
     final newOrder = state.sortOrder == SortOrder.ascending
         ? SortOrder.descending
         : SortOrder.ascending;
+    LoggerUtils.i('【SortDialog】切换排序顺序: $newOrder, 当前分类: ${state.selectedCategory ?? "全部"}', 'SortDialog');
     context.read<EventBloc>().add(UpdateSortConfig(
       sortOrder: newOrder,
     ));
   }
 
   Future<void> _showCategoryPicker(BuildContext context, String? selectedCategory) async {
+    LoggerUtils.i('【SortDialog】选择分类前: $selectedCategory', 'SortDialog');
     final result = await Navigator.push<Category>(
       context,
       MaterialPageRoute(
@@ -148,6 +152,7 @@ class SortDialog extends StatelessWidget {
     );
     
     if (context.mounted) {
+      LoggerUtils.i('【SortDialog】选择分类后: ${result?.name}', 'SortDialog');
       context.read<EventBloc>().add(
         UpdateSortConfig(selectedCategory: result?.name),
       );

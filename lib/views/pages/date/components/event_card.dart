@@ -10,6 +10,7 @@ import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/views/pages/date/edit_event_page.dart';
 import 'package:remind_me/utils/common/route_utils.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -267,6 +268,12 @@ class EventCard extends StatelessWidget {
   }
 
   void _toggleDisplayUnit(BuildContext context) {
+    LoggerUtils.i('''【EventCard】切换显示单位:
+      事件ID: ${event.id}
+      当前单位: ${event.displayUnit}
+      当前分类: ${context.read<EventBloc>().state.selectedCategory ?? "全部"}
+    ''', 'EventCard');
+    
     context.read<EventBloc>().add(
       UpdateEvent(event.toggleUnit())
     );

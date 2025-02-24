@@ -139,7 +139,7 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   Future<void> _showCategoryPicker() async {
-    LoggerUtils.i('打开分类选择页: 当前category=$_category, icon=$_categoryIconName', 'EditEventPage');
+    // LoggerUtils.i('打开分类选择页: 当前category=$_category, icon=$_categoryIconName', 'EditEventPage');
   
     final result = await Navigator.push<Category>(
       context,
@@ -151,7 +151,7 @@ class _AddEventPageState extends State<AddEventPage> {
       ),
     );
     
-    LoggerUtils.i('分类选择返回: name=${result?.name}, icon=${result?.iconName}', 'EditEventPage');
+    // LoggerUtils.i('分类选择返回: name=${result?.name}, icon=${result?.iconName}', 'EditEventPage');
   
     setState(() {
       LoggerUtils.i('更新状态前: category=$_category, icon=$_categoryIconName', 'EditEventPage');

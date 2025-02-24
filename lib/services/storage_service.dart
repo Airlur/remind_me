@@ -52,12 +52,12 @@ class StorageService {
 
   // 更新事件
   Future<void> updateEvent(Event event) async {
-    LoggerUtils.i('开始更新事件 - Title: ${event.title}, Category: ${event.category}, Background: ${event.backgroundType}, BackgroundColor: ${event.backgroundColorValue}, Icon: ${event.iconName}', 'StorageService');
+    // LoggerUtils.i('开始更新事件 - Title: ${event.title}, Category: ${event.category}, Background: ${event.backgroundType}, BackgroundColor: ${event.backgroundColorValue}, Icon: ${event.iconName}', 'StorageService');
     final events = _eventBox.values.toList();
     final index = events.indexWhere((e) => e.id == event.id);
     if (index != -1) {
       await _eventBox.putAt(index, event);
-      LoggerUtils.i('事件更新成功 - Title: ${event.title}, Category: ${event.category}, Background: ${event.backgroundType}, BackgroundColor: ${event.backgroundColorValue}, Icon: ${event.iconName}', 'StorageService');
+      // LoggerUtils.i('事件更新成功 - Title: ${event.title}, Category: ${event.category}, Background: ${event.backgroundType}, Icon: ${event.iconName}', 'StorageService');
     } else {
       LoggerUtils.e('未找到要更新的事件 - ID: ${event.id}', 'StorageService');
     }

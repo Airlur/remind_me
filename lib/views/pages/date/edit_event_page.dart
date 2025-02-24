@@ -124,7 +124,6 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   void _saveEvent() {
-    LoggerUtils.i('开始保存事件: title=${_titleController.text}, background=$_backgroundType, icon=$_iconName', 'EditEventPage');
     
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -326,13 +325,11 @@ class _EditEventPageState extends State<EditEventPage> {
                         backgroundType: _backgroundType,
                         iconName: _iconName,
                         onBackgroundChanged: (value) {
-                          LoggerUtils.i('编辑页 - 背景色变更: 从 $_backgroundType 变为 $value', 'EditEventPage');
                           setState(() {
                             _backgroundType = value;
                           });
                         },
                         onIconChanged: (value) {
-                          LoggerUtils.i('编辑页 - 图标变更: 从 $_iconName 变为 $value', 'EditEventPage');
                           setState(() {
                             _iconName = value;
                           });

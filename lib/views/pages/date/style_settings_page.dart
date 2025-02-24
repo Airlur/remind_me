@@ -33,6 +33,9 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
   String? _selectedBackground;
   String? _selectedIcon;
   
+  // 添加常量定义
+  static const double _backgroundOptionsHeight = 110.0; // 统一的背景选项高度
+
   @override
   void initState() {
     super.initState();
@@ -64,78 +67,102 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
     Colors.green,
     Colors.lightGreen,
     Colors.lime,
+    // 新添加的预设颜色
+    const Color(0xFFFF0000), // Material Red 500
+    const Color(0xFF4CAF50), // Material Green 500
+    const Color(0xFF00FFFF), // Material Cyan 500
+    const Color(0xFF3F51B5), // Material Indigo 500
+    const Color(0xFF607D8B), // Material Blue Grey 500
+    const Color(0xFFFFC107), // Material Amber 500
+    const Color(0xFFFF9800), // Material Orange 500
+    const Color(0xFFFF5722), // Material Deep Orange 500
+    const Color(0xFF795548), // Material Brown 500
+    const Color(0xFF9C27B0), // Material Purple 500
+    const Color(0xFFFFEB3B), // Material Yellow 500
+    const Color(0xFF00BCD4), // Material Cyan 500
   ];
 
   Widget _buildBackgroundOptions() {
     switch (_tabController.index) {
       case 0:  // 纯色
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 6,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-            childAspectRatio: 1,
-          ),
-          itemCount: _presetColors.length,
-          itemBuilder: (context, index) {
-            final color = _presetColors[index];
-            final isSelected = _selectedBackground == color.value.toRadixString(16);
-            
-            return InkWell(
-              onTap: () {
-                final newBackground = isSelected ? null : color.value.toRadixString(16);
-                LoggerUtils.i('背景色变更: 从 $_selectedBackground 变为 $newBackground', 'StyleSettingsPage');
-                setState(() {
-                  _selectedBackground = newBackground;
-                });
-                widget.onBackgroundChanged(_selectedBackground);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(8),
-                  border: isSelected 
-                    ? Border.all(color: Colors.white, width: 2)
-                    : null,
-                  boxShadow: isSelected 
-                    ? [BoxShadow(
-                        color: color.withOpacity(0.5),
-                        blurRadius: 4,
-                        spreadRadius: 1,
-                      )]
-                    : null,
+        const int crossAxisCount = 6; // 每行6个
+        const double spacing = 8.0;   // 间距
+        
+        return SizedBox(
+          height: _backgroundOptionsHeight,
+          child: GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              mainAxisSpacing: spacing,
+              crossAxisSpacing: spacing,
+              childAspectRatio: 1,
+            ),
+            itemCount: _presetColors.length,
+            itemBuilder: (context, index) {
+              final color = _presetColors[index];
+              final isSelected = _selectedBackground == color.value.toRadixString(16);
+              
+              return InkWell(
+                onTap: () {
+                  final newBackground = isSelected ? null : color.value.toRadixString(16);
+                  LoggerUtils.i('背景色变更: 从 $_selectedBackground 变为 $newBackground', 'StyleSettingsPage');
+                  setState(() {
+                    _selectedBackground = newBackground;
+                  });
+                  widget.onBackgroundChanged(_selectedBackground);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(8),
+                    border: isSelected 
+                      ? Border.all(color: Colors.white, width: 2)
+                      : null,
+                    boxShadow: isSelected 
+                      ? [BoxShadow(
+                          color: color.withOpacity(0.5),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        )]
+                      : null,
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       
       case 1:  // 渐变
-        // TODO: 实现渐变背景选项
-        return const Center(child: Text('渐变背景选项'));
+        return const SizedBox(
+          height: _backgroundOptionsHeight,
+          child: Center(child: Text('渐变背景选项')),
+        );
       
       case 2:  // 图案
-        // TODO: 实现图案背景选项
-        return const Center(child: Text('图案背景选项'));
+        return const SizedBox(
+          height: _backgroundOptionsHeight,
+          child: Center(child: Text('图案背景选项')),
+        );
       
       case 3:  // 自定义
-        return Container(
-          height: 120,
-          margin: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add_photo_alternate, size: 40),
-                SizedBox(height: 8),
-                Text('点击上传图片'),
-              ],
+        return SizedBox(
+          height: _backgroundOptionsHeight,
+          child: Container(
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_photo_alternate, size: 40),
+                  SizedBox(height: 8),
+                  Text('点击上传图片'),
+                ],
+              ),
             ),
           ),
         );
@@ -305,7 +332,6 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
-                    height: 110,  // 减小整体高度
                     child: _buildBackgroundOptions(),
                   ),
                 ],

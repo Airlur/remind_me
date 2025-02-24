@@ -69,15 +69,53 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
     }
   }
 
-  Future<void> _onUpdateEvent(UpdateEvent event, Emitter<EventState> emit) async {
+  void _onUpdateEvent(UpdateEvent event, Emitter<EventState> emit) async {
+    LoggerUtils.i('''【EventBloc】更新事件前状态:
+      事件ID: ${event.event.id}
+      当前分类: ${state.selectedCategory ?? "全部"}
+      排序类型: ${state.sortType}
+      事件数量: ${state.events.length}
+    ''', 'EventBloc');
+    
     try {
+      // 1. 更新数据库
       await _repository.updateEvent(event.event);
-      final events = await _repository.getAllEvents();
-      emit(state.copyWith(
-        status: EventStatus.success,
+      
+      // 2. 只更新当前事件，保持其他状态不变
+      final events = List<Event>.from(state.events);
+      final index = events.indexWhere((e) => e.id == event.event.id);
+      if (index != -1) {
+        events[index] = event.event;
+      }
+      
+      // 3. 发出新状态前记录
+      LoggerUtils.i('''【EventBloc】即将发出新状态:
+        事件ID: ${event.event.id}
+        当前分类: ${state.selectedCategory ?? "全部"}
+        排序类型: ${state.sortType}
+        事件数量: ${events.length}
+      ''', 'EventBloc');
+      
+      // 4. 发出新状态
+      final newState = state.copyWith(
         events: events,
-      ));
+        // 明确保持其他状态不变
+        selectedCategory: state.selectedCategory,
+        sortType: state.sortType,
+        sortOrder: state.sortOrder,
+      );
+      
+      // 5. 发出新状态后记录
+      LoggerUtils.i('''【EventBloc】发出新状态后:
+        事件ID: ${event.event.id}
+        新状态分类: ${newState.selectedCategory ?? "全部"}
+        新状态排序: ${newState.sortType}
+        新状态事件数量: ${newState.events.length}
+      ''', 'EventBloc');
+      
+      emit(newState);
     } catch (e) {
+      LoggerUtils.e('【EventBloc】更新事件错误: $e', 'EventBloc');
       emit(state.copyWith(
         status: EventStatus.failure,
         error: e.toString(),
@@ -144,29 +182,50 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   }
 
   void _onEventReordered(EventReordered event, Emitter<EventState> emit) async {
-    // 先更新UI，保证拖拽动画流畅
-    final currentEvents = state.sortedEvents.toList();
-    final movedEvent = currentEvents[event.oldIndex];
-    currentEvents.removeAt(event.oldIndex);
-    currentEvents.insert(event.newIndex, movedEvent);
+    LoggerUtils.i('''【EventBloc】事件重新排序:
+      当前分类: ${state.selectedCategory ?? "全部"}
+      排序类型: ${state.sortType}
+      移动位置: ${event.oldIndex} -> ${event.newIndex}
+      当前顺序: ${state.sortedEvents.map((e) => "${e.title}(${e.order})").join(", ")}
+    ''', 'EventBloc');
     
-    emit(state.copyWith(
-      events: currentEvents,
-      sortType: SortType.custom,
-    ));
-
-    // 批量收集需要更新的事件
-    final updates = <Event>[];
-    for (int i = 0; i < currentEvents.length; i++) {
-      if (currentEvents[i].order != i) {  // 只更新order变化的事件
-        updates.add(currentEvents[i].copyWith(order: i));
+    final currentEvents = List<Event>.from(state.events); // 使用所有事件的副本
+    final filteredEvents = state.sortedEvents.toList(); // 当前分类的事件
+    final movedEvent = filteredEvents[event.oldIndex];
+    
+    // 在完整列表中找到并更新事件
+    final indexInAll = currentEvents.indexWhere((e) => e.id == movedEvent.id);
+    if (indexInAll != -1) {
+      currentEvents[indexInAll] = movedEvent.copyWith(order: event.newIndex);
+    }
+    
+    // 更新受影响的其他事件
+    for (var i = 0; i < currentEvents.length; i++) {
+      final e = currentEvents[i];
+      if (e.category == state.selectedCategory && e.id != movedEvent.id) {
+        if (e.order! >= event.newIndex && e.order! < event.oldIndex) {
+          currentEvents[i] = e.copyWith(order: e.order! + 1);
+        }
       }
     }
     
-    // 使用批量更新方法
-    if (updates.isNotEmpty) {
-      await _repository.updateEvents(updates);
-    }
+    LoggerUtils.i('''【EventBloc】更新后顺序:
+      更新后: ${currentEvents.where((e) => e.category == state.selectedCategory).map((e) => "${e.title}(${e.order})").join(", ")}
+    ''', 'EventBloc');
+
+    emit(state.copyWith(
+      events: currentEvents,
+      sortType: SortType.custom,
+      selectedCategory: state.selectedCategory,
+    ));
+
+    // 只更新发生变化的事件
+    final updates = currentEvents.where((e) => 
+      e.category == state.selectedCategory && 
+      (e.id == movedEvent.id || (e.order! >= event.newIndex && e.order! < event.oldIndex))
+    ).toList();
+    
+    await _repository.updateEvents(updates);
   }
 
   Future<void> _onRefreshEvents(RefreshEvents event, Emitter<EventState> emit) async {
@@ -197,10 +256,16 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   }
 
   void _onUpdateSortConfig(UpdateSortConfig event, Emitter<EventState> emit) {
+    LoggerUtils.i('''【EventBloc】更新排序配置:
+      当前排序类型: ${state.sortType} -> ${event.sortType ?? state.sortType}
+      当前排序顺序: ${state.sortOrder} -> ${event.sortOrder ?? state.sortOrder}
+      当前分类: ${state.selectedCategory ?? "全部"} -> ${event.selectedCategory ?? "全部"}
+    ''', 'EventBloc');
+
     emit(state.copyWith(
       sortType: event.sortType ?? state.sortType,
       sortOrder: event.sortOrder ?? state.sortOrder,
-      selectedCategory: event.selectedCategory,
+      selectedCategory: event.selectedCategory ?? state.selectedCategory,
     ));
   }
 
