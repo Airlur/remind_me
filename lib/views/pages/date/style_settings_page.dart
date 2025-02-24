@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:remind_me/utils/common/icon_mapping.dart';
 
 class StyleSettingsPage extends StatefulWidget {
   final String title;
@@ -7,8 +8,8 @@ class StyleSettingsPage extends StatefulWidget {
   final int absDays;     // 新增：天数
   final String? backgroundType;
   final String? iconName;
-  final Function(String) onBackgroundChanged;
-  final Function(String) onIconChanged;
+  final Function(String?) onBackgroundChanged;
+  final Function(String?) onIconChanged;
   
   const StyleSettingsPage({
     super.key,
@@ -86,7 +87,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                 setState(() {
                   _selectedBackground = isSelected ? null : color.value.toRadixString(16);
                 });
-                widget.onBackgroundChanged(_selectedBackground ?? '');
+                widget.onBackgroundChanged(_selectedBackground);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -142,21 +143,6 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
   }
 
   Widget _buildIconOptions() {
-    final List<IconData> icons = [
-      Icons.favorite,
-      Icons.star,
-      Icons.cake,
-      Icons.celebration,
-      Icons.emoji_events,
-      Icons.emoji_emotions,
-      Icons.local_activity,
-      Icons.park,
-      Icons.beach_access,
-      Icons.directions_bike,
-      Icons.directions_run,
-      Icons.sports_basketball,
-    ];
-
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -166,17 +152,18 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
         crossAxisSpacing: 8,
         childAspectRatio: 1,
       ),
-      itemCount: icons.length,
+      itemCount: EventIconMapping.icons.length,
       itemBuilder: (context, index) {
-        final icon = icons[index];
-        final isSelected = _selectedIcon == icon.codePoint.toString();
+        final iconName = EventIconMapping.icons.keys.elementAt(index);
+        final icon = EventIconMapping.icons[iconName]!;
+        final isSelected = _selectedIcon == iconName;
         
         return InkWell(
           onTap: () {
             setState(() {
-              _selectedIcon = isSelected ? null : icon.codePoint.toString();
+              _selectedIcon = isSelected ? null : iconName;
             });
-            widget.onIconChanged(_selectedIcon ?? '');
+            widget.onIconChanged(_selectedIcon);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -199,7 +186,6 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
   }
 
   Widget _buildPreviewCard() {
-    // 判断是否有背景色
     final hasBackground = _selectedBackground != null && _selectedBackground!.isNotEmpty;
     
     return Card(
@@ -220,10 +206,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: Icon(
-                    IconData(
-                      int.parse(_selectedIcon!),
-                      fontFamily: 'MaterialIcons',
-                    ),
+                    EventIconMapping.getIcon(_selectedIcon!),
                     size: 20,
                     color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
                   ),

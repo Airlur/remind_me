@@ -9,6 +9,7 @@ import 'package:remind_me/theme/app_colors.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/views/pages/date/edit_event_page.dart';
 import 'package:remind_me/utils/common/route_utils.dart';
+import 'package:remind_me/utils/common/icon_mapping.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -149,10 +150,7 @@ class EventCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: Icon(
-                          IconData(
-                            int.parse(event.iconName!),
-                            fontFamily: 'MaterialIcons',
-                          ),
+                          EventIconMapping.getIcon(event.iconName!),
                           size: iconSize ?? 20,  // 使用传入的图标大小
                           color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
                         ),

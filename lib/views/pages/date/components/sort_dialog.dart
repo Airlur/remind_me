@@ -5,6 +5,7 @@ import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
 import 'package:remind_me/views/pages/date/components/category/category_select_page.dart';
 import 'package:remind_me/models/category.dart';
+import 'package:remind_me/utils/common/icon_mapping.dart';
 
 class SortDialog extends StatelessWidget {
   const SortDialog({super.key});
@@ -13,10 +14,7 @@ class SortDialog extends StatelessWidget {
     try {
       final category = categories.firstWhere((c) => c.name == categoryName);
       if (category.iconName != null) {
-        return IconData(
-          int.parse(category.iconName!), // 确保 category.iconName 是有效的字符串
-          fontFamily: 'MaterialIcons',
-        );
+        return CategoryIconMapping.getIcon(category.iconName!);
       }
     } catch (_) {}
     return Icons.folder_outlined;

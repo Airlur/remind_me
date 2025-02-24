@@ -14,6 +14,7 @@ import 'package:remind_me/views/pages/date/components/custom_page_view.dart';
 import 'package:remind_me/views/pages/date/components/sort_dialog.dart';
 import 'package:remind_me/theme/app_colors.dart';
 import 'package:remind_me/views/pages/date/components/empty_state.dart';
+import 'package:remind_me/utils/common/icon_mapping.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -339,10 +340,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
         );
         // 如果该分类有图标，则使用分类的图标
         if (category.iconName != null) {
-          return IconData(
-            int.parse(category.iconName!), 
-            fontFamily: 'MaterialIcons'
-          );
+          return EventIconMapping.getIcon(category.iconName!);
         }
       } catch (_) {}
       // 如果找不到分类或分类没有图标，使用默认图标

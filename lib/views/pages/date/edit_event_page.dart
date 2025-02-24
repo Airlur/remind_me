@@ -9,6 +9,8 @@ import 'package:remind_me/l10n/l10n.dart';
 import 'style_settings_page.dart';
 import 'components/category/category_select_page.dart';
 import 'package:remind_me/models/category.dart';
+import 'package:remind_me/utils/common/icon_mapping.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class EditEventPage extends StatefulWidget {
   final Event event;
@@ -23,7 +25,8 @@ class _EditEventPageState extends State<EditEventPage> {
   late DateTime _targetDate;
   late bool _isPinned;
   late bool _includeStartDay;
-  late String? _category;
+  String? _category;
+  String? _categoryIconName;
   late String? _backgroundType;
   late String? _iconName;
   
@@ -35,6 +38,13 @@ class _EditEventPageState extends State<EditEventPage> {
     _isPinned = widget.event.isPinned;
     _includeStartDay = widget.event.includeStartDay;
     _category = widget.event.category;
+    final categories = context.read<EventBloc>().state.categories;
+    _categoryIconName = categories
+        .firstWhere(
+          (c) => c.name == widget.event.category,
+          orElse: () => Category(name: '', iconName: null),
+        )
+        .iconName;
     _backgroundType = widget.event.backgroundColorValue?.toRadixString(16);
     _iconName = widget.event.iconName;
   }
@@ -102,12 +112,14 @@ class _EditEventPageState extends State<EditEventPage> {
       MaterialPageRoute(
         builder: (context) => CategorySelectPage(
           selectedCategory: _category,
+          selectedCategoryIcon: _categoryIconName,
         ),
       ),
     );
     
     setState(() {
       _category = result?.name;
+      _categoryIconName = result?.iconName;
     });
   }
 
@@ -182,18 +194,11 @@ class _EditEventPageState extends State<EditEventPage> {
                     title: const Text('分类'),
                     trailing: BlocBuilder<EventBloc, EventState>(
                       builder: (context, state) {
-                        final selectedCategory = state.categories
-                            .firstWhere((c) => c.name == _category, 
-                                        orElse: () => Category(name: ''));
-                        
                         return Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (_category != null) Icon(
-                              IconData(
-                                int.parse(selectedCategory.iconName!),
-                                fontFamily: 'MaterialIcons',
-                              ),
+                           if (_categoryIconName != null) Icon(
+                              CategoryIconMapping.getIcon(_categoryIconName!),
                               size: 20,
                               color: Theme.of(context).colorScheme.primary,
                             ),

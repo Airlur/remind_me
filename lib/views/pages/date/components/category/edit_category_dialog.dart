@@ -4,7 +4,7 @@ import 'package:remind_me/models/category.dart';
 import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
-import 'package:remind_me/theme/app_colors.dart';
+import 'package:remind_me/utils/common/icon_mapping.dart';
 
 class EditCategoryDialog extends StatefulWidget {
   final Category category;
@@ -22,22 +22,6 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   late TextEditingController _controller;
   String? _selectedIcon;
   String? _errorText;
-
-  // 常用图标列表
-  final _icons = [
-    Icons.home_outlined,
-    Icons.work_outline,
-    Icons.school_outlined,
-    Icons.favorite_outline,
-    Icons.shopping_cart_outlined,
-    Icons.sports_esports_outlined,
-    Icons.restaurant_outlined,
-    Icons.local_hospital_outlined,
-    Icons.flight_outlined,
-    Icons.fitness_center_outlined,
-    Icons.pets_outlined,
-    Icons.family_restroom_outlined,
-  ];
 
   @override
   void initState() {
@@ -78,9 +62,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         ),
         child: Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.vertical(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(
               top: Radius.circular(16),
             ),
           ),
@@ -116,14 +100,15 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                     mainAxisSpacing: 8,
                     crossAxisSpacing: 8,
                   ),
-                  itemCount: _icons.length,
+                  itemCount: CategoryIconMapping.icons.values.length,
                   itemBuilder: (context, index) {
-                    final iconData = _icons[index];
-                    final isSelected = _selectedIcon == iconData.codePoint.toString();
+                    final iconData = CategoryIconMapping.icons.values.elementAt(index);
+                    final iconName = CategoryIconMapping.getIconName(iconData);
+                    final isSelected = _selectedIcon == iconName;
                     
                     return InkWell(
                       onTap: () => setState(() {
-                        _selectedIcon = isSelected ? null : iconData.codePoint.toString();
+                        _selectedIcon = isSelected ? null : iconName;
                       }),
                       child: Container(
                         decoration: BoxDecoration(

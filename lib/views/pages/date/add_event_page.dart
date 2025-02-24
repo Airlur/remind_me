@@ -9,6 +9,8 @@ import 'package:remind_me/l10n/l10n.dart';
 import 'style_settings_page.dart';
 import 'components/category/category_select_page.dart';
 import 'package:remind_me/models/category.dart';
+import 'package:remind_me/utils/common/icon_mapping.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class AddEventPage extends StatefulWidget {
   const AddEventPage({super.key});
@@ -21,6 +23,7 @@ class _AddEventPageState extends State<AddEventPage> {
   final _titleController = TextEditingController();
   DateTime _targetDate = DateTime.now();
   String? _category;
+  String? _categoryIconName;
   bool _isPinned = false;
   bool _includeStartDay = false;
   String? _backgroundType;
@@ -115,17 +118,25 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   Future<void> _showCategoryPicker() async {
+    LoggerUtils.i('打开分类选择页: 当前category=$_category, icon=$_categoryIconName', 'EditEventPage');
+  
     final result = await Navigator.push<Category>(
       context,
       MaterialPageRoute(
         builder: (context) => CategorySelectPage(
           selectedCategory: _category,
+          selectedCategoryIcon: _categoryIconName,
         ),
       ),
     );
     
+    LoggerUtils.i('分类选择返回: name=${result?.name}, icon=${result?.iconName}', 'EditEventPage');
+  
     setState(() {
+      LoggerUtils.i('更新状态前: category=$_category, icon=$_categoryIconName', 'EditEventPage');
       _category = result?.name;
+      _categoryIconName = result?.iconName;
+      LoggerUtils.i('更新状态后: category=$_category, icon=$_categoryIconName', 'EditEventPage');
     });
   }
 
@@ -179,11 +190,8 @@ class _AddEventPageState extends State<AddEventPage> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (_category != null) Icon(
-                          IconData(
-                            int.parse(_iconName!), // 确保 _iconName 是有效的字符串
-                            fontFamily: 'MaterialIcons',
-                          ),
+                        if (_categoryIconName != null) Icon(
+                          CategoryIconMapping.getIcon(_categoryIconName!),
                           size: 20,
                           color: Theme.of(context).colorScheme.primary,
                         ),
