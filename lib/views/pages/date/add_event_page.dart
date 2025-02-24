@@ -79,6 +79,20 @@ class _AddEventPageState extends State<AddEventPage> {
       return;
     }
 
+    // 根据实际设置的值决定背景类型
+    BackgroundType? determinedBackgroundType;
+    if (_backgroundType != null) {
+      determinedBackgroundType = BackgroundType.color;
+    }
+    // 新增页面暂时只支持纯色背景，其他类型的背景后续添加时再补充判断
+    // } else if (gradientColorValues != null) {
+    //   determinedBackgroundType = BackgroundType.gradient;
+    // } else if (localImagePath != null) {
+    //   determinedBackgroundType = BackgroundType.image;
+    // } else if (animationType != null) {
+    //   determinedBackgroundType = BackgroundType.animation;
+    // }
+
     final event = Event(
       id: const Uuid().v4(),
       title: _titleController.text,
@@ -87,8 +101,15 @@ class _AddEventPageState extends State<AddEventPage> {
       isPinned: _isPinned,
       includeStartDay: _includeStartDay,
       category: _category,
-      backgroundType: BackgroundType.color,
-      backgroundColorValue: _backgroundType != null ? int.parse(_backgroundType!, radix: 16) : null,
+      // 如果所有背景相关值都是 null，则使用默认的 color 类型
+      backgroundType: determinedBackgroundType ?? BackgroundType.color,
+      // 各种背景值，只保留当前选中类型的值
+      backgroundColorValue: determinedBackgroundType == BackgroundType.color ? 
+          (_backgroundType == null ? null : int.parse(_backgroundType!, radix: 16)) : null,
+      // 新增页面暂时只支持纯色背景，其他类型为 null
+      gradientColorValues: null,
+      localImagePath: null,
+      animationType: null,
       iconName: _iconName,
     );
 

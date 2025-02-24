@@ -280,7 +280,7 @@ class Event extends Equatable {
       localImagePath: localImagePath ?? this.localImagePath,
       animationType: animationType ?? this.animationType,
       isLunar: isLunar ?? this.isLunar,
-      category: category,
+      category: category ?? this.category,
       order: order ?? this.order,
       fontFamily: fontFamily ?? this.fontFamily,
       iconName: iconName ?? this.iconName,

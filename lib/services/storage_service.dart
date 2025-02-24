@@ -46,18 +46,18 @@ class StorageService {
 
   // 保存事件
   Future<void> saveEvent(Event event) async {
-    LoggerUtils.i('新建事件 - Title: ${event.title}, Order: ${event.order}', 'StorageService');
+    LoggerUtils.i('新建事件 - Title: ${event.title}, Order: ${event.order}, BackgroundType: ${event.backgroundType}, BackgroundColor: ${event.backgroundColorValue}, Icon: ${event.iconName}', 'StorageService');
     await _eventBox.put(event.id, event);
   }
 
   // 更新事件
   Future<void> updateEvent(Event event) async {
-    LoggerUtils.i('开始更新事件 - Title: ${event.title}, Category: ${event.category}', 'StorageService');
+    LoggerUtils.i('开始更新事件 - Title: ${event.title}, Category: ${event.category}, Background: ${event.backgroundType}, BackgroundColor: ${event.backgroundColorValue}, Icon: ${event.iconName}', 'StorageService');
     final events = _eventBox.values.toList();
     final index = events.indexWhere((e) => e.id == event.id);
     if (index != -1) {
       await _eventBox.putAt(index, event);
-      LoggerUtils.i('事件更新成功 - Title: ${event.title}, Category: ${event.category}', 'StorageService');
+      LoggerUtils.i('事件更新成功 - Title: ${event.title}, Category: ${event.category}, Background: ${event.backgroundType}, BackgroundColor: ${event.backgroundColorValue}, Icon: ${event.iconName}', 'StorageService');
     } else {
       LoggerUtils.e('未找到要更新的事件 - ID: ${event.id}', 'StorageService');
     }

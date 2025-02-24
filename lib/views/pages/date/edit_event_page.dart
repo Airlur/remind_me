@@ -124,6 +124,8 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   void _saveEvent() {
+    LoggerUtils.i('开始保存事件: title=${_titleController.text}, background=$_backgroundType, icon=$_iconName', 'EditEventPage');
+    
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('请输入标题')),
@@ -131,17 +133,47 @@ class _EditEventPageState extends State<EditEventPage> {
       return;
     }
 
-    final event = widget.event.copyWith(
+    // 根据实际设置的值决定背景类型
+    BackgroundType? determinedBackgroundType;
+    if (_backgroundType != null) {
+      determinedBackgroundType = BackgroundType.color;
+    } else if (widget.event.gradientColorValues != null) {
+      determinedBackgroundType = BackgroundType.gradient;
+    } else if (widget.event.localImagePath != null) {
+      determinedBackgroundType = BackgroundType.image;
+    } else if (widget.event.animationType != null) {
+      determinedBackgroundType = BackgroundType.animation;
+    }
+
+    final event = Event(
+      id: widget.event.id,
       title: _titleController.text,
       targetDate: _targetDate,
+      createdAt: widget.event.createdAt,
+      displayUnit: widget.event.displayUnit,
       isPinned: _isPinned,
-      includeStartDay: _includeStartDay,
+      pinnedAt: widget.event.pinnedAt,
+      // 如果所有背景相关值都是 null，则使用默认的 color 类型
+      backgroundType: determinedBackgroundType ?? BackgroundType.color,
+      // 各种背景值，只保留当前选中类型的值
+      backgroundColorValue: determinedBackgroundType == BackgroundType.color ? 
+          (_backgroundType == null ? null : int.parse(_backgroundType!, radix: 16)) : null,
+      gradientColorValues: determinedBackgroundType == BackgroundType.gradient ? 
+          widget.event.gradientColorValues : null,
+      localImagePath: determinedBackgroundType == BackgroundType.image ? 
+          widget.event.localImagePath : null,
+      animationType: determinedBackgroundType == BackgroundType.animation ? 
+          widget.event.animationType : null,
+      isLunar: widget.event.isLunar,
       category: _category,
-      backgroundType: BackgroundType.color,
-      backgroundColor: _backgroundType != null ? Color(int.parse(_backgroundType!, radix: 16)) : null,
+      order: widget.event.order,
+      fontFamily: widget.event.fontFamily,
       iconName: _iconName,
+      reminderTime: widget.event.reminderTime,
+      includeStartDay: _includeStartDay,
     );
 
+    LoggerUtils.i('事件更新对象: background=${event.backgroundColorValue}, icon=${event.iconName}', 'EditEventPage');
     context.read<EventBloc>().add(UpdateEvent(event));
     Navigator.of(context).pop();
   }
@@ -294,11 +326,13 @@ class _EditEventPageState extends State<EditEventPage> {
                         backgroundType: _backgroundType,
                         iconName: _iconName,
                         onBackgroundChanged: (value) {
+                          LoggerUtils.i('编辑页 - 背景色变更: 从 $_backgroundType 变为 $value', 'EditEventPage');
                           setState(() {
                             _backgroundType = value;
                           });
                         },
                         onIconChanged: (value) {
+                          LoggerUtils.i('编辑页 - 图标变更: 从 $_iconName 变为 $value', 'EditEventPage');
                           setState(() {
                             _iconName = value;
                           });

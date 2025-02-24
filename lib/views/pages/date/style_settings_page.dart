@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class StyleSettingsPage extends StatefulWidget {
   final String title;
@@ -84,8 +85,10 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
             
             return InkWell(
               onTap: () {
+                final newBackground = isSelected ? null : color.value.toRadixString(16);
+                LoggerUtils.i('背景色变更: 从 $_selectedBackground 变为 $newBackground', 'StyleSettingsPage');
                 setState(() {
-                  _selectedBackground = isSelected ? null : color.value.toRadixString(16);
+                  _selectedBackground = newBackground;
                 });
                 widget.onBackgroundChanged(_selectedBackground);
               },
@@ -160,8 +163,10 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
         
         return InkWell(
           onTap: () {
+            final newIcon = isSelected ? null : iconName;
+            LoggerUtils.i('图标变更: 从 $_selectedIcon 变为 $newIcon', 'StyleSettingsPage');
             setState(() {
-              _selectedIcon = isSelected ? null : iconName;
+              _selectedIcon = newIcon;
             });
             widget.onIconChanged(_selectedIcon);
           },
