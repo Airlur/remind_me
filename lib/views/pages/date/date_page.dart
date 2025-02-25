@@ -16,6 +16,7 @@ import 'package:remind_me/theme/app_colors.dart';
 import 'package:remind_me/views/pages/date/components/empty_state.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'dart:io';
+import 'package:remind_me/utils/common/lunar_utils.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -453,11 +454,25 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
 
   // 构建置顶卡片
   Widget _buildPinnedCard(Event event) {
+    final theme = Theme.of(context);
+    final defaultColor = theme.colorScheme.surface; // 使用主题的主色调作为默认背景色
+    
+    // 确定背景颜色
+    Color backgroundColor;
+    if (event.backgroundType == BackgroundType.color && event.backgroundColor != null) {
+      backgroundColor = event.backgroundColor!;
+    } else {
+      backgroundColor = defaultColor;
+    }
+    
+    // 根据背景颜色亮度决定文字颜色
+    final textColor = backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+    
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
       child: Container(
-        decoration: _buildCardBackground(event),
+        decoration: _buildCardBackground(event, defaultColor),
         child: InkWell(
           onTap: () => context.read<EventBloc>().add(
             UpdateEvent(event.toggleUnit())
@@ -473,7 +488,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                     child: Icon(
                       EventIconMapping.getIcon(event.iconName!),
                       size: 28,
-                      color: Colors.white,
+                      color: textColor, // 使用动态文字颜色
                     ),
                   ),
                 Expanded(
@@ -483,18 +498,18 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                     children: [
                       Text(
                         event.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: textColor, // 使用动态文字颜色
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${event.targetDate.year}-${event.targetDate.month.toString().padLeft(2, '0')}-${event.targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(event.targetDate)}',
-                        style: const TextStyle(
+                        '${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
+                        style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white,
+                          color: textColor, // 使用动态文字颜色
                         ),
                       ),
                     ],
@@ -505,25 +520,25 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                   alignment: Alignment.centerLeft,
                   child: Text(
                     event.displayPrefix,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
-                      color: Colors.white,
+                      color: textColor, // 使用动态文字颜色
                     ),
                   ),
                 ),
                 Text(
                   event.getFormattedNumber(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: textColor, // 使用动态文字颜色
                   ),
                 ),
                 Text(
                   _getDaysText(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white,
+                    color: textColor, // 使用动态文字颜色
                   ),
                 ),
               ],
@@ -534,10 +549,8 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     );
   }
 
-  // 构建卡片背景
-  BoxDecoration _buildCardBackground(Event event) {
-    final defaultColor = Theme.of(context).colorScheme.surface;
-
+  // 构建卡片背景 - 修改为接收默认颜色参数
+  BoxDecoration _buildCardBackground(Event event, Color defaultColor) {
     switch (event.backgroundType) {
       case BackgroundType.color:
         return BoxDecoration(
@@ -559,6 +572,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                   fit: BoxFit.cover,
                 )
               : null,
+          color: defaultColor, // 添加默认背景色，以防图片加载失败
           borderRadius: BorderRadius.circular(8),
         );
       case BackgroundType.animation:
@@ -567,11 +581,6 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
           borderRadius: BorderRadius.circular(8),
         );
     }
-  }
-
-  String _getWeekDay(DateTime date) {
-    final weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    return weekDays[date.weekday % 7];
   }
 
   String _getDaysText() {

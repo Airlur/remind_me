@@ -11,6 +11,7 @@ import 'package:remind_me/views/pages/date/edit_event_page.dart';
 import 'package:remind_me/utils/common/route_utils.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+import 'package:remind_me/utils/common/lunar_utils.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -171,7 +172,7 @@ class EventCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '${event.targetDate.year}-${event.targetDate.month.toString().padLeft(2, '0')}-${event.targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(event.targetDate)}',
+                            '${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
                             style: dateWeekStyle ?? TextStyle(
                               fontSize: 12,
                               color: event.backgroundColor != null 
@@ -288,10 +289,5 @@ class EventCard extends StatelessWidget {
 
   void _deleteEvent(BuildContext context) {
     context.read<EventBloc>().add(InitiateEventDelete(event));
-  }
-
-  String _getWeekDay(DateTime date) {
-    final weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    return weekDays[date.weekday % 7];
   }
 }

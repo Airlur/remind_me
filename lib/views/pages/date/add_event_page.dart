@@ -11,6 +11,7 @@ import 'components/category/category_select_page.dart';
 import 'package:remind_me/models/category.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+import 'package:remind_me/utils/common/lunar_utils.dart';
 
 class AddEventPage extends StatefulWidget {
   const AddEventPage({super.key});
@@ -22,6 +23,7 @@ class AddEventPage extends StatefulWidget {
 class _AddEventPageState extends State<AddEventPage> {
   final _titleController = TextEditingController();
   DateTime _targetDate = DateTime.now();
+  bool _isLunar = false;
   String? _category;
   String? _categoryIconName;
   bool _isPinned = false;
@@ -100,6 +102,7 @@ class _AddEventPageState extends State<AddEventPage> {
       createdAt: DateTime.now(),
       isPinned: _isPinned,
       includeStartDay: _includeStartDay,
+      isLunar: _isLunar,
       category: _category,
       // 如果所有背景相关值都是 null，则使用默认的 color 类型
       backgroundType: determinedBackgroundType ?? BackgroundType.color,
@@ -128,9 +131,15 @@ class _AddEventPageState extends State<AddEventPage> {
       builder: (BuildContext context) {
         return DatePickerWidget(
           initialDate: _targetDate,
+          initialIsLunar: _isLunar,
           onDateChanged: (date) {
             setState(() {
               _targetDate = date;
+            });
+          },
+          onLunarChanged: (isLunar) {
+            setState(() {
+              _isLunar = isLunar;
             });
           },
         );
@@ -200,8 +209,8 @@ class _AddEventPageState extends State<AddEventPage> {
                     leading: const Icon(Icons.edit_calendar_rounded),
                     title: Text(context.l10n.targetDate),
                     trailing: Text(
-                      _targetDate.toString().split(' ')[0],
-                      style: const TextStyle(fontSize: 16,color: Colors.blue),
+                      LunarUtils.formatDate(_targetDate, _isLunar),
+                      style: const TextStyle(fontSize: 16, color: Colors.blue),
                     ),
                     onTap: _showDatePicker,
                   ),

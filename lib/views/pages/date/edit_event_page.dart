@@ -11,6 +11,7 @@ import 'components/category/category_select_page.dart';
 import 'package:remind_me/models/category.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+import 'package:remind_me/utils/common/lunar_utils.dart';
 
 class EditEventPage extends StatefulWidget {
   final Event event;
@@ -25,6 +26,7 @@ class _EditEventPageState extends State<EditEventPage> {
   late DateTime _targetDate;
   late bool _isPinned;
   late bool _includeStartDay;
+  late bool _isLunar;
   String? _category;
   String? _categoryIconName;
   late String? _backgroundType;
@@ -37,6 +39,7 @@ class _EditEventPageState extends State<EditEventPage> {
     _targetDate = widget.event.targetDate;
     _isPinned = widget.event.isPinned;
     _includeStartDay = widget.event.includeStartDay;
+    _isLunar = widget.event.isLunar;
     _category = widget.event.category;
     final categories = context.read<EventBloc>().state.categories;
     _categoryIconName = categories
@@ -96,9 +99,15 @@ class _EditEventPageState extends State<EditEventPage> {
       builder: (BuildContext context) {
         return DatePickerWidget(
           initialDate: _targetDate,
+          initialIsLunar: _isLunar,
           onDateChanged: (date) {
             setState(() {
               _targetDate = date;
+            });
+          },
+          onLunarChanged: (isLunar) {
+            setState(() {
+              _isLunar = isLunar;
             });
           },
         );
@@ -163,7 +172,7 @@ class _EditEventPageState extends State<EditEventPage> {
           widget.event.localImagePath : null,
       animationType: determinedBackgroundType == BackgroundType.animation ? 
           widget.event.animationType : null,
-      isLunar: widget.event.isLunar,
+      isLunar: _isLunar,
       category: _category,
       order: widget.event.order,
       fontFamily: widget.event.fontFamily,
@@ -215,7 +224,7 @@ class _EditEventPageState extends State<EditEventPage> {
                     leading: const Icon(Icons.edit_calendar_rounded),
                     title: Text(context.l10n.targetDate),
                     trailing: Text(
-                      _targetDate.toString().split(' ')[0],
+                      LunarUtils.formatDate(_targetDate, _isLunar),
                       style: const TextStyle(fontSize: 16, color: Colors.blue),
                     ),
                     onTap: _showDatePicker,
@@ -319,7 +328,7 @@ class _EditEventPageState extends State<EditEventPage> {
                     MaterialPageRoute(
                       builder: (context) => StyleSettingsPage(
                         title: _titleController.text,
-                        dateText: '${_targetDate.year}-${_targetDate.month.toString().padLeft(2, '0')}-${_targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(_targetDate)}',
+                        dateText: '${LunarUtils.formatDate(_targetDate, _isLunar)} ${LunarUtils.getWeekDay(_targetDate)}',
                         prefix: _prefix,
                         absDays: _absDays,
                         backgroundType: _backgroundType,

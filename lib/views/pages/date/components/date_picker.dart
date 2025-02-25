@@ -7,11 +7,15 @@ import 'package:remind_me/utils/common/logger_utils.dart';
 class DatePickerWidget extends StatefulWidget {
   final DateTime initialDate;
   final ValueChanged<DateTime> onDateChanged;
+  final bool initialIsLunar;
+  final ValueChanged<bool>? onLunarChanged;
 
   const DatePickerWidget({
     super.key,
     required this.initialDate,
     required this.onDateChanged,
+    this.initialIsLunar = false,
+    this.onLunarChanged,
   });
 
   @override
@@ -22,7 +26,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   late int selectedYear;
   late int selectedMonth;
   late int selectedDay;
-  bool isLunar = false;
+  late bool isLunar;
   bool isLeapMonth = false;
 
   // 获取当前选择的日期（公历）
@@ -55,13 +59,17 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   // 确认按钮处理
   void _handleConfirm() {
     final date = selectedDate;
-    widget.onDateChanged(date);  // 暂时保持单参数
+    widget.onDateChanged(date);
+    if (widget.onLunarChanged != null) {
+      widget.onLunarChanged!(isLunar);
+    }
     Navigator.pop(context);
   }
 
   @override
   void initState() {
     super.initState();
+    isLunar = widget.initialIsLunar;
     _initializeDate();
   }
 

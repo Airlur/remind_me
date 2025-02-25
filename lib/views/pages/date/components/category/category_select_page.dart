@@ -33,7 +33,7 @@ class _CategorySelectPageState extends State<CategorySelectPage> {
     super.initState();
     _selectedCategory = widget.selectedCategory;
     _selectedCategoryIcon = widget.selectedCategoryIcon;
-    LoggerUtils.i('初始化分类选择: name=${_selectedCategory}, icon=${_selectedCategoryIcon}', 'CategorySelectPage');
+    LoggerUtils.i('初始化分类选择: name=$_selectedCategory, icon=$_selectedCategoryIcon', 'CategorySelectPage');
   }
 
   @override
