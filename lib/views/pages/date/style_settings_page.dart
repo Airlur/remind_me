@@ -9,8 +9,10 @@ class StyleSettingsPage extends StatefulWidget {
   final int absDays;     // 新增：天数
   final String? backgroundType;
   final String? iconName;
+  final String? fontFamily;
   final Function(String?) onBackgroundChanged;
   final Function(String?) onIconChanged;
+  final Function(String?)? onFontFamilyChanged;
   
   const StyleSettingsPage({
     super.key,
@@ -20,8 +22,10 @@ class StyleSettingsPage extends StatefulWidget {
     required this.absDays,   // 新增
     this.backgroundType,
     this.iconName,
+    this.fontFamily,
     required this.onBackgroundChanged,
     required this.onIconChanged,
+    this.onFontFamilyChanged,
   });
 
   @override
@@ -32,27 +36,17 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
   late TabController _tabController;
   String? _selectedBackground;
   String? _selectedIcon;
+  String? _selectedFontFamily;
   
-  // 添加常量定义
-  static const double _backgroundOptionsHeight = 110.0; // 统一的背景选项高度
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-    _selectedBackground = widget.backgroundType;
-    _selectedIcon = widget.iconName;
-    _tabController.addListener(() {
-      setState(() {});  // 更新背景选项显示
-    });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
+  // 定义背景选项区域的固定高度
+  static const double _backgroundOptionsHeight = 120.0; // 适合显示2行色块
+  
+  // 定义字体选项区域的固定高度
+  static const double _fontOptionsHeight = 50.0; // 减小高度
+  
+  // 定义图标选项区域的固定高度
+  static const double _iconOptionsHeight = 150.0; // 适合显示3行图标
+  
   // 预设的背景色列表
   final List<Color> _presetColors = [
     Colors.red,
@@ -81,6 +75,35 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
     const Color(0xFFFFEB3B), // Material Yellow 500
     const Color(0xFF00BCD4), // Material Cyan 500
   ];
+  
+  // 预设字体列表
+  final List<Map<String, dynamic>> _fontOptions = [
+    {'name': '默认', 'fontFamily': null},
+    {'name': '思源黑体', 'fontFamily': 'SourceHanSans'},
+    {'name': '思源宋体', 'fontFamily': 'SourceHanSerif'},
+    {'name': '站酷高端黑', 'fontFamily': 'ZCOOLKuaiLe'},
+    {'name': '站酷快乐体', 'fontFamily': 'ZCOOLQingKeHuangYou'},
+    {'name': '霞鹜文楷', 'fontFamily': 'LXGWWenKai'},
+    {'name': '阿里巴巴普惠体', 'fontFamily': 'AlibabaPuHuiTi'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _selectedBackground = widget.backgroundType;
+    _selectedIcon = widget.iconName;
+    _selectedFontFamily = widget.fontFamily;
+    _tabController.addListener(() {
+      setState(() {});  // 更新背景选项显示
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   Widget _buildBackgroundOptions() {
     switch (_tabController.index) {
@@ -88,10 +111,12 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
         const int crossAxisCount = 6; // 每行6个
         const double spacing = 8.0;   // 间距
         
+        // 使用固定高度的Container包裹GridView，并允许GridView滚动
         return SizedBox(
           height: _backgroundOptionsHeight,
           child: GridView.builder(
-            shrinkWrap: true,
+            // 不使用shrinkWrap，允许内容超出并滚动
+            physics: const BouncingScrollPhysics(), // 允许滚动
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
               mainAxisSpacing: spacing,
@@ -134,18 +159,25 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
         );
       
       case 1:  // 渐变
+        // 使用相同高度的容器
         return const SizedBox(
           height: _backgroundOptionsHeight,
-          child: Center(child: Text('渐变背景选项')),
+          child: Center(
+            child: Text('渐变背景选项'),
+          ),
         );
       
       case 2:  // 图案
+        // 使用相同高度的容器
         return const SizedBox(
           height: _backgroundOptionsHeight,
-          child: Center(child: Text('图案背景选项')),
+          child: Center(
+            child: Text('图案背景选项'),
+          ),
         );
       
       case 3:  // 自定义
+        // 使用相同高度的容器
         return SizedBox(
           height: _backgroundOptionsHeight,
           child: Container(
@@ -168,52 +200,104 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
         );
       
       default:
-        return const SizedBox();
+        return const SizedBox(height: _backgroundOptionsHeight);
     }
   }
 
-  Widget _buildIconOptions() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 6,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        childAspectRatio: 1,
-      ),
-      itemCount: EventIconMapping.icons.length,
-      itemBuilder: (context, index) {
-        final iconName = EventIconMapping.icons.keys.elementAt(index);
-        final icon = EventIconMapping.icons[iconName]!;
-        final isSelected = _selectedIcon == iconName;
-        
-        return InkWell(
-          onTap: () {
-            final newIcon = isSelected ? null : iconName;
-            LoggerUtils.i('图标变更: 从 $_selectedIcon 变为 $newIcon', 'StyleSettingsPage');
-            setState(() {
-              _selectedIcon = newIcon;
-            });
-            widget.onIconChanged(_selectedIcon);
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-                width: isSelected ? 2 : 1,
+  Widget _buildFontOptions() {
+    return SizedBox(
+      height: _fontOptionsHeight,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: _fontOptions.length,
+        itemBuilder: (context, index) {
+          final font = _fontOptions[index];
+          final isSelected = _selectedFontFamily == font['fontFamily'];
+          
+          return InkWell( // 添加 InkWell 包裹
+            onTap: () {
+              final newFont = isSelected ? null : font['fontFamily'];
+              LoggerUtils.i('字体变更: 从 $_selectedFontFamily 变为 $newFont', 'StyleSettingsPage');
+              setState(() {
+                _selectedFontFamily = newFont;
+              });
+              // 检查 widget 是否有 onFontFamilyChanged 回调
+              if (widget.onFontFamilyChanged != null) {
+                widget.onFontFamilyChanged!(_selectedFontFamily);
+              }
+            },
+            child: Container(
+              width: 80, // 减小宽度
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                  width: isSelected ? 2 : 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
+                color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
               ),
-              borderRadius: BorderRadius.circular(8),
-              color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+              child: Center(
+                child: Text(
+                  font['name'],
+                  style: TextStyle(
+                    fontSize: 12, // 减小字体大小
+                    color: isSelected ? Theme.of(context).primaryColor : null,
+                  ),
+                ),
+              ),
             ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: isSelected ? Theme.of(context).primaryColor : null,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildIconOptions() {
+    return SizedBox(
+      height: _iconOptionsHeight, // 使用固定高度
+      child: GridView.builder(
+        physics: const BouncingScrollPhysics(), // 允许滚动
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 6,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 1,
+        ),
+        itemCount: EventIconMapping.icons.length,
+        itemBuilder: (context, index) {
+          final iconName = EventIconMapping.icons.keys.elementAt(index);
+          final icon = EventIconMapping.icons[iconName]!;
+          final isSelected = _selectedIcon == iconName;
+          
+          return InkWell(
+            onTap: () {
+              final newIcon = isSelected ? null : iconName;
+              LoggerUtils.i('图标变更: 从 $_selectedIcon 变为 $newIcon', 'StyleSettingsPage');
+              setState(() {
+                _selectedIcon = newIcon;
+              });
+              widget.onIconChanged(_selectedIcon);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                  width: isSelected ? 2 : 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
+                color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+              ),
+              child: Icon(
+                icon,
+                size: 20,
+                color: isSelected ? Theme.of(context).primaryColor : null,
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -253,6 +337,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        // 不实际应用字体，只是为了演示
                         color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
@@ -261,6 +346,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                       widget.dateText,
                       style: TextStyle(
                         fontSize: 12,
+                        // 不实际应用字体，只是为了演示
                         color: hasBackground
                           ? Colors.white
                           : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -273,6 +359,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                 widget.prefix,
                 style: TextStyle(
                   fontSize: 16,
+                  // 不实际应用字体，只是为了演示
                   color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
@@ -282,6 +369,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  // 不实际应用字体，只是为了演示
                   color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
@@ -290,6 +378,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  // 不实际应用字体，只是为了演示
                   color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
@@ -349,27 +438,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                 children: [
                   const Text('字体', style: TextStyle(fontSize: 14)),
                   const SizedBox(height: 8),
-                  SizedBox(
-                    height: 45,  // 减小高度
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          width: 90,  // 减小宽度
-                          margin: const EdgeInsets.only(right: 8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: Text('字体 ${index + 1}', 
-                              style: const TextStyle(fontSize: 13)),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  _buildFontOptions(),
                 ],
               ),
             ),
@@ -385,7 +454,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                 children: [
                   const Text('图标', style: TextStyle(fontSize: 14)),
                   const SizedBox(height: 8),
-                  _buildIconOptions(),
+                  _buildIconOptions(), // 使用修改后的图标选项
                 ],
               ),
             ),
