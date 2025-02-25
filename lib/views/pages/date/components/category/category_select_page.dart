@@ -125,7 +125,9 @@ class _CategorySelectPageState extends State<CategorySelectPage> {
                         ),
                         child: ListTile(
                           leading: Icon(
-                            CategoryIconMapping.getIcon(category.iconName!),
+                            category.iconName != null 
+                                ? CategoryIconMapping.getIcon(category.iconName!)
+                                : Icons.folder_outlined,
                           ),
                           title: Text(
                             category.name,
