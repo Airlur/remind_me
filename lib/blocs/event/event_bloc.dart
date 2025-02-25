@@ -70,12 +70,13 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   }
 
   void _onUpdateEvent(UpdateEvent event, Emitter<EventState> emit) async {
-    LoggerUtils.i('''【EventBloc】更新事件前状态:
-      事件ID: ${event.event.id}
-      当前分类: ${state.selectedCategory ?? "全部"}
-      排序类型: ${state.sortType}
-      事件数量: ${state.events.length}
-    ''', 'EventBloc');
+    // LoggerUtils.i('''【EventBloc】更新事件前状态:
+    //   事件ID: ${event.event.id}
+    //   当前分类: ${state.selectedCategory ?? "全部"}
+    //   排序类型: ${state.sortType}
+    //   事件数量: ${state.events.length}
+    //   待删除事件: ${state.pendingDeleteEvent?.id}
+    // ''', 'EventBloc');
     
     try {
       // 1. 更新数据库
@@ -89,29 +90,32 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       }
       
       // 3. 发出新状态前记录
-      LoggerUtils.i('''【EventBloc】即将发出新状态:
-        事件ID: ${event.event.id}
-        当前分类: ${state.selectedCategory ?? "全部"}
-        排序类型: ${state.sortType}
-        事件数量: ${events.length}
-      ''', 'EventBloc');
+      // LoggerUtils.i('''【EventBloc】即将发出新状态:
+      //   事件ID: ${event.event.id}
+      //   当前分类: ${state.selectedCategory ?? "全部"}
+      //   排序类型: ${state.sortType}
+      //   事件数量: ${events.length}
+      //   待删除事件: ${state.pendingDeleteEvent?.id}
+      // ''', 'EventBloc');
       
-      // 4. 发出新状态
+      // 4. 发出新状态，保留pendingDeleteEvent
       final newState = state.copyWith(
         events: events,
         // 明确保持其他状态不变
         selectedCategory: state.selectedCategory,
         sortType: state.sortType,
         sortOrder: state.sortOrder,
+        pendingDeleteEvent: state.pendingDeleteEvent, // 明确保留待删除事件
       );
       
       // 5. 发出新状态后记录
-      LoggerUtils.i('''【EventBloc】发出新状态后:
-        事件ID: ${event.event.id}
-        新状态分类: ${newState.selectedCategory ?? "全部"}
-        新状态排序: ${newState.sortType}
-        新状态事件数量: ${newState.events.length}
-      ''', 'EventBloc');
+      // LoggerUtils.i('''【EventBloc】发出新状态后:
+      //   事件ID: ${event.event.id}
+      //   新状态分类: ${newState.selectedCategory ?? "全部"}
+      //   新状态排序: ${newState.sortType}
+      //   新状态事件数量: ${newState.events.length}
+      //   新状态待删除事件: ${newState.pendingDeleteEvent?.id}
+      // ''', 'EventBloc');
       
       emit(newState);
     } catch (e) {
@@ -126,11 +130,11 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   Future<void> _onDeleteEvent(DeleteEvent event, Emitter<EventState> emit) async {
     try {
       await _repository.deleteEvent(event.eventId);
-      final events = await _repository.getAllEvents();
-      emit(state.copyWith(
-        status: EventStatus.success,
-        events: events,
-      ));
+      // 如果是当前待删除的事件，清除待删除状态
+      if (state.pendingDeleteEvent?.id == event.eventId) {
+        emit(state.copyWith(pendingDeleteEvent: null));
+      }
+      // 注意：不需要重新加载事件列表，因为我们已经在UI上移除了该事件
     } catch (e) {
       emit(state.copyWith(
         status: EventStatus.failure,
@@ -182,12 +186,12 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   }
 
   void _onEventReordered(EventReordered event, Emitter<EventState> emit) async {
-    LoggerUtils.i('''【EventBloc】事件重新排序:
-      当前分类: ${state.selectedCategory ?? "全部"}
-      排序类型: ${state.sortType}
-      移动位置: ${event.oldIndex} -> ${event.newIndex}
-      当前顺序: ${state.sortedEvents.map((e) => "${e.title}(${e.order})").join(", ")}
-    ''', 'EventBloc');
+    // LoggerUtils.i('''【EventBloc】事件重新排序:
+    //   当前分类: ${state.selectedCategory ?? "全部"}
+    //   排序类型: ${state.sortType}
+    //   移动位置: ${event.oldIndex} -> ${event.newIndex}
+    //   当前顺序: ${state.sortedEvents.map((e) => "${e.title}(${e.order})").join(", ")}
+    // ''', 'EventBloc');
     
     final currentEvents = List<Event>.from(state.events); // 使用所有事件的副本
     final filteredEvents = state.sortedEvents.toList(); // 当前分类的事件
@@ -209,9 +213,9 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       }
     }
     
-    LoggerUtils.i('''【EventBloc】更新后顺序:
-      更新后: ${currentEvents.where((e) => e.category == state.selectedCategory).map((e) => "${e.title}(${e.order})").join(", ")}
-    ''', 'EventBloc');
+    // LoggerUtils.i('''【EventBloc】更新后顺序:
+    //   更新后: ${currentEvents.where((e) => e.category == state.selectedCategory).map((e) => "${e.title}(${e.order})").join(", ")}
+    // ''', 'EventBloc');
 
     emit(state.copyWith(
       events: currentEvents,
@@ -270,10 +274,26 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   }
 
   void _onInitiateEventDelete(InitiateEventDelete event, Emitter<EventState> emit) {
-    _deleteTimer?.cancel();
-    emit(state.copyWith(pendingDeleteEvent: event.event));
+    // 如果已经有待删除事件，立即删除它
+    if (state.pendingDeleteEvent != null) {
+      add(DeleteEvent(state.pendingDeleteEvent!.id));
+    }
     
+    // 取消现有计时器
+    _deleteTimer?.cancel();
+    
+    // 从当前事件列表中移除该事件（UI上立即消失）
+    final updatedEvents = state.events.where((e) => e.id != event.event.id).toList();
+    
+    // 设置新的待删除事件和更新后的事件列表
+    emit(state.copyWith(
+      pendingDeleteEvent: event.event,
+      events: updatedEvents,
+    ));
+    
+    // 创建新的计时器
     _deleteTimer = Timer(const Duration(seconds: 5), () {
+      // 5秒后真正从数据库删除
       add(DeleteEvent(event.event.id));
       add(const CancelEventDelete());
     });
@@ -281,7 +301,25 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
 
   void _onCancelEventDelete(CancelEventDelete event, Emitter<EventState> emit) {
     _deleteTimer?.cancel();
-    emit(state.copyWith(pendingDeleteEvent: null));
+    _deleteTimer = null;
+    
+    // 如果有待删除事件，将其添加回事件列表
+    if (state.pendingDeleteEvent != null) {
+      final updatedEvents = List<Event>.from(state.events);
+      updatedEvents.add(state.pendingDeleteEvent!);
+      
+      // 重新排序事件列表
+      if (state.sortType == SortType.custom) {
+        updatedEvents.sort((a, b) => (a.order ?? 0).compareTo(b.order ?? 0));
+      }
+      
+      emit(state.copyWith(
+        pendingDeleteEvent: null,
+        events: updatedEvents,
+      ));
+    } else {
+      emit(state.copyWith(pendingDeleteEvent: null));
+    }
   }
 
   void _scheduleMidnightUpdate() {

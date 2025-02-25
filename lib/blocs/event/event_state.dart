@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/models/category.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
-import 'package:remind_me/utils/common/logger_utils.dart';
+// import 'package:remind_me/utils/common/logger_utils.dart';
 
 enum EventStatus { initial, loading, success, failure }
 
@@ -76,11 +76,11 @@ class EventState extends Equatable {
         ? events.where((e) => e.category == selectedCategory).toList()
         : events.toList();
         
-    LoggerUtils.i('''【EventState】获取排序后事件:
-      分类: ${selectedCategory ?? "全部"}
-      排序类型: $sortType
-      事件数量: ${filtered.length}
-    ''', 'EventState');
+    // LoggerUtils.i('''【EventState】获取排序后事件:
+    //   分类: ${selectedCategory ?? "全部"}
+    //   排序类型: $sortType
+    //   事件数量: ${filtered.length}
+    // ''', 'EventState');
 
     // 然后排序
     switch (sortType) {

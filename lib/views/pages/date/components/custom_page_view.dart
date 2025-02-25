@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 
 class CustomPageView extends StatefulWidget {
-  final List<Widget> children;
   final PageController controller;
-  final ValueChanged<int>? onPageChanged;
-  final ScrollPhysics? physics;
+  final ScrollPhysics physics; // 滚动物理效果
+  final ValueChanged<int>? onPageChanged; // 页面改变回调
+  final List<Widget> children; // 子组件列表
+  final bool enableAutoScroll; // 是否启用自动滚动
 
   const CustomPageView({
-    Key? key,
-    required this.children,
     required this.controller,
+    required this.children,
+    this.physics = const BouncingScrollPhysics(),
     this.onPageChanged,
-    this.physics,
+    this.enableAutoScroll = false,
+    Key? key,
   }) : super(key: key);
 
   @override
-  CustomPageViewState createState() => CustomPageViewState();
+  State<CustomPageView> createState() => _CustomPageViewState();
 }
 
-class CustomPageViewState extends State<CustomPageView> {
+class _CustomPageViewState extends State<CustomPageView> {
   int _lastReportedPage = 0;
 
   @override
@@ -43,10 +45,12 @@ class CustomPageViewState extends State<CustomPageView> {
         }
         return false;
       },
-      child: PageView(
+      child: PageView.builder(
         controller: widget.controller,
         physics: widget.physics,
-        children: widget.children,
+        onPageChanged: widget.onPageChanged,
+        itemCount: widget.children.length,
+        itemBuilder: (context, index) => widget.children[index],
       ),
     );
   }

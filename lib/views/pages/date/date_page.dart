@@ -15,6 +15,7 @@ import 'package:remind_me/views/pages/date/components/sort_dialog.dart';
 import 'package:remind_me/theme/app_colors.dart';
 import 'package:remind_me/views/pages/date/components/empty_state.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
+import 'dart:io';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -349,7 +350,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     
     // 非分类情况的图标保持不变
     return widget.filter == DatePage.countdownFilter 
-        ? Icons.timer 
+        ? Icons.event_available
         : widget.filter == DatePage.countupFilter 
             ? Icons.event_available 
             : Icons.add_circle_outline;
@@ -419,65 +420,162 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
   Widget _buildPinnedArea(List<Event> pinnedEvents, PinnedDisplayMode mode) {
     if (pinnedEvents.isEmpty) return const SizedBox();
     
-    // 如果是单个置顶模式或只有一个置顶项，不使用 PageView
-    if (mode == PinnedDisplayMode.single || pinnedEvents.length == 1) {
-      return SizedBox(
-        height: 100,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: EventCard(
-            event: pinnedEvents.first,
-            iconSize: 28,  // 增加图标大小
-            titleStyle: const TextStyle(
-              fontSize: 20, // 增加文字大小
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            dateWeekStyle: const TextStyle(
-              fontSize: 16, // 增加文字大小
-              // fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            prefixStyle: const TextStyle(
-              fontSize: 20, // 增加文字大小
-              // fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            numberDayStyle: const TextStyle(
-              fontSize: 24, // 增加文字大小
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      );
-    }
-
-    // 轮播图
     return SizedBox(
       height: 100,
-      child: CustomPageView(  // 使用自定义的 PageView
+      child: CustomPageView(  // 统一使用自定义的 PageView
         controller: _pageController,
-        physics: const BouncingScrollPhysics(),
-        onPageChanged: (page) {
+        physics: mode == PinnedDisplayMode.carousel 
+            ? const BouncingScrollPhysics()
+            : const NeverScrollableScrollPhysics(), // 单个模式下禁止滑动
+        enableAutoScroll: mode == PinnedDisplayMode.carousel && pinnedEvents.length > 1,
+        onPageChanged: mode == PinnedDisplayMode.carousel ? (page) {
           final itemCount = pinnedEvents.length;
           if (page == itemCount * 3 - 1) {
             _pageController.jumpToPage(itemCount * 2 - 1);
           } else if (page == 0) {
             _pageController.jumpToPage(itemCount);
           }
-        },
+        } : null,
         children: List.generate(
-          pinnedEvents.length * 3,
+          mode == PinnedDisplayMode.carousel ? pinnedEvents.length * 3 : 1,
           (index) => Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: EventCard(
-              event: pinnedEvents[index % pinnedEvents.length],
+            child: _buildPinnedCard(
+              mode == PinnedDisplayMode.carousel 
+                  ? pinnedEvents[index % pinnedEvents.length]
+                  : pinnedEvents.first
             ),
           ),
         ),
       ),
     );
+  }
+
+  // 构建置顶卡片
+  Widget _buildPinnedCard(Event event) {
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      child: Container(
+        decoration: _buildCardBackground(event),
+        child: InkWell(
+          onTap: () => context.read<EventBloc>().add(
+            UpdateEvent(event.toggleUnit())
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (event.iconName != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Icon(
+                      EventIconMapping.getIcon(event.iconName!),
+                      size: 28,
+                      color: Colors.white,
+                    ),
+                  ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        event.title,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${event.targetDate.year}-${event.targetDate.month.toString().padLeft(2, '0')}-${event.targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(event.targetDate)}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 48,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    event.displayPrefix,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Text(
+                  event.getFormattedNumber(),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  _getDaysText(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 构建卡片背景
+  BoxDecoration _buildCardBackground(Event event) {
+    final defaultColor = Theme.of(context).colorScheme.surface;
+
+    switch (event.backgroundType) {
+      case BackgroundType.color:
+        return BoxDecoration(
+          color: event.backgroundColor ?? defaultColor,
+          borderRadius: BorderRadius.circular(8),
+        );
+      case BackgroundType.gradient:
+        return BoxDecoration(
+          gradient: LinearGradient(
+            colors: event.gradientColors ?? [defaultColor, defaultColor.withOpacity(0.7)],
+          ),
+          borderRadius: BorderRadius.circular(8),
+        );
+      case BackgroundType.image:
+        return BoxDecoration(
+          image: event.localImagePath != null
+              ? DecorationImage(
+                  image: FileImage(File(event.localImagePath!)),
+                  fit: BoxFit.cover,
+                )
+              : null,
+          borderRadius: BorderRadius.circular(8),
+        );
+      case BackgroundType.animation:
+        return BoxDecoration(
+          color: defaultColor,
+          borderRadius: BorderRadius.circular(8),
+        );
+    }
+  }
+
+  String _getWeekDay(DateTime date) {
+    final weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    return weekDays[date.weekday % 7];
+  }
+
+  String _getDaysText() {
+    return ''; // 实现与EventCard中相同的逻辑
   }
 
   // 获取过滤名称
