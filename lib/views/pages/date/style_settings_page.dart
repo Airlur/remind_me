@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+import 'package:remind_me/theme/app_colors.dart';
+import 'package:remind_me/models/event.dart';
+import 'package:collection/collection.dart';
+import 'package:remind_me/utils/ui/background_utils.dart';
 
 class StyleSettingsPage extends StatefulWidget {
   final String title;
   final String dateText;  // 新增：日期文本 (yyyy-MM-dd 周x)
   final String prefix;    // 新增：前缀文本 ("还有"/"已经"等)
   final int absDays;     // 新增：天数
-  final String? backgroundType;
+  final BackgroundType? backgroundType;
+  final int? backgroundColorValue;
+  final List<int>? gradientColorValues;
+  final String? localImagePath;
+  final String? animationType;
   final String? iconName;
   final String? fontFamily;
-  final Function(String?) onBackgroundChanged;
+  final Function(BackgroundType?, int?, List<int>?, String?, String?) onBackgroundChanged;
   final Function(String?) onIconChanged;
   final Function(String?)? onFontFamilyChanged;
   
@@ -21,6 +29,10 @@ class StyleSettingsPage extends StatefulWidget {
     required this.prefix,    // 新增
     required this.absDays,   // 新增
     this.backgroundType,
+    this.backgroundColorValue,
+    this.gradientColorValues,
+    this.localImagePath,
+    this.animationType,
     this.iconName,
     this.fontFamily,
     required this.onBackgroundChanged,
@@ -34,47 +46,25 @@ class StyleSettingsPage extends StatefulWidget {
 
 class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String? _selectedBackground;
+  BackgroundType? _selectedBackgroundType;
+  int? _selectedBackgroundColor;
+  List<int>? _selectedGradientColors;
+  String? _selectedLocalImagePath;
+  String? _selectedAnimationType;
   String? _selectedIcon;
   String? _selectedFontFamily;
   
+  // 用于比较列表是否相等
+  final _listEquals = const ListEquality().equals;
+  
   // 定义背景选项区域的固定高度
-  static const double _backgroundOptionsHeight = 120.0; // 适合显示2行色块
+  static const double _backgroundOptionsHeight = 120.0;
   
   // 定义字体选项区域的固定高度
-  static const double _fontOptionsHeight = 50.0; // 减小高度
+  static const double _fontOptionsHeight = 50.0;
   
   // 定义图标选项区域的固定高度
-  static const double _iconOptionsHeight = 150.0; // 适合显示3行图标
-  
-  // 预设的背景色列表
-  final List<Color> _presetColors = [
-    Colors.red,
-    Colors.pink,
-    Colors.purple,
-    Colors.deepPurple,
-    Colors.indigo,
-    Colors.blue,
-    Colors.lightBlue,
-    Colors.cyan,
-    Colors.teal,
-    Colors.green,
-    Colors.lightGreen,
-    Colors.lime,
-    // 新添加的预设颜色
-    const Color(0xFFFF0000), // Material Red 500
-    const Color(0xFF4CAF50), // Material Green 500
-    const Color(0xFF00FFFF), // Material Cyan 500
-    const Color(0xFF3F51B5), // Material Indigo 500
-    const Color(0xFF607D8B), // Material Blue Grey 500
-    const Color(0xFFFFC107), // Material Amber 500
-    const Color(0xFFFF9800), // Material Orange 500
-    const Color(0xFFFF5722), // Material Deep Orange 500
-    const Color(0xFF795548), // Material Brown 500
-    const Color(0xFF9C27B0), // Material Purple 500
-    const Color(0xFFFFEB3B), // Material Yellow 500
-    const Color(0xFF00BCD4), // Material Cyan 500
-  ];
+  static const double _iconOptionsHeight = 150.0;
   
   // 预设字体列表
   final List<Map<String, dynamic>> _fontOptions = [
@@ -91,9 +81,34 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    _selectedBackground = widget.backgroundType;
+    _selectedBackgroundType = widget.backgroundType;
+    _selectedBackgroundColor = widget.backgroundColorValue;
+    _selectedGradientColors = widget.gradientColorValues;
+    _selectedLocalImagePath = widget.localImagePath;
+    _selectedAnimationType = widget.animationType;
     _selectedIcon = widget.iconName;
     _selectedFontFamily = widget.fontFamily;
+    
+    // 根据初始背景类型设置选中的选项卡
+    if (widget.backgroundType != null) {
+      switch (widget.backgroundType) {
+        case BackgroundType.color:
+          _tabController.index = 0;
+          break;
+        case BackgroundType.gradient:
+          _tabController.index = 1;
+          break;
+        case BackgroundType.image:
+          _tabController.index = 2;
+          break;
+        case BackgroundType.animation:
+          _tabController.index = 3;
+          break;
+        default:
+          _tabController.index = 0;
+      }
+    }
+    
     _tabController.addListener(() {
       setState(() {});  // 更新背景选项显示
     });
@@ -105,102 +120,182 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
     super.dispose();
   }
 
+  // 构建颜色选择网格的通用方法
+  Widget _buildColorGrid({
+    required List<dynamic> colors,
+    required BackgroundType type,
+    required bool Function(dynamic color) isSelected,
+    required void Function(dynamic color) onSelected,
+  }) {
+    const int crossAxisCount = 6; // 每行6个
+    const double spacing = 8.0;   // 间距
+    
+    return SizedBox(
+      height: _backgroundOptionsHeight,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: spacing,
+          mainAxisSpacing: spacing,
+          childAspectRatio: 1.0,
+        ),
+        itemCount: colors.length,
+        itemBuilder: (context, index) {
+          final color = colors[index];
+          final selected = isSelected(color);
+          
+          // 构建颜色项的装饰
+          BoxDecoration decoration;
+          if (type == BackgroundType.color) {
+            // 纯色背景
+            decoration = BoxDecoration(
+              color: color as Color,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: selected ? Colors.white : Colors.transparent,
+                width: 2,
+              ),
+            );
+          } else if (type == BackgroundType.gradient) {
+            // 渐变背景
+            final gradientColors = color as List<Color>;
+            decoration = BoxDecoration(
+              gradient: LinearGradient(
+                colors: gradientColors,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: selected ? Colors.white : Colors.transparent,
+                width: 2,
+              ),
+            );
+          } else {
+            // 默认装饰
+            decoration = BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(8),
+            );
+          }
+          
+          return InkWell(
+            onTap: () => onSelected(color),
+            child: Container(
+              decoration: decoration,
+              child: selected ? const Icon(Icons.check, color: Colors.white) : null,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildBackgroundOptions() {
     switch (_tabController.index) {
       case 0:  // 纯色
-        const int crossAxisCount = 6; // 每行6个
-        const double spacing = 8.0;   // 间距
+        return _buildColorGrid(
+          colors: AppColors.presetColors,
+          type: BackgroundType.color,
+          isSelected: (color) {
+            return _selectedBackgroundType == BackgroundType.color && 
+                   _selectedBackgroundColor == (color as Color).value;
+          },
+          onSelected: (color) {
+            setState(() {
+              if (_selectedBackgroundType == BackgroundType.color && 
+                  _selectedBackgroundColor == (color as Color).value) {
+                // 如果已经选中，则取消选择
+                _selectedBackgroundType = null;
+                _selectedBackgroundColor = null;
+              } else {
+                // 否则选中该颜色
+                _selectedBackgroundType = BackgroundType.color;
+                _selectedBackgroundColor = (color as Color).value;
+                // 清除其他背景类型的选择
+                _selectedGradientColors = null;
+                _selectedLocalImagePath = null;
+                _selectedAnimationType = null;
+              }
+            });
+            
+            // 通知父组件背景已更改
+            widget.onBackgroundChanged(
+              _selectedBackgroundType,
+              _selectedBackgroundColor,
+              _selectedGradientColors,
+              _selectedLocalImagePath,
+              _selectedAnimationType,
+            );
+          },
+        );
         
-        // 使用固定高度的Container包裹GridView，并允许GridView滚动
-        return SizedBox(
-          height: _backgroundOptionsHeight,
-          child: GridView.builder(
-            // 不使用shrinkWrap，允许内容超出并滚动
-            physics: const BouncingScrollPhysics(), // 允许滚动
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              mainAxisSpacing: spacing,
-              crossAxisSpacing: spacing,
-              childAspectRatio: 1,
-            ),
-            itemCount: _presetColors.length,
-            itemBuilder: (context, index) {
-              final color = _presetColors[index];
-              final isSelected = _selectedBackground == color.value.toRadixString(16);
-              
-              return InkWell(
-                onTap: () {
-                  final newBackground = isSelected ? null : color.value.toRadixString(16);
-                  LoggerUtils.i('背景色变更: 从 $_selectedBackground 变为 $newBackground', 'StyleSettingsPage');
-                  setState(() {
-                    _selectedBackground = newBackground;
-                  });
-                  widget.onBackgroundChanged(_selectedBackground);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(8),
-                    border: isSelected 
-                      ? Border.all(color: Colors.white, width: 2)
-                      : null,
-                    boxShadow: isSelected 
-                      ? [BoxShadow(
-                          color: color.withOpacity(0.5),
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                        )]
-                      : null,
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      
       case 1:  // 渐变
-        // 使用相同高度的容器
-        return const SizedBox(
-          height: _backgroundOptionsHeight,
-          child: Center(
-            child: Text('渐变背景选项'),
-          ),
+        return _buildColorGrid(
+          colors: AppColors.presetGradients,
+          type: BackgroundType.gradient,
+          isSelected: (color) {
+            if (_selectedBackgroundType != BackgroundType.gradient || 
+                _selectedGradientColors == null) {
+              return false;
+            }
+            
+            final gradientColors = (color as List<Color>).map((c) => c.value).toList();
+            if (_selectedGradientColors!.length != gradientColors.length) {
+              return false;
+            }
+            
+            // 比较两个列表是否包含相同的颜色值
+            return _listEquals(_selectedGradientColors!, gradientColors);
+          },
+          onSelected: (color) {
+            final gradientColors = (color as List<Color>).map((c) => c.value).toList();
+            
+            setState(() {
+              if (_selectedBackgroundType == BackgroundType.gradient && 
+                  _selectedGradientColors != null && 
+                  _listEquals(_selectedGradientColors!, gradientColors)) {
+                // 如果已经选中，则取消选择
+                _selectedBackgroundType = null;
+                _selectedGradientColors = null;
+              } else {
+                // 否则选中该渐变
+                _selectedBackgroundType = BackgroundType.gradient;
+                _selectedGradientColors = gradientColors;
+                // 清除其他背景类型的选择
+                _selectedBackgroundColor = null;
+                _selectedLocalImagePath = null;
+                _selectedAnimationType = null;
+              }
+            });
+            
+            // 通知父组件背景已更改
+            widget.onBackgroundChanged(
+              _selectedBackgroundType,
+              _selectedBackgroundColor,
+              _selectedGradientColors,
+              _selectedLocalImagePath,
+              _selectedAnimationType,
+            );
+          },
         );
-      
-      case 2:  // 图案
-        // 使用相同高度的容器
-        return const SizedBox(
+        
+      case 2:  // 图案（暂未实现）
+        return Container(
           height: _backgroundOptionsHeight,
-          child: Center(
-            child: Text('图案背景选项'),
-          ),
+          alignment: Alignment.center,
+          child: const Text('图案背景功能即将推出'),
         );
-      
-      case 3:  // 自定义
-        // 使用相同高度的容器
-        return SizedBox(
+        
+      case 3:  // 自定义（暂未实现）
+        return Container(
           height: _backgroundOptionsHeight,
-          child: Container(
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add_photo_alternate, size: 40),
-                  SizedBox(height: 8),
-                  Text('点击上传图片'),
-                ],
-              ),
-            ),
-          ),
+          alignment: Alignment.center,
+          child: const Text('自定义背景功能即将推出'),
         );
-      
+        
       default:
-        return const SizedBox(height: _backgroundOptionsHeight);
+        return Container();
     }
   }
 
@@ -302,18 +397,36 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
   }
 
   Widget _buildPreviewCard() {
-    final hasBackground = _selectedBackground != null && _selectedBackground!.isNotEmpty;
+    final defaultColor = Theme.of(context).colorScheme.surface;
+    
+    final decoration = BackgroundUtils.buildBackgroundDecoration(
+      backgroundType: _selectedBackgroundType ?? BackgroundType.color,
+      backgroundColor: _selectedBackgroundColor != null 
+          ? Color(_selectedBackgroundColor!) 
+          : null,
+      gradientColors: _selectedGradientColors?.map((c) => Color(c)).toList(),
+      localImagePath: _selectedLocalImagePath,
+      defaultColor: defaultColor,
+    );
+    
+    final defaultDarkColor = Theme.of(context).colorScheme.onSurface;
+    const defaultLightColor = Colors.white;
+    
+    final textColor = BackgroundUtils.getTextColor(
+      backgroundType: _selectedBackgroundType ?? BackgroundType.color,
+      backgroundColor: _selectedBackgroundColor != null 
+          ? Color(_selectedBackgroundColor!) 
+          : null,
+      gradientColors: _selectedGradientColors?.map((c) => Color(c)).toList(),
+      lightTextColor: defaultLightColor,
+      darkTextColor: defaultDarkColor,
+    );
     
     return Card(
       elevation: 0,
       margin: const EdgeInsets.all(12),
       child: Container(
-        decoration: BoxDecoration(
-          color: hasBackground
-            ? Color(int.parse(_selectedBackground!, radix: 16))
-            : Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
-        ),
+        decoration: decoration,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
@@ -324,7 +437,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                   child: Icon(
                     EventIconMapping.getIcon(_selectedIcon!),
                     size: 20,
-                    color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                    color: textColor,
                   ),
                 ),
               Expanded(
@@ -337,8 +450,8 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        // 不实际应用字体，只是为了演示
-                        color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                        fontFamily: _selectedFontFamily,
+                        color: textColor,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -346,41 +459,54 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                       widget.dateText,
                       style: TextStyle(
                         fontSize: 12,
-                        // 不实际应用字体，只是为了演示
-                        color: hasBackground
-                          ? Colors.white
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: textColor.withOpacity(0.8),
                       ),
                     ),
                   ],
                 ),
               ),
-              Text(
-                widget.prefix,
-                style: TextStyle(
-                  fontSize: 16,
-                  // 不实际应用字体，只是为了演示
-                  color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${widget.absDays}',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  // 不实际应用字体，只是为了演示
-                  color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              Text(
-                ' 天',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  // 不实际应用字体，只是为了演示
-                  color: hasBackground ? Colors.white : Theme.of(context).colorScheme.onSurface,
-                ),
+              Row(
+                children: [
+                  Text(
+                    widget.prefix,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: _selectedFontFamily,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  if (widget.prefix == '就是')
+                    Text(
+                      '今天',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: _selectedFontFamily,
+                        color: textColor,
+                      ),
+                    )
+                  else
+                    Text(
+                      '${widget.absDays}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: _selectedFontFamily,
+                        color: textColor,
+                      ),
+                    ),
+                  if (widget.prefix != '就是')
+                    Text(
+                      ' 天',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: _selectedFontFamily,
+                        color: textColor,
+                      ),
+                    ),
+                ],
               ),
             ],
           ),

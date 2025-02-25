@@ -137,16 +137,27 @@ class Event extends Equatable {
   }
 
   String get displayPrefix {
-    final prefix = isToday ? '就是' : (isCountdown ? '还有' : '已经');
-    return prefix;
+    if (isToday) {
+      return includeStartDay ? '第' : '就是';
+    } else {
+      return isCountdown ? '还有' : (includeStartDay ? '第' : '已经');
+    }
   }
 
   String getFormattedNumber() {
-    if (isToday) return '今天';
+    if (isToday) {
+      return includeStartDay ? '1 天' : '今天';
+    }
+    
+    // 计算显示的天数
+    int displayDays = absDays;
+    if (!isCountdown && includeStartDay) {
+      displayDays += 1; // 对于过去的日子，如果包含开始日期，天数+1
+    }
     
     switch (displayUnit) {
       case TimeUnit.day:
-        return '$absDays天';
+        return '$displayDays 天';
         
       case TimeUnit.year:
         // 确保开始日期小于结束日期
@@ -169,9 +180,14 @@ class Event extends Equatable {
           years--;
           months += 12;
         }
+        
+        // 如果包含开始日期且不是倒计时，调整天数
+        if (!isCountdown && includeStartDay && days == 0) {
+          days = 1;
+        }
 
         // 如果不足一年，返回天数让 toggleUnit 跳过
-        if (years == 0) return '$absDays天';
+        if (years == 0) return '$displayDays 天';
 
         // 年月日显示
         return [
@@ -196,7 +212,7 @@ class Event extends Equatable {
         }
 
         // 如果不足一个月，返回天数让 toggleUnit 跳过
-        if (totalMonths == 0) return '$absDays天';
+        if (totalMonths == 0) return '$displayDays 天';
 
         // 月日显示
         return [
@@ -205,11 +221,11 @@ class Event extends Equatable {
         ].join('');
         
       case TimeUnit.week:
-        final weeks = absDays ~/ 7;
-        final remainingDays = absDays % 7;
+        final weeks = displayDays ~/ 7;
+        final remainingDays = displayDays % 7;
         
         // 如果不足一周，返回天数让 toggleUnit 跳过
-        if (weeks == 0) return '$absDays天';
+        if (weeks == 0) return '$displayDays天';
         
         return [
           '$weeks周',

@@ -41,6 +41,7 @@ dependencies:
   path_provider: ^2.1.1
   permission_handler: ^11.0.1
   uuid: ^4.0.0
+  collection: ^1.18.0
 
   # 滑动删除
   flutter_slidable: ^3.0.1

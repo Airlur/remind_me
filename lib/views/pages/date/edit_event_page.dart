@@ -29,8 +29,13 @@ class _EditEventPageState extends State<EditEventPage> {
   late bool _isLunar;
   String? _category;
   String? _categoryIconName;
-  late String? _backgroundType;
+  late BackgroundType? _backgroundType;
+  late int? _backgroundColorValue;
+  late List<int>? _gradientColorValues;
+  late String? _localImagePath;
+  late String? _animationType;
   late String? _iconName;
+  late String? _fontFamily;
   
   @override
   void initState() {
@@ -48,8 +53,13 @@ class _EditEventPageState extends State<EditEventPage> {
           orElse: () => Category(name: '', iconName: null),
         )
         .iconName;
-    _backgroundType = widget.event.backgroundColorValue?.toRadixString(16);
+    _backgroundType = widget.event.backgroundType;
+    _backgroundColorValue = widget.event.backgroundColorValue;
+    _gradientColorValues = widget.event.gradientColorValues;
+    _localImagePath = widget.event.localImagePath;
+    _animationType = widget.event.animationType;
     _iconName = widget.event.iconName;
+    _fontFamily = widget.event.fontFamily;
   }
 
   @override
@@ -80,12 +90,21 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   String get _prefix {
-    return _isToday ? '就是' : (_isCountdown ? context.l10n.daysLeft : context.l10n.daysAgo);
+    if (_isToday) {
+      return _includeStartDay ? '第' : '就是';
+    } else {
+      return _isCountdown ? context.l10n.daysLeft : (_includeStartDay ? '第' : context.l10n.daysAgo);
+    }
   }
 
-  String _getWeekDay(DateTime date) {
-    final weekDays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-    return weekDays[date.weekday - 1];
+  int get _displayDays {
+    if (_isToday) {
+      return _includeStartDay ? 1 : 0;
+    } else if (_isCountdown) {
+      return _absDays;
+    } else {
+      return _includeStartDay ? _absDays + 1 : _absDays;
+    }
   }
 
   Future<void> _showDatePicker() async {
@@ -141,18 +160,6 @@ class _EditEventPageState extends State<EditEventPage> {
       return;
     }
 
-    // 根据实际设置的值决定背景类型
-    BackgroundType? determinedBackgroundType;
-    if (_backgroundType != null) {
-      determinedBackgroundType = BackgroundType.color;
-    } else if (widget.event.gradientColorValues != null) {
-      determinedBackgroundType = BackgroundType.gradient;
-    } else if (widget.event.localImagePath != null) {
-      determinedBackgroundType = BackgroundType.image;
-    } else if (widget.event.animationType != null) {
-      determinedBackgroundType = BackgroundType.animation;
-    }
-
     final event = Event(
       id: widget.event.id,
       title: _titleController.text,
@@ -161,21 +168,15 @@ class _EditEventPageState extends State<EditEventPage> {
       displayUnit: widget.event.displayUnit,
       isPinned: _isPinned,
       pinnedAt: widget.event.pinnedAt,
-      // 如果所有背景相关值都是 null，则使用默认的 color 类型
-      backgroundType: determinedBackgroundType ?? BackgroundType.color,
-      // 各种背景值，只保留当前选中类型的值
-      backgroundColorValue: determinedBackgroundType == BackgroundType.color ? 
-          (_backgroundType == null ? null : int.parse(_backgroundType!, radix: 16)) : null,
-      gradientColorValues: determinedBackgroundType == BackgroundType.gradient ? 
-          widget.event.gradientColorValues : null,
-      localImagePath: determinedBackgroundType == BackgroundType.image ? 
-          widget.event.localImagePath : null,
-      animationType: determinedBackgroundType == BackgroundType.animation ? 
-          widget.event.animationType : null,
+      backgroundType: _backgroundType ?? BackgroundType.color,
+      backgroundColorValue: _backgroundColorValue,
+      gradientColorValues: _gradientColorValues,
+      localImagePath: _localImagePath,
+      animationType: _animationType,
       isLunar: _isLunar,
       category: _category,
       order: widget.event.order,
-      fontFamily: widget.event.fontFamily,
+      fontFamily: _fontFamily,
       iconName: _iconName,
       reminderTime: widget.event.reminderTime,
       includeStartDay: _includeStartDay,
@@ -330,17 +331,31 @@ class _EditEventPageState extends State<EditEventPage> {
                         title: _titleController.text,
                         dateText: '${LunarUtils.formatDate(_targetDate, _isLunar)} ${LunarUtils.getWeekDay(_targetDate)}',
                         prefix: _prefix,
-                        absDays: _absDays,
+                        absDays: _displayDays,
                         backgroundType: _backgroundType,
+                        backgroundColorValue: _backgroundColorValue,
+                        gradientColorValues: _gradientColorValues,
+                        localImagePath: _localImagePath,
+                        animationType: _animationType,
                         iconName: _iconName,
-                        onBackgroundChanged: (value) {
+                        fontFamily: _fontFamily,
+                        onBackgroundChanged: (type, colorValue, gradientValues, imagePath, animation) {
                           setState(() {
-                            _backgroundType = value;
+                            _backgroundType = type;
+                            _backgroundColorValue = colorValue;
+                            _gradientColorValues = gradientValues;
+                            _localImagePath = imagePath;
+                            _animationType = animation;
                           });
                         },
                         onIconChanged: (value) {
                           setState(() {
                             _iconName = value;
+                          });
+                        },
+                        onFontFamilyChanged: (value) {
+                          setState(() {
+                            _fontFamily = value;
                           });
                         },
                       ),

@@ -4,7 +4,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/blocs/event/event_event.dart'; 
-import 'dart:io';
 import 'package:remind_me/theme/app_colors.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/views/pages/date/edit_event_page.dart';
@@ -12,6 +11,7 @@ import 'package:remind_me/utils/common/route_utils.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:remind_me/utils/common/lunar_utils.dart';
+import 'package:remind_me/utils/ui/background_utils.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -33,7 +33,6 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0), // 添加上下和左右间距
@@ -154,7 +153,7 @@ class EventCard extends StatelessWidget {
                         child: Icon(
                           EventIconMapping.getIcon(event.iconName!),
                           size: iconSize ?? 20,  // 使用传入的图标大小
-                          color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
+                          color: _getTextColor(context),
                         ),
                       ),
                     Expanded(
@@ -167,7 +166,8 @@ class EventCard extends StatelessWidget {
                             style: titleStyle ?? TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
+                              color: _getTextColor(context),
+                              fontFamily: event.fontFamily,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -175,9 +175,7 @@ class EventCard extends StatelessWidget {
                             '${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
                             style: dateWeekStyle ?? TextStyle(
                               fontSize: 12,
-                              color: event.backgroundColor != null 
-                                ? Colors.white
-                                : theme.colorScheme.onSurfaceVariant,
+                              color: _getTextColor(context),
                             ),
                           ),
                         ],
@@ -190,7 +188,7 @@ class EventCard extends StatelessWidget {
                         event.displayPrefix,
                         style: prefixStyle ?? TextStyle(
                           fontSize: 16,
-                          color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
+                          color: _getTextColor(context),
                         ),
                       ),
                     ),
@@ -199,15 +197,15 @@ class EventCard extends StatelessWidget {
                       style: numberDayStyle ?? TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
+                        color: _getTextColor(context),
                       ),
                     ),
-                    // TODO: getFormattedNumber方法返回的文本和_getDaysText方法，返回的文本以及国际化调整
+                    // TODO: getFormattedNumber方法返回的文本的国际化调整
                     Text(
                       _getDaysText(),
                       style: TextStyle(
                         fontSize: 16,
-                        color: event.backgroundColor != null ? Colors.white : theme.colorScheme.onSurface,
+                        color: _getTextColor(context),
                       ),
                     ),
                   ],
@@ -226,38 +224,28 @@ class EventCard extends StatelessWidget {
   }
 
   BoxDecoration _buildBackgroundDecoration(BuildContext context) {
-    // final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = Theme.of(context).colorScheme.surface;  // 统一使用主题色
+    final defaultColor = Theme.of(context).colorScheme.surface;
+    
+    return BackgroundUtils.buildBackgroundDecoration(
+      backgroundType: event.backgroundType,
+      backgroundColor: event.backgroundColor,
+      gradientColors: event.gradientColors,
+      localImagePath: event.localImagePath,
+      defaultColor: defaultColor,
+    );
+  }
 
-    switch (event.backgroundType) {
-      case BackgroundType.color:
-        return BoxDecoration(
-          color: event.backgroundColor ?? defaultColor,
-          borderRadius: BorderRadius.circular(8),
-        );
-      case BackgroundType.gradient:
-        return BoxDecoration(
-          gradient: LinearGradient(
-            colors: event.gradientColors ?? [defaultColor, defaultColor],
-          ),
-          borderRadius: BorderRadius.circular(8),
-        );
-      case BackgroundType.image:
-        return BoxDecoration(
-          image: event.localImagePath != null
-              ? DecorationImage(
-                  image: FileImage(File(event.localImagePath!)),
-                  fit: BoxFit.cover,
-                )
-              : null,
-          borderRadius: BorderRadius.circular(8),
-        );
-      case BackgroundType.animation:
-        return BoxDecoration(
-          color: defaultColor,
-          borderRadius: BorderRadius.circular(8),
-        );
-    }
+  Color _getTextColor(BuildContext context) {
+    final defaultDarkColor = Theme.of(context).colorScheme.onSurface;
+    const defaultLightColor = Colors.white;
+    
+    return BackgroundUtils.getTextColor(
+      backgroundType: event.backgroundType,
+      backgroundColor: event.backgroundColor,
+      gradientColors: event.gradientColors,
+      lightTextColor: defaultLightColor,
+      darkTextColor: defaultDarkColor,
+    );
   }
 
   void _togglePin(BuildContext context) {

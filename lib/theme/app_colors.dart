@@ -47,4 +47,73 @@ abstract class AppColors {
   static const onActionColor = Colors.white;    // 所有操作按钮的文字/图标颜色
   static const iconGrayColor = Color(0xFF757175);  // 和Icon灰色相似的字体颜色
 
+  // 预设的纯色背景列表
+  static const List<Color> presetColors = [
+    Colors.red,
+    Colors.pink,
+    Colors.purple,
+    Colors.deepPurple,
+    Colors.indigo,
+    Colors.blue,
+    Colors.lightBlue,
+    Colors.cyan,
+    Colors.teal,
+    Colors.green,
+    Colors.lightGreen,
+    Colors.lime,
+    Color(0xFFFF0000), // Material Red 500
+    Color(0xFF4CAF50), // Material Green 500
+    Color(0xFF00FFFF), // Material Cyan 500
+    Color(0xFF3F51B5), // Material Indigo 500
+    Color(0xFF607D8B), // Material Blue Grey 500
+    Color(0xFFFFC107), // Material Amber 500
+    Color(0xFFFF9800), // Material Orange 500
+    Color(0xFFFF5722), // Material Deep Orange 500
+    Color(0xFF795548), // Material Brown 500
+    Color(0xFF9C27B0), // Material Purple 500
+    Color(0xFFFFEB3B), // Material Yellow 500
+    Color(0xFF00BCD4), // Material Cyan 500
+  ];
+  
+  // 预设的渐变色背景列表
+  static const List<List<Color>> presetGradients = [
+    // 红色系渐变
+    [Color(0xFFFF416C), Color(0xFFFF4B2B)], // 红色到橙色
+    [Color(0xFFf85032), Color(0xFFe73827)], // 深红色渐变
+    
+    // 橙色系渐变
+    [Color(0xFFf12711), Color(0xFFf5af19)], // 红色到黄色
+    [Color(0xFFFF8008), Color(0xFFFFC837)], // 橙色到黄色
+    
+    // 黄色系渐变
+    [Color(0xFFFFE000), Color(0xFFFFBD00)], // 黄色渐变
+    [Color(0xFFF7971E), Color(0xFFFFD200)], // 橙黄色渐变
+    
+    // 绿色系渐变
+    [Color(0xFF11998e), Color(0xFF38ef7d)], // 深绿到浅绿
+    [Color(0xFF00b09b), Color(0xFF96c93d)], // 青绿到黄绿
+    
+    // 蓝色系渐变
+    [Color(0xFF2193b0), Color(0xFF6dd5ed)], // 深蓝到浅蓝
+    [Color(0xFF4364F7), Color(0xFF6FB1FC)], // 蓝色渐变
+    
+    // 紫色系渐变
+    [Color(0xFF834d9b), Color(0xFFd04ed6)], // 深紫到粉紫
+    [Color(0xFF8E2DE2), Color(0xFF4A00E0)], // 紫色渐变
+    
+    // 粉色系渐变
+    [Color(0xFFee9ca7), Color(0xFFffdde1)], // 粉红色渐变
+    [Color(0xFFFF6B6B), Color(0xFFFF8E8E)], // 红粉色渐变
+    
+    // 多彩渐变
+    [Color(0xFF1A2980), Color(0xFF26D0CE)], // 深蓝到青色
+    [Color(0xFFFF512F), Color(0xFFDD2476)], // 橙色到粉色
+    [Color(0xFF614385), Color(0xFF516395)], // 紫色到蓝紫色
+    [Color(0xFF02AABD), Color(0xFF00CDAC)], // 青色到绿色
+    [Color(0xFFFF5F6D), Color(0xFFFFC371)], // 红色到橙黄色
+    [Color(0xFF396afc), Color(0xFF2948ff)], // 蓝色渐变
+    [Color(0xFFcc2b5e), Color(0xFF753a88)], // 红色到紫色
+    [Color(0xFF42275a), Color(0xFF734b6d)], // 深紫到浅紫
+    [Color(0xFF141E30), Color(0xFF243B55)], // 深蓝色渐变
+  ];
 } 

@@ -15,8 +15,8 @@ import 'package:remind_me/views/pages/date/components/sort_dialog.dart';
 import 'package:remind_me/theme/app_colors.dart';
 import 'package:remind_me/views/pages/date/components/empty_state.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
-import 'dart:io';
 import 'package:remind_me/utils/common/lunar_utils.dart';
+import 'package:remind_me/utils/ui/background_utils.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -454,25 +454,14 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
 
   // 构建置顶卡片
   Widget _buildPinnedCard(Event event) {
-    final theme = Theme.of(context);
-    final defaultColor = theme.colorScheme.surface; // 使用主题的主色调作为默认背景色
-    
-    // 确定背景颜色
-    Color backgroundColor;
-    if (event.backgroundType == BackgroundType.color && event.backgroundColor != null) {
-      backgroundColor = event.backgroundColor!;
-    } else {
-      backgroundColor = defaultColor;
-    }
-    
-    // 根据背景颜色亮度决定文字颜色
-    final textColor = backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
-    
+    // 使用我们定义的 _getTextColor 方法获取文字颜色
+    final textColor = _getTextColor(event, context);
+
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
       child: Container(
-        decoration: _buildCardBackground(event, defaultColor),
+        decoration: _buildCardBackground(event, context),
         child: InkWell(
           onTap: () => context.read<EventBloc>().add(
             UpdateEvent(event.toggleUnit())
@@ -549,47 +538,35 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     );
   }
 
-  // 构建卡片背景 - 修改为接收默认颜色参数
-  BoxDecoration _buildCardBackground(Event event, Color defaultColor) {
-    switch (event.backgroundType) {
-      case BackgroundType.color:
-        return BoxDecoration(
-          color: event.backgroundColor ?? defaultColor,
-          borderRadius: BorderRadius.circular(8),
-        );
-      case BackgroundType.gradient:
-        return BoxDecoration(
-          gradient: LinearGradient(
-            colors: event.gradientColors ?? [defaultColor, defaultColor.withOpacity(0.7)],
-          ),
-          borderRadius: BorderRadius.circular(8),
-        );
-      case BackgroundType.image:
-        return BoxDecoration(
-          image: event.localImagePath != null
-              ? DecorationImage(
-                  image: FileImage(File(event.localImagePath!)),
-                  fit: BoxFit.cover,
-                )
-              : null,
-          color: defaultColor, // 添加默认背景色，以防图片加载失败
-          borderRadius: BorderRadius.circular(8),
-        );
-      case BackgroundType.animation:
-        return BoxDecoration(
-          color: defaultColor,
-          borderRadius: BorderRadius.circular(8),
-        );
-    }
+  // 构建卡片背景
+  BoxDecoration _buildCardBackground(Event event, BuildContext context) {
+    final defaultColor = Theme.of(context).colorScheme.surface;
+    
+    return BackgroundUtils.buildBackgroundDecoration(
+      backgroundType: event.backgroundType,
+      backgroundColor: event.backgroundColor,
+      gradientColors: event.gradientColors,
+      localImagePath: event.localImagePath,
+      defaultColor: defaultColor,
+    );
+  }
+
+  // 获取文字颜色
+  Color _getTextColor(Event event, BuildContext context) {
+    final defaultDarkColor = Theme.of(context).colorScheme.onSurface;
+    const defaultLightColor = Colors.white;
+    
+    return BackgroundUtils.getTextColor(
+      backgroundType: event.backgroundType,
+      backgroundColor: event.backgroundColor,
+      gradientColors: event.gradientColors,
+      lightTextColor: defaultLightColor,
+      darkTextColor: defaultDarkColor,
+    );
   }
 
   String _getDaysText() {
     return ''; // 实现与EventCard中相同的逻辑
   }
 
-  // 获取过滤名称
-  String _getFilterName() {
-    if (widget.filter == null) return '事件';
-    return widget.filter == DatePage.countdownFilter ? '倒数日' : '正数日';
-  }
 }

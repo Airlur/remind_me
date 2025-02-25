@@ -28,8 +28,13 @@ class _AddEventPageState extends State<AddEventPage> {
   String? _categoryIconName;
   bool _isPinned = false;
   bool _includeStartDay = false;
-  String? _backgroundType;
+  BackgroundType? _backgroundType;
+  int? _backgroundColorValue;
+  List<int>? _gradientColorValues;
+  String? _localImagePath;
+  String? _animationType;
   String? _iconName;
+  String? _fontFamily;
   
   bool get _isToday {
     final now = DateTime.now();
@@ -53,9 +58,22 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   String get _prefix {
-    return _isToday ? '就是' : (_isCountdown ? context.l10n.daysLeft : context.l10n.daysAgo);
+    if (_isToday) {
+      return _includeStartDay ? '第' : '就是';
+    } else {
+      return _isCountdown ? context.l10n.daysLeft : (_includeStartDay ? '第' : context.l10n.daysAgo);
+    }
   }
 
+  int get _displayDays {
+    if (_isToday) {
+      return _includeStartDay ? 1 : 0;
+    } else if (_isCountdown) {
+      return _absDays;
+    } else {
+      return _includeStartDay ? _absDays + 1 : _absDays;
+    }
+  }
   // String get _previewText {
   //   if (_titleController.text.isEmpty) return context.l10n.preview;
   //   final daysText = _isToday ? '今天' : '${_absDays}天';
@@ -81,20 +99,6 @@ class _AddEventPageState extends State<AddEventPage> {
       return;
     }
 
-    // 根据实际设置的值决定背景类型
-    BackgroundType? determinedBackgroundType;
-    if (_backgroundType != null) {
-      determinedBackgroundType = BackgroundType.color;
-    }
-    // 新增页面暂时只支持纯色背景，其他类型的背景后续添加时再补充判断
-    // } else if (gradientColorValues != null) {
-    //   determinedBackgroundType = BackgroundType.gradient;
-    // } else if (localImagePath != null) {
-    //   determinedBackgroundType = BackgroundType.image;
-    // } else if (animationType != null) {
-    //   determinedBackgroundType = BackgroundType.animation;
-    // }
-
     final event = Event(
       id: const Uuid().v4(),
       title: _titleController.text,
@@ -104,16 +108,13 @@ class _AddEventPageState extends State<AddEventPage> {
       includeStartDay: _includeStartDay,
       isLunar: _isLunar,
       category: _category,
-      // 如果所有背景相关值都是 null，则使用默认的 color 类型
-      backgroundType: determinedBackgroundType ?? BackgroundType.color,
-      // 各种背景值，只保留当前选中类型的值
-      backgroundColorValue: determinedBackgroundType == BackgroundType.color ? 
-          (_backgroundType == null ? null : int.parse(_backgroundType!, radix: 16)) : null,
-      // 新增页面暂时只支持纯色背景，其他类型为 null
-      gradientColorValues: null,
-      localImagePath: null,
-      animationType: null,
+      backgroundType: _backgroundType ?? BackgroundType.color,
+      backgroundColorValue: _backgroundColorValue,
+      gradientColorValues: _gradientColorValues,
+      localImagePath: _localImagePath,
+      animationType: _animationType,
       iconName: _iconName,
+      fontFamily: _fontFamily,
     );
 
     context.read<EventBloc>().add(AddEvent(event));
@@ -319,17 +320,31 @@ class _AddEventPageState extends State<AddEventPage> {
                         title: _titleController.text,
                         dateText: '${_targetDate.year}-${_targetDate.month.toString().padLeft(2, '0')}-${_targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(_targetDate)}',
                         prefix: _prefix,
-                        absDays: _absDays,
+                        absDays: _displayDays,
                         backgroundType: _backgroundType,
+                        backgroundColorValue: _backgroundColorValue,
+                        gradientColorValues: _gradientColorValues,
+                        localImagePath: _localImagePath,
+                        animationType: _animationType,
                         iconName: _iconName,
-                        onBackgroundChanged: (value) {
+                        fontFamily: _fontFamily,
+                        onBackgroundChanged: (type, colorValue, gradientValues, imagePath, animation) {
                           setState(() {
-                            _backgroundType = value;
+                            _backgroundType = type;
+                            _backgroundColorValue = colorValue;
+                            _gradientColorValues = gradientValues;
+                            _localImagePath = imagePath;
+                            _animationType = animation;
                           });
                         },
                         onIconChanged: (value) {
                           setState(() {
                             _iconName = value;
+                          });
+                        },
+                        onFontFamilyChanged: (value) {
+                          setState(() {
+                            _fontFamily = value;
                           });
                         },
                       ),
