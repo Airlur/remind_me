@@ -8,6 +8,10 @@
 # 改为手动触发
 on: workflow_dispatch
 
+# 在 jobs 之前添加
+permissions:
+  contents: write  # 这给予了写入仓库内容的权限，包括创建 Release
+
 jobs:
   build:
     runs-on: ubuntu-latest
