@@ -9,9 +9,9 @@ import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/views/pages/date/edit_event_page.dart';
 import 'package:remind_me/utils/common/route_utils.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
-import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:remind_me/utils/common/lunar_utils.dart';
 import 'package:remind_me/utils/ui/background_utils.dart';
+import 'package:remind_me/views/pages/date/event_detail_page.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -139,9 +139,9 @@ class EventCard extends StatelessWidget {
           //     ? theme.colorScheme.surfaceContainer
           //     : Colors.white,
           child: Container(
-            decoration: _buildBackgroundDecoration(context),
+            decoration: BackgroundUtils.getEventCardBackground(event, context),
             child: InkWell(
-              onTap: () => _toggleDisplayUnit(context), // 改为单击切换
+              onTap: () => _openDetailPage(context),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // 调整内边距
                 child: Row(
@@ -153,7 +153,7 @@ class EventCard extends StatelessWidget {
                         child: Icon(
                           EventIconMapping.getIcon(event.iconName!),
                           size: iconSize ?? 20,  // 使用传入的图标大小
-                          color: _getTextColor(context),
+                          color: BackgroundUtils.getEventTextColor(event, context),
                         ),
                       ),
                     Expanded(
@@ -166,7 +166,7 @@ class EventCard extends StatelessWidget {
                             style: titleStyle ?? TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: _getTextColor(context),
+                              color: BackgroundUtils.getEventTextColor(event, context),
                               fontFamily: event.fontFamily,
                             ),
                           ),
@@ -175,7 +175,7 @@ class EventCard extends StatelessWidget {
                             '${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
                             style: dateWeekStyle ?? TextStyle(
                               fontSize: 12,
-                              color: _getTextColor(context),
+                              color: BackgroundUtils.getEventTextColor(event, context),
                             ),
                           ),
                         ],
@@ -188,24 +188,23 @@ class EventCard extends StatelessWidget {
                         event.displayPrefix,
                         style: prefixStyle ?? TextStyle(
                           fontSize: 16,
-                          color: _getTextColor(context),
+                          color: BackgroundUtils.getEventTextColor(event, context),
                         ),
                       ),
                     ),
                     Text(
-                      event.getFormattedNumber(),
+                      event.absDays.toString(),
                       style: numberDayStyle ?? TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: _getTextColor(context),
+                        color: BackgroundUtils.getEventTextColor(event, context),
                       ),
                     ),
-                    // TODO: getFormattedNumber方法返回的文本的国际化调整
                     Text(
-                      _getDaysText(),
+                      " 天",
                       style: TextStyle(
                         fontSize: 16,
-                        color: _getTextColor(context),
+                        color: BackgroundUtils.getEventTextColor(event, context),
                       ),
                     ),
                   ],
@@ -218,36 +217,6 @@ class EventCard extends StatelessWidget {
     );
   }
 
-  String _getDaysText() {
-    // Implementation of _getDaysText method
-    return ''; // Placeholder return, actual implementation needed
-  }
-
-  BoxDecoration _buildBackgroundDecoration(BuildContext context) {
-    final defaultColor = Theme.of(context).colorScheme.surface;
-    
-    return BackgroundUtils.buildBackgroundDecoration(
-      backgroundType: event.backgroundType,
-      backgroundColor: event.backgroundColor,
-      gradientColors: event.gradientColors,
-      localImagePath: event.localImagePath,
-      defaultColor: defaultColor,
-    );
-  }
-
-  Color _getTextColor(BuildContext context) {
-    final defaultDarkColor = Theme.of(context).colorScheme.onSurface;
-    const defaultLightColor = Colors.white;
-    
-    return BackgroundUtils.getTextColor(
-      backgroundType: event.backgroundType,
-      backgroundColor: event.backgroundColor,
-      gradientColors: event.gradientColors,
-      lightTextColor: defaultLightColor,
-      darkTextColor: defaultDarkColor,
-    );
-  }
-
   void _togglePin(BuildContext context) {
     if (event.isPinned) {
       context.read<EventBloc>().add(UnpinEvent(event.id));
@@ -256,17 +225,6 @@ class EventCard extends StatelessWidget {
     }
   }
 
-  void _toggleDisplayUnit(BuildContext context) {
-    LoggerUtils.i('''【EventCard】切换显示单位:
-      事件ID: ${event.id}
-      当前单位: ${event.displayUnit}
-      当前分类: ${context.read<EventBloc>().state.selectedCategory ?? "全部"}
-    ''', 'EventCard');
-    
-    context.read<EventBloc>().add(
-      UpdateEvent(event.toggleUnit())
-    );
-  }
 
   void _editEvent(BuildContext context) {
     Navigator.push(
@@ -277,5 +235,20 @@ class EventCard extends StatelessWidget {
 
   void _deleteEvent(BuildContext context) {
     context.read<EventBloc>().add(InitiateEventDelete(event));
+  }
+
+  void _openDetailPage(BuildContext context) {
+    final RenderBox? box = context.findRenderObject() as RenderBox?;
+    if (box == null) {
+      Navigator.push(
+        context,
+        RouteUtils.buildPageRoute(page: EventDetailPage(event: event)),
+      );
+      return;
+    }
+
+    Navigator.of(context).push(
+      RouteUtils.buildEventDetailRoute(context, event, box),
+    );
   }
 }

@@ -17,6 +17,7 @@ import 'package:remind_me/views/pages/date/components/empty_state.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/lunar_utils.dart';
 import 'package:remind_me/utils/ui/background_utils.dart';
+import 'package:remind_me/views/pages/date/event_detail_page.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -454,83 +455,82 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
 
   // 构建置顶卡片
   Widget _buildPinnedCard(Event event) {
-    // 使用我们定义的 _getTextColor 方法获取文字颜色
-    final textColor = _getTextColor(event, context);
-
-    return Card(
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      child: Container(
-        decoration: _buildCardBackground(event, context),
-        child: InkWell(
-          onTap: () => context.read<EventBloc>().add(
-            UpdateEvent(event.toggleUnit())
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (event.iconName != null)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Icon(
-                      EventIconMapping.getIcon(event.iconName!),
-                      size: 28,
-                      color: textColor, // 使用动态文字颜色
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+      child: Card(
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        child: Container(
+          decoration: BackgroundUtils.getEventCardBackground(event, context),
+          child: InkWell(
+            onTap: () => _openDetailPage(context, event),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (event.iconName != null)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Icon(
+                        EventIconMapping.getIcon(event.iconName!),
+                        size: 20,
+                        color: BackgroundUtils.getEventTextColor(event, context),
+                      ),
+                    ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          event.title,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: BackgroundUtils.getEventTextColor(event, context),
+                            fontFamily: event.fontFamily,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: BackgroundUtils.getEventTextColor(event, context),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        event.title,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: textColor, // 使用动态文字颜色
-                        ),
+                  Container(
+                    width: 48,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      event.displayPrefix,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: BackgroundUtils.getEventTextColor(event, context),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: textColor, // 使用动态文字颜色
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                Container(
-                  width: 48,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    event.displayPrefix,
+                  Text(
+                    event.absDays.toString(),
                     style: TextStyle(
-                      fontSize: 20,
-                      color: textColor, // 使用动态文字颜色
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: BackgroundUtils.getEventTextColor(event, context),
                     ),
                   ),
-                ),
-                Text(
-                  event.getFormattedNumber(),
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: textColor, // 使用动态文字颜色
+                  Text(
+                    " 天",
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: BackgroundUtils.getEventTextColor(event, context),
+                    ),
                   ),
-                ),
-                Text(
-                  _getDaysText(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: textColor, // 使用动态文字颜色
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -538,35 +538,20 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     );
   }
 
-  // 构建卡片背景
-  BoxDecoration _buildCardBackground(Event event, BuildContext context) {
-    final defaultColor = Theme.of(context).colorScheme.surface;
-    
-    return BackgroundUtils.buildBackgroundDecoration(
-      backgroundType: event.backgroundType,
-      backgroundColor: event.backgroundColor,
-      gradientColors: event.gradientColors,
-      localImagePath: event.localImagePath,
-      defaultColor: defaultColor,
-    );
-  }
+  // 修改打开详情页的方法
+  void _openDetailPage(BuildContext context, Event event) {
+    final RenderBox? box = context.findRenderObject() as RenderBox?;
+    if (box == null) {
+      Navigator.push(
+        context,
+        RouteUtils.buildPageRoute(page: EventDetailPage(event: event)),
+      );
+      return;
+    }
 
-  // 获取文字颜色
-  Color _getTextColor(Event event, BuildContext context) {
-    final defaultDarkColor = Theme.of(context).colorScheme.onSurface;
-    const defaultLightColor = Colors.white;
-    
-    return BackgroundUtils.getTextColor(
-      backgroundType: event.backgroundType,
-      backgroundColor: event.backgroundColor,
-      gradientColors: event.gradientColors,
-      lightTextColor: defaultLightColor,
-      darkTextColor: defaultDarkColor,
+    Navigator.of(context).push(
+      RouteUtils.buildEventDetailRoute(context,event,box),
     );
-  }
-
-  String _getDaysText() {
-    return ''; // 实现与EventCard中相同的逻辑
   }
 
 }

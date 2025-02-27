@@ -97,4 +97,31 @@ class BackgroundUtils {
     
     return isDark ? lightTextColor : darkTextColor;
   }
+
+  /// 获取事件卡片背景装饰
+  static BoxDecoration getEventCardBackground(Event event, BuildContext context) {
+    final defaultColor = Theme.of(context).colorScheme.surface;
+    
+    return buildBackgroundDecoration(
+      backgroundType: event.backgroundType,
+      backgroundColor: event.backgroundColor,
+      gradientColors: event.gradientColors,
+      localImagePath: event.localImagePath,
+      defaultColor: defaultColor,
+    );
+  }
+
+  /// 获取事件卡片文字颜色
+  static Color getEventTextColor(Event event, BuildContext context) {
+    final defaultDarkColor = Theme.of(context).colorScheme.onSurface;
+    const defaultLightColor = Colors.white;
+    
+    return getTextColor(
+      backgroundType: event.backgroundType,
+      backgroundColor: event.backgroundColor,
+      gradientColors: event.gradientColors,
+      lightTextColor: defaultLightColor,
+      darkTextColor: defaultDarkColor,
+    );
+  }
 } 
