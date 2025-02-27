@@ -144,6 +144,20 @@ class Event extends Equatable {
     }
   }
 
+  String get displayDays {
+    if (absDays == 0) {
+      return includeStartDay ? "1" : "今天";
+    }
+    return absDays.toString();
+  }
+
+  String get displayDaysUnit {
+    if (absDays == 0) {
+      return includeStartDay ? " 天" : "";
+    }
+    return " 天";
+  }
+
   String getFormattedNumber() {
     if (isToday) {
       return includeStartDay ? '1 天' : '今天';

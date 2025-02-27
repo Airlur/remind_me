@@ -489,7 +489,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                     ),
                   ),
                   Text(
-                    event.absDays.toString(),
+                    event.displayDays,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -497,7 +497,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                     ),
                   ),
                   Text(
-                    " 天",
+                    event.displayDaysUnit,
                     style: TextStyle(
                       fontSize: 24,
                       color: BackgroundUtils.getEventTextColor(event, context),

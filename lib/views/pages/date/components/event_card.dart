@@ -193,7 +193,7 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      event.absDays.toString(),
+                      event.displayDays,
                       style: numberDayStyle ?? TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -201,7 +201,7 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      " 天",
+                      event.displayDaysUnit,
                       style: TextStyle(
                         fontSize: 16,
                         color: BackgroundUtils.getEventTextColor(event, context),
