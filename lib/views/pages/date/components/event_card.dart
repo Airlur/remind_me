@@ -185,7 +185,7 @@ class EventCard extends StatelessWidget {
                       width: 48,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        event.displayPrefix,
+                        event.getDisplayPrefix(context),
                         style: prefixStyle ?? TextStyle(
                           fontSize: 16,
                           color: BackgroundUtils.getEventTextColor(event, context),
@@ -193,7 +193,7 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      event.displayDays,
+                      event.getDisplayDays(context),
                       style: numberDayStyle ?? TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -201,7 +201,7 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      event.displayDaysUnit,
+                      event.getDisplayUnit(context),
                       style: TextStyle(
                         fontSize: 16,
                         color: BackgroundUtils.getEventTextColor(event, context),

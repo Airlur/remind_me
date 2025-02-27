@@ -160,9 +160,19 @@
     "description": "Days Ago"
   },
   
-  "days": "Days",
+  "day": "day",
+  "@day": {
+    "description": "Single day"
+  },
+  
+  "days": "days",
   "@days": {
-    "description": "Day"
+    "description": "Multiple days"
+  },
+
+  "dayShort": "d",
+  "@dayShort": {
+    "description": "Single day abbreviation"
   },
   
   "timeline": "Timeline",
@@ -205,19 +215,55 @@
     "description": "Preview"
   },
 
-  "year": "Year",
+  "year": "year",
+  "years": "years",
+  "yearShort": "yr",
+  "yearsShort": "yrs",
   "@year": {
-    "description": "Year"
+    "description": "Single year"
   },
-  
-  "month": "Month",
+  "@years": {
+    "description": "Multiple years"
+  },
+  "@yearShort": {
+    "description": "Single year abbreviation"
+  },
+  "@yearsShort": {
+    "description": "Multiple years abbreviation"
+  },
+
+  "month": "month",
+  "months": "months",
+  "monthShort": "mo",
+  "monthsShort": "mos",
   "@month": {
-    "description": "Month"
+    "description": "Single month"
   },
-  
-  "week": "Week",
+  "@months": {
+    "description": "Multiple months"
+  },
+  "@monthShort": {
+    "description": "Single month abbreviation"
+  },
+  "@monthsShort": {
+    "description": "Multiple months abbreviation"
+  },
+
+  "week": "week",
+  "weeks": "weeks",
+  "weekShort": "wk",
+  "weeksShort": "wks",
   "@week": {
-    "description": "Week"
+    "description": "Single week"
+  },
+  "@weeks": {
+    "description": "Multiple weeks"
+  },
+  "@weekShort": {
+    "description": "Single week abbreviation"
+  },
+  "@weeksShort": {
+    "description": "Multiple weeks abbreviation"
   },
 
   "edit": "Edit",
@@ -239,5 +285,18 @@
   "confirm": "Confirm",
   "@confirm": {
     "description": "Confirm"
-  }
+  },
+
+  "eventPrefixToday": "",
+  "eventPrefixTodayOrdinal": "The",
+  "eventPrefixFuture": "In",
+  "eventPrefixPastOrdinal": "The",
+  "eventPrefixPast": "",
+
+  "ordinalSuffix1": "st",
+  "ordinalSuffix2": "nd",
+  "ordinalSuffix3": "rd",
+  "ordinalSuffixOther": "th",
+
+  "eventToday": "today"
 }

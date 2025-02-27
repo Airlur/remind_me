@@ -101,7 +101,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get daysAgo => '已经';
 
   @override
+  String get day => '天';
+
+  @override
   String get days => '天';
+
+  @override
+  String get dayShort => '天';
 
   @override
   String get timeline => '时间线';
@@ -131,10 +137,37 @@ class AppLocalizationsZh extends AppLocalizations {
   String get year => '年';
 
   @override
+  String get years => '年';
+
+  @override
+  String get yearShort => '年';
+
+  @override
+  String get yearsShort => '年';
+
+  @override
   String get month => '月';
 
   @override
+  String get months => '月';
+
+  @override
+  String get monthShort => '月';
+
+  @override
+  String get monthsShort => '月';
+
+  @override
   String get week => '周';
+
+  @override
+  String get weeks => '周';
+
+  @override
+  String get weekShort => '周';
+
+  @override
+  String get weeksShort => '周';
 
   @override
   String get edit => '编辑';
@@ -150,4 +183,34 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get confirm => '确定';
+
+  @override
+  String get eventPrefixToday => '就是';
+
+  @override
+  String get eventPrefixTodayOrdinal => '第';
+
+  @override
+  String get eventPrefixFuture => '还有';
+
+  @override
+  String get eventPrefixPastOrdinal => '第';
+
+  @override
+  String get eventPrefixPast => '已经';
+
+  @override
+  String get ordinalSuffix1 => 'st';
+
+  @override
+  String get ordinalSuffix2 => 'nd';
+
+  @override
+  String get ordinalSuffix3 => 'rd';
+
+  @override
+  String get ordinalSuffixOther => 'th';
+
+  @override
+  String get eventToday => '今天';
 }

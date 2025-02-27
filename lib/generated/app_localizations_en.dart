@@ -101,7 +101,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get daysAgo => 'Days Ago';
 
   @override
-  String get days => 'Days';
+  String get day => 'day';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get dayShort => 'd';
 
   @override
   String get timeline => 'Timeline';
@@ -128,13 +134,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get preview => 'Preview';
 
   @override
-  String get year => 'Year';
+  String get year => 'year';
 
   @override
-  String get month => 'Month';
+  String get years => 'years';
 
   @override
-  String get week => 'Week';
+  String get yearShort => 'yr';
+
+  @override
+  String get yearsShort => 'yrs';
+
+  @override
+  String get month => 'month';
+
+  @override
+  String get months => 'months';
+
+  @override
+  String get monthShort => 'mo';
+
+  @override
+  String get monthsShort => 'mos';
+
+  @override
+  String get week => 'week';
+
+  @override
+  String get weeks => 'weeks';
+
+  @override
+  String get weekShort => 'wk';
+
+  @override
+  String get weeksShort => 'wks';
 
   @override
   String get edit => 'Edit';
@@ -150,4 +183,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirm => 'Confirm';
+
+  @override
+  String get eventPrefixToday => '';
+
+  @override
+  String get eventPrefixTodayOrdinal => 'The';
+
+  @override
+  String get eventPrefixFuture => 'In';
+
+  @override
+  String get eventPrefixPastOrdinal => 'The';
+
+  @override
+  String get eventPrefixPast => '';
+
+  @override
+  String get ordinalSuffix1 => 'st';
+
+  @override
+  String get ordinalSuffix2 => 'nd';
+
+  @override
+  String get ordinalSuffix3 => 'rd';
+
+  @override
+  String get ordinalSuffixOther => 'th';
+
+  @override
+  String get eventToday => 'today';
 }

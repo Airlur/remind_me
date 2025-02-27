@@ -175,7 +175,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
             ),
             const SizedBox(width: 8),
             Text(
-              event.displayPrefix,
+              event.getDisplayPrefix(context),
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -202,7 +202,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
             children: [
      
               Text(
-                event.getFormattedNumber(),
+                event.getFormattedNumber(context),
                 style: TextStyle(
                   fontSize: 64,
                   fontWeight: FontWeight.bold,
@@ -354,7 +354,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
   // 切换显示单位
   void _toggleDisplayUnit(Event event) {
     setState(() {
-      _event = event.toggleUnit();
+      _event = event.toggleUnit(context);
     });
     
     // 更新到Bloc

@@ -285,11 +285,23 @@ abstract class AppLocalizations {
   /// **'Days Ago'**
   String get daysAgo;
 
-  /// Day
+  /// Single day
   ///
   /// In en, this message translates to:
-  /// **'Days'**
+  /// **'day'**
+  String get day;
+
+  /// Multiple days
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
   String get days;
+
+  /// Single day abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'d'**
+  String get dayShort;
 
   /// Timeline
   ///
@@ -339,23 +351,77 @@ abstract class AppLocalizations {
   /// **'Preview'**
   String get preview;
 
-  /// Year
+  /// Single year
   ///
   /// In en, this message translates to:
-  /// **'Year'**
+  /// **'year'**
   String get year;
 
-  /// Month
+  /// Multiple years
   ///
   /// In en, this message translates to:
-  /// **'Month'**
+  /// **'years'**
+  String get years;
+
+  /// Single year abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'yr'**
+  String get yearShort;
+
+  /// Multiple years abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'yrs'**
+  String get yearsShort;
+
+  /// Single month
+  ///
+  /// In en, this message translates to:
+  /// **'month'**
   String get month;
 
-  /// Week
+  /// Multiple months
   ///
   /// In en, this message translates to:
-  /// **'Week'**
+  /// **'months'**
+  String get months;
+
+  /// Single month abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'mo'**
+  String get monthShort;
+
+  /// Multiple months abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'mos'**
+  String get monthsShort;
+
+  /// Single week
+  ///
+  /// In en, this message translates to:
+  /// **'week'**
   String get week;
+
+  /// Multiple weeks
+  ///
+  /// In en, this message translates to:
+  /// **'weeks'**
+  String get weeks;
+
+  /// Single week abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'wk'**
+  String get weekShort;
+
+  /// Multiple weeks abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'wks'**
+  String get weeksShort;
 
   /// Edit
   ///
@@ -386,6 +452,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm'**
   String get confirm;
+
+  /// No description provided for @eventPrefixToday.
+  ///
+  /// In en, this message translates to:
+  /// **''**
+  String get eventPrefixToday;
+
+  /// No description provided for @eventPrefixTodayOrdinal.
+  ///
+  /// In en, this message translates to:
+  /// **'The'**
+  String get eventPrefixTodayOrdinal;
+
+  /// No description provided for @eventPrefixFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'In'**
+  String get eventPrefixFuture;
+
+  /// No description provided for @eventPrefixPastOrdinal.
+  ///
+  /// In en, this message translates to:
+  /// **'The'**
+  String get eventPrefixPastOrdinal;
+
+  /// No description provided for @eventPrefixPast.
+  ///
+  /// In en, this message translates to:
+  /// **''**
+  String get eventPrefixPast;
+
+  /// No description provided for @ordinalSuffix1.
+  ///
+  /// In en, this message translates to:
+  /// **'st'**
+  String get ordinalSuffix1;
+
+  /// No description provided for @ordinalSuffix2.
+  ///
+  /// In en, this message translates to:
+  /// **'nd'**
+  String get ordinalSuffix2;
+
+  /// No description provided for @ordinalSuffix3.
+  ///
+  /// In en, this message translates to:
+  /// **'rd'**
+  String get ordinalSuffix3;
+
+  /// No description provided for @ordinalSuffixOther.
+  ///
+  /// In en, this message translates to:
+  /// **'th'**
+  String get ordinalSuffixOther;
+
+  /// No description provided for @eventToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get eventToday;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

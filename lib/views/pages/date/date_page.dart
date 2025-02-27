@@ -481,7 +481,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                     width: 48,
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      event.displayPrefix,
+                      event.getDisplayPrefix(context),
                       style: TextStyle(
                         fontSize: 18,
                         color: BackgroundUtils.getEventTextColor(event, context),
@@ -489,7 +489,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                     ),
                   ),
                   Text(
-                    event.displayDays,
+                    event.getDisplayDays(context),
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -497,7 +497,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                     ),
                   ),
                   Text(
-                    event.displayDaysUnit,
+                    event.getDisplayUnit(context),
                     style: TextStyle(
                       fontSize: 24,
                       color: BackgroundUtils.getEventTextColor(event, context),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:equatable/equatable.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 part 'event.g.dart';  // part 指令必须在所有导入之后，声明之前
 
@@ -136,42 +137,89 @@ class Event extends Equatable {
     return target.difference(today).inDays.abs();
   }
 
-  String get displayPrefix {
-    if (isToday) {
-      return includeStartDay ? '第' : '就是';
-    } else {
-      return isCountdown ? '还有' : (includeStartDay ? '第' : '已经');
+  // 获取序数词后缀（仅用于英文）
+  String _getOrdinalSuffix(int number, BuildContext context) {
+    final l10n = context.l10n;
+    if (Localizations.localeOf(context).languageCode != 'en') return '';
+    
+    if (number >= 11 && number <= 13) return l10n.ordinalSuffixOther;
+    switch (number % 10) {
+      case 1: return l10n.ordinalSuffix1;
+      case 2: return l10n.ordinalSuffix2;
+      case 3: return l10n.ordinalSuffix3;
+      default: return l10n.ordinalSuffixOther;
     }
   }
 
-  String get displayDays {
-    if (absDays == 0) {
-      return includeStartDay ? "1" : "今天";
+  // 获取前缀
+  String getDisplayPrefix(BuildContext context) {
+    final l10n = context.l10n;
+    
+    if (isToday) {
+      return includeStartDay ? l10n.eventPrefixTodayOrdinal : l10n.eventPrefixToday;
+    } else {
+      return isCountdown 
+          ? l10n.eventPrefixFuture 
+          : (includeStartDay ? l10n.eventPrefixPastOrdinal : l10n.eventPrefixPast);
     }
+  }
+
+  // 获取显示天数
+  String getDisplayDays(BuildContext context) {
+    final l10n = context.l10n;
+    
+    if (absDays == 0) {
+      if (includeStartDay) {
+        final suffix = _getOrdinalSuffix(1, context);
+        return "1$suffix";
+      }
+      return l10n.eventToday;  // 使用 l10n 的翻译
+    }
+    
+    if (includeStartDay && !isCountdown) {
+      final number = absDays + 1;
+      final suffix = _getOrdinalSuffix(number, context);
+      return "$number$suffix";
+    }
+    
     return absDays.toString();
   }
 
-  String get displayDaysUnit {
+  // 获取单位
+  String getDisplayUnit(BuildContext context) {
+    final l10n = context.l10n;
     if (absDays == 0) {
-      return includeStartDay ? " 天" : "";
+      return includeStartDay ? " ${l10n.day}" : "";  // 序数词用单数
     }
-    return " 天";
+    return absDays == 1 ? " ${l10n.day}" : " ${l10n.days}";  // 根据天数使用单复数
   }
 
-  String getFormattedNumber() {
+  String getFormattedNumber(BuildContext context) {
+    final l10n = context.l10n;
+    
     if (isToday) {
-      return includeStartDay ? '1 天' : '今天';
+      return includeStartDay 
+          ? "1${_getOrdinalSuffix(1, context)} ${l10n.day}"
+          : l10n.eventToday;
     }
     
     // 计算显示的天数
     int displayDays = absDays;
     if (!isCountdown && includeStartDay) {
-      displayDays += 1; // 对于过去的日子，如果包含开始日期，天数+1
+      displayDays += 1;
+    }
+    
+    // 辅助函数：计算居中所需的空格数
+    String getCenteredSpaces(String firstLine, String secondLine) {
+      final firstLineLength = firstLine.length;
+      final secondLineLength = secondLine.length;
+      final spaces = ((firstLineLength - secondLineLength) / 2).round();
+      return ' ' * (spaces > 0 ? spaces : 0);
     }
     
     switch (displayUnit) {
       case TimeUnit.day:
-        return '$displayDays 天';
+        return "$displayDays ${displayDays == 1 ? l10n.day : l10n.days}";
         
       case TimeUnit.year:
         // 确保开始日期小于结束日期
@@ -201,14 +249,20 @@ class Event extends Equatable {
         }
 
         // 如果不足一年，返回天数让 toggleUnit 跳过
-        if (years == 0) return '$displayDays 天';
+        if (years == 0) return "$displayDays ${displayDays == 1 ? l10n.day : l10n.days}";
 
-        // 年月日显示
-        return [
-          '$years年',
-          if (months > 0) '$months个月',
-          if (days > 0) '$days天',
-        ].join('');
+        // 年月和天数分两行显示
+        final mainPart = [
+          "$years ${years == 1 ? l10n.yearShort : l10n.yearsShort}",
+          if (months > 0) "$months ${months == 1 ? l10n.monthShort : l10n.monthsShort}",
+        ].join(' ');
+        
+        if (days > 0) {
+          final secondLine = "$days ${days == 1 ? l10n.dayShort : l10n.dayShort}";
+          final spaces = getCenteredSpaces(mainPart, secondLine);
+          return "$mainPart\n$spaces$secondLine";
+        }
+        return mainPart;
         
       case TimeUnit.month:
         // 确保开始日期小于结束日期
@@ -226,41 +280,46 @@ class Event extends Equatable {
         }
 
         // 如果不足一个月，返回天数让 toggleUnit 跳过
-        if (totalMonths == 0) return '$displayDays 天';
+        if (totalMonths == 0) return "$displayDays ${displayDays == 1 ? l10n.day : l10n.days}";
 
-        // 月日显示
-        return [
-          '$totalMonths个月',
-          if (days > 0) '$days天',
-        ].join('');
+        final mainPart = "$totalMonths ${totalMonths == 1 ? l10n.monthShort : l10n.monthsShort}";
+        if (days > 0) {
+          final secondLine = "$days ${days == 1 ? l10n.dayShort : l10n.dayShort}";
+          final spaces = getCenteredSpaces(mainPart, secondLine);
+          return "$mainPart\n$spaces$secondLine";
+        }
+        return mainPart;
         
       case TimeUnit.week:
         final weeks = displayDays ~/ 7;
         final remainingDays = displayDays % 7;
         
         // 如果不足一周，返回天数让 toggleUnit 跳过
-        if (weeks == 0) return '$displayDays天';
+        if (weeks == 0) return "$displayDays ${displayDays == 1 ? l10n.day : l10n.days}";
         
-        return [
-          '$weeks周',
-          if (remainingDays > 0) '$remainingDays天',
-        ].join('');
+        final mainPart = "$weeks ${weeks == 1 ? l10n.weekShort : l10n.weeksShort}";
+        if (remainingDays > 0) {
+          final secondLine = "$remainingDays ${remainingDays == 1 ? l10n.dayShort : l10n.dayShort}";
+          final spaces = getCenteredSpaces(mainPart, secondLine);
+          return "$mainPart\n$spaces$secondLine";
+        }
+        return mainPart;
     }
   }
 
   // 切换显示单位
-  Event toggleUnit() {
+  Event toggleUnit(BuildContext context) {
     const units = TimeUnit.values;
     var nextIndex = (units.indexOf(displayUnit) + 1) % units.length;
     
     // 如果下一个单位的显示结果和当前一样，就跳过
     while (nextIndex != units.indexOf(displayUnit)) {
       final nextUnit = units[nextIndex];
-      final currentDisplay = getFormattedNumber();
+      final currentDisplay = getFormattedNumber(context);
       
       // 临时切换单位计算显示值
       final tempEvent = copyWith(displayUnit: nextUnit);
-      final nextDisplay = tempEvent.getFormattedNumber();
+      final nextDisplay = tempEvent.getFormattedNumber(context);
       
       // 如果显示不同，就使用这个单位
       if (currentDisplay != nextDisplay) {

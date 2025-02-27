@@ -160,11 +160,21 @@
     "description": "Days Ago"
   },
   
-  "days": "天",
-  "@days": {
-    "description": "Day"
+  "day": "天",
+  "@day": {
+    "description": "Single day"
   },
   
+  "days": "天",
+  "@days": {
+    "description": "Multiple days"
+  },
+  
+  "dayShort": "天",
+  "@dayShort": {
+    "description": "Single day abbreviation"
+  },
+
   "timeline": "时间线",
   "@timeline": {
     "description": "Timeline"
@@ -206,18 +216,54 @@
   },
 
   "year": "年",
+  "years": "年",
+  "yearShort": "年",
+  "yearsShort": "年",
   "@year": {
-    "description": "Year"
+    "description": "Single year"
   },
-  
+  "@years": {
+    "description": "Multiple years"
+  },
+  "@yearShort": {
+    "description": "Single year abbreviation"
+  },
+  "@yearsShort": {
+    "description": "Multiple years abbreviation"
+  },
+
   "month": "月",
+  "months": "月",
+  "monthShort": "月",
+  "monthsShort": "月",
   "@month": {
-    "description": "Month"
+    "description": "Single month"
   },
-  
+  "@months": {
+    "description": "Multiple months"
+  },
+  "@monthShort": {
+    "description": "Single month abbreviation"
+  },
+  "@monthsShort": {
+    "description": "Multiple months abbreviation"
+  },
+
   "week": "周",
+  "weeks": "周",
+  "weekShort": "周",
+  "weeksShort": "周",
   "@week": {
-    "description": "Week"
+    "description": "Single week"
+  },
+  "@weeks": {
+    "description": "Multiple weeks"
+  },
+  "@weekShort": {
+    "description": "Single week abbreviation"
+  },
+  "@weeksShort": {
+    "description": "Multiple weeks abbreviation"
   },
 
   "edit": "编辑",
@@ -239,5 +285,18 @@
   "confirm": "确定",
   "@confirm": {
     "description": "Confirm"
-  }
+  },
+
+  "eventPrefixToday": "就是",
+  "eventPrefixTodayOrdinal": "第",
+  "eventPrefixFuture": "还有",
+  "eventPrefixPastOrdinal": "第",
+  "eventPrefixPast": "已经",
+
+  "ordinalSuffix1": "st",
+  "ordinalSuffix2": "nd",
+  "ordinalSuffix3": "rd",
+  "ordinalSuffixOther": "th",
+
+  "eventToday": "今天"
 }
