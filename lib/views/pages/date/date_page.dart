@@ -267,7 +267,6 @@ class _EventList extends StatefulWidget {
 // 事件列表状态
 class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMixin {
   late PageController _pageController;
-  Timer? _timer;
 
   // 保持状态，避免切换tab重新加载
   @override
@@ -277,7 +276,6 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 1);
-    _startAutoPlay();
     // 只在第一次加载时获取事件
     if (context.read<EventBloc>().state.status == EventStatus.initial) {
       context.read<EventBloc>().add(LoadEvents());
@@ -286,32 +284,8 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
 
   @override
   void dispose() {
-    _stopAutoPlay();
     _pageController.dispose();
     super.dispose();
-  }
-
-  // 置顶项轮播图自动播放
-  void _startAutoPlay() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      final state = context.read<EventBloc>().state;
-      if (state.pinnedDisplayMode == PinnedDisplayMode.carousel &&
-          state.pinnedEvents.length > 1 &&
-          _pageController.hasClients) {
-        final nextPage = (_pageController.page?.round() ?? 0) + 1;
-        _pageController.animateToPage(
-          nextPage,  // 不需要取模，让它自然滑动到下一页
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-  }
-
-  void _stopAutoPlay() {
-    _timer?.cancel();
-    _timer = null;
   }
 
   List<Event> _filterEvents(List<Event> events) {
@@ -424,7 +398,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     
     return SizedBox(
       height: 100,
-      child: CustomPageView(  // 统一使用自定义的 PageView
+      child: CustomPageView(
         controller: _pageController,
         physics: mode == PinnedDisplayMode.carousel 
             ? const BouncingScrollPhysics()

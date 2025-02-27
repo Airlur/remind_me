@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class CustomPageView extends StatefulWidget {
   final PageController controller;
@@ -22,15 +23,66 @@ class CustomPageView extends StatefulWidget {
 
 class _CustomPageViewState extends State<CustomPageView> {
   int _lastReportedPage = 0;
+  Timer? _autoScrollTimer;
 
   @override
   void initState() {
     super.initState();
     _lastReportedPage = widget.controller.initialPage;
+    _setupAutoScroll();
+  }
+
+  @override
+  void didUpdateWidget(CustomPageView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 当 enableAutoScroll 状态改变时，更新自动滚动
+    if (oldWidget.enableAutoScroll != widget.enableAutoScroll) {
+      if (widget.enableAutoScroll) {
+        _setupAutoScroll();
+      } else {
+        _stopAutoScroll();
+        // 确保在禁用自动滚动时回到第一页
+        if (widget.controller.hasClients) {
+          widget.controller.jumpToPage(0);
+        }
+      }
+    }
+  }
+
+  void _setupAutoScroll() {
+    _stopAutoScroll();
+    if (widget.enableAutoScroll && widget.children.length > 1) {
+      _autoScrollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+        if (mounted && widget.controller.hasClients) {
+          final nextPage = (_lastReportedPage + 1) % widget.children.length;
+          widget.controller.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
+  }
+
+  void _stopAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = null;
+  }
+
+  @override
+  void dispose() {
+    _stopAutoScroll();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // 非轮播模式下只显示第一个子组件
+    if (!widget.enableAutoScroll) {
+      return widget.children.first;
+    }
+
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification notification) {
         if (notification.depth == 0 && 
