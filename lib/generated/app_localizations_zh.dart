@@ -113,10 +113,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get timeline => '时间线';
 
   @override
+  String get sort => '排序 ';
+
+  @override
   String get unpin => '取消置顶';
 
   @override
   String get pin => '置顶';
+
+  @override
+  String get pinMode => '置顶模式';
 
   @override
   String get addSpecialDay => '添加特殊日';
@@ -125,7 +131,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get enterTitle => '请输入标题';
 
   @override
+  String get startDate => '起始日期';
+
+  @override
   String get targetDate => '目标日期';
+
+  @override
+  String get solarDate => '公历';
+
+  @override
+  String get lunarDate => '农历';
+
+  @override
+  String weekday(String day) {
+    return '$day';
+  }
 
   @override
   String get backgroundSettings => '背景设置';
@@ -185,6 +205,45 @@ class AppLocalizationsZh extends AppLocalizations {
   String get confirm => '确定';
 
   @override
+  String get share => '分享';
+
+  @override
+  String get category => '分类';
+
+  @override
+  String get reminderTime => '提醒时间';
+
+  @override
+  String get endTime => '结束时间';
+
+  @override
+  String get repeat => '重复';
+
+  @override
+  String get includeStartDate => '包含开始日期';
+
+  @override
+  String get styleSettings => '样式设置';
+
+  @override
+  String get background => '背景';
+
+  @override
+  String get pureColor => '纯色';
+
+  @override
+  String get gradient => '渐变';
+
+  @override
+  String get custom => '自定义';
+
+  @override
+  String get font => '字体';
+
+  @override
+  String get icon => '图标';
+
+  @override
   String get eventPrefixToday => '就是';
 
   @override
@@ -213,4 +272,46 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get eventToday => '今天';
+
+  @override
+  String get monday => '周一';
+
+  @override
+  String get mondayShort => '周一';
+
+  @override
+  String get tuesday => '周二';
+
+  @override
+  String get tuesdayShort => '周二';
+
+  @override
+  String get wednesday => '周三';
+
+  @override
+  String get wednesdayShort => '周三';
+
+  @override
+  String get thursday => '周四';
+
+  @override
+  String get thursdayShort => '周四';
+
+  @override
+  String get friday => '周五';
+
+  @override
+  String get fridayShort => '周五';
+
+  @override
+  String get saturday => '周六';
+
+  @override
+  String get saturdayShort => '周六';
+
+  @override
+  String get sunday => '周日';
+
+  @override
+  String get sundayShort => '周日';
 }

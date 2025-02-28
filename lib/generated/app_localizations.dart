@@ -309,6 +309,12 @@ abstract class AppLocalizations {
   /// **'Timeline'**
   String get timeline;
 
+  /// Sort
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get sort;
+
   /// Unpin
   ///
   /// In en, this message translates to:
@@ -320,6 +326,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pin'**
   String get pin;
+
+  /// Pin Mode
+  ///
+  /// In en, this message translates to:
+  /// **'Pin Mode'**
+  String get pinMode;
 
   /// Add Special Day
   ///
@@ -333,11 +345,35 @@ abstract class AppLocalizations {
   /// **'Enter Title'**
   String get enterTitle;
 
-  /// Target Date
+  /// Start date label
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDate;
+
+  /// Target date label
   ///
   /// In en, this message translates to:
   /// **'Target Date'**
   String get targetDate;
+
+  /// Solar calendar label
+  ///
+  /// In en, this message translates to:
+  /// **'Solar'**
+  String get solarDate;
+
+  /// Lunar calendar label
+  ///
+  /// In en, this message translates to:
+  /// **'Lunar'**
+  String get lunarDate;
+
+  /// Weekday format
+  ///
+  /// In en, this message translates to:
+  /// **'{day}'**
+  String weekday(String day);
 
   /// Background Settings
   ///
@@ -453,6 +489,84 @@ abstract class AppLocalizations {
   /// **'Confirm'**
   String get confirm;
 
+  /// Share
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// Category
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// Reminder Time
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Time'**
+  String get reminderTime;
+
+  /// End Time
+  ///
+  /// In en, this message translates to:
+  /// **'End Time'**
+  String get endTime;
+
+  /// Repeat
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get repeat;
+
+  /// Include Start Date
+  ///
+  /// In en, this message translates to:
+  /// **'Include Start Date'**
+  String get includeStartDate;
+
+  /// Style Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Style Settings'**
+  String get styleSettings;
+
+  /// Background
+  ///
+  /// In en, this message translates to:
+  /// **'Background'**
+  String get background;
+
+  /// Pure Color
+  ///
+  /// In en, this message translates to:
+  /// **'Pure Color'**
+  String get pureColor;
+
+  /// Gradient
+  ///
+  /// In en, this message translates to:
+  /// **'Gradient'**
+  String get gradient;
+
+  /// Custom
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get custom;
+
+  /// Font
+  ///
+  /// In en, this message translates to:
+  /// **'Font'**
+  String get font;
+
+  /// Icon
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get icon;
+
   /// No description provided for @eventPrefixToday.
   ///
   /// In en, this message translates to:
@@ -512,6 +626,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'today'**
   String get eventToday;
+
+  /// Monday full name
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get monday;
+
+  /// No description provided for @mondayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get mondayShort;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get tuesday;
+
+  /// No description provided for @tuesdayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get tuesdayShort;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get wednesday;
+
+  /// No description provided for @wednesdayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get wednesdayShort;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get thursday;
+
+  /// No description provided for @thursdayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get thursdayShort;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get friday;
+
+  /// No description provided for @fridayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get fridayShort;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get saturday;
+
+  /// No description provided for @saturdayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get saturdayShort;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get sunday;
+
+  /// No description provided for @sundayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get sundayShort;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

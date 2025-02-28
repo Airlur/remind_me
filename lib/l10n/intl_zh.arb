@@ -180,6 +180,11 @@
     "description": "Timeline"
   },
   
+  "sort": "排序 ",
+  "@sort": {
+    "description": "Sort"
+  },
+
   "unpin": "取消置顶",
   "@unpin": {
     "description": "Unpin"
@@ -188,6 +193,11 @@
   "pin": "置顶",
   "@pin": {
     "description": "Pin"
+  },
+
+  "pinMode": "置顶模式",
+  "@pinMode": {
+    "description": "Pin Mode"
   },
   
   "addSpecialDay": "添加特殊日",
@@ -200,9 +210,34 @@
     "description": "Enter Title"
   },
   
+ "startDate": "起始日期",
+  "@startDate": {
+    "description": "Start date label"
+  },
+
   "targetDate": "目标日期",
   "@targetDate": {
-    "description": "Target Date"
+    "description": "Target date label"
+  },
+
+  "solarDate": "公历",
+  "@solarDate": {
+    "description": "Solar calendar label"
+  },
+
+  "lunarDate": "农历",
+  "@lunarDate": {
+    "description": "Lunar calendar label"
+  },
+
+  "weekday": "{day}",
+  "@weekday": {
+    "description": "Weekday format",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
   },
   
   "backgroundSettings": "背景设置",
@@ -286,6 +321,58 @@
   "@confirm": {
     "description": "Confirm"
   },
+  "share": "分享",
+  "@share": {
+    "description": "Share"
+  },
+  "category": "分类",
+  "@category": {
+    "description": "Category"
+  },
+  "reminderTime": "提醒时间",
+  "@reminderTime": {
+    "description": "Reminder Time"
+  },
+  "repeat": "重复",
+  "@repeat": {
+    "description": "Repeat"
+  },
+  "endTime": "结束时间",
+  "@endTime": {
+    "description": "End Time"
+  },
+  "includeStartDate": "包含开始日期",
+  "@includeStartDate": {
+    "description": "Include Start Date"
+  },
+  "styleSettings": "样式设置",
+  "@styleSettings": {
+    "description": "Style Settings"
+  },
+  "background": "背景",
+  "@background": {
+    "description": "Background"
+  },
+  "pureColor": "纯色",
+  "@pureColor": {
+    "description": "Pure Color"
+  },
+  "gradient": "渐变",
+  "@gradient": {
+    "description": "Gradient"
+  },
+  "custom": "自定义",
+  "@custom": {
+    "description": "Custom"
+  },
+  "font": "字体",
+  "@font": {
+    "description": "Font"
+  },
+  "icon": "图标",
+  "@icon": {
+    "description": "Icon"
+  },
 
   "eventPrefixToday": "就是",
   "eventPrefixTodayOrdinal": "第",
@@ -298,5 +385,23 @@
   "ordinalSuffix3": "rd",
   "ordinalSuffixOther": "th",
 
-  "eventToday": "今天"
+  "eventToday": "今天",
+
+  "monday": "周一",
+  "mondayShort": "周一",
+  "tuesday": "周二",
+  "tuesdayShort": "周二",
+  "wednesday": "周三",
+  "wednesdayShort": "周三",
+  "thursday": "周四",
+  "thursdayShort": "周四",
+  "friday": "周五",
+  "fridayShort": "周五",
+  "saturday": "周六",
+  "saturdayShort": "周六",
+  "sunday": "周日",
+  "sundayShort": "周日",
+  "@monday": {
+    "description": "Monday in Chinese"
+  }
 }

@@ -209,14 +209,6 @@ class Event extends Equatable {
       displayDays += 1;
     }
     
-    // 辅助函数：计算居中所需的空格数
-    String getCenteredSpaces(String firstLine, String secondLine) {
-      final firstLineLength = firstLine.length;
-      final secondLineLength = secondLine.length;
-      final spaces = ((firstLineLength - secondLineLength) / 2).round();
-      return ' ' * (spaces > 0 ? spaces : 0);
-    }
-    
     switch (displayUnit) {
       case TimeUnit.day:
         return "$displayDays ${displayDays == 1 ? l10n.day : l10n.days}";
@@ -251,18 +243,17 @@ class Event extends Equatable {
         // 如果不足一年，返回天数让 toggleUnit 跳过
         if (years == 0) return "$displayDays ${displayDays == 1 ? l10n.day : l10n.days}";
 
-        // 年月和天数分两行显示
-        final mainPart = [
+        final firstLine = [
           "$years ${years == 1 ? l10n.yearShort : l10n.yearsShort}",
           if (months > 0) "$months ${months == 1 ? l10n.monthShort : l10n.monthsShort}",
         ].join(' ');
         
         if (days > 0) {
           final secondLine = "$days ${days == 1 ? l10n.dayShort : l10n.dayShort}";
-          final spaces = getCenteredSpaces(mainPart, secondLine);
-          return "$mainPart\n$spaces$secondLine";
+          // 使用特殊字符来标记第二行，UI层会处理居中
+          return "$firstLine\n$secondLine";
         }
-        return mainPart;
+        return firstLine;
         
       case TimeUnit.month:
         // 确保开始日期小于结束日期
@@ -284,9 +275,8 @@ class Event extends Equatable {
 
         final mainPart = "$totalMonths ${totalMonths == 1 ? l10n.monthShort : l10n.monthsShort}";
         if (days > 0) {
-          final secondLine = "$days ${days == 1 ? l10n.dayShort : l10n.dayShort}";
-          final spaces = getCenteredSpaces(mainPart, secondLine);
-          return "$mainPart\n$spaces$secondLine";
+          final secondPart = "$days ${days == 1 ? l10n.dayShort : l10n.dayShort}";
+          return "$mainPart $secondPart"; // 始终在一行显示
         }
         return mainPart;
         
@@ -299,9 +289,8 @@ class Event extends Equatable {
         
         final mainPart = "$weeks ${weeks == 1 ? l10n.weekShort : l10n.weeksShort}";
         if (remainingDays > 0) {
-          final secondLine = "$remainingDays ${remainingDays == 1 ? l10n.dayShort : l10n.dayShort}";
-          final spaces = getCenteredSpaces(mainPart, secondLine);
-          return "$mainPart\n$spaces$secondLine";
+          final secondPart = "$remainingDays ${remainingDays == 1 ? l10n.dayShort : l10n.dayShort}";
+          return "$mainPart $secondPart"; // 始终在一行显示
         }
         return mainPart;
     }

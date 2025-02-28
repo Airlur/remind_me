@@ -329,7 +329,7 @@ class _EditEventPageState extends State<EditEventPage> {
                     MaterialPageRoute(
                       builder: (context) => StyleSettingsPage(
                         title: _titleController.text,
-                        dateText: '${LunarUtils.formatDate(_targetDate, _isLunar)} ${LunarUtils.getWeekDay(_targetDate)}',
+                        dateText: '${LunarUtils.formatDateWithYear(_targetDate, _isLunar, context)} ${LunarUtils.getWeekDay(_targetDate, context, useShort: true)}',
                         prefix: _prefix,
                         absDays: _displayDays,
                         backgroundType: _backgroundType,

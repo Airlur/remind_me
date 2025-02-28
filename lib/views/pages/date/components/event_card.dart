@@ -124,8 +124,7 @@ class EventCard extends StatelessWidget {
               backgroundColor: AppColors.shareAction,
               foregroundColor: AppColors.onActionColor,
               icon: Icons.share,
-              // label: context.l10n.share,
-              label: '分享',
+              label: context.l10n.share,
               spacing: 4,
               padding: EdgeInsets.zero,
               autoClose: true,
@@ -172,7 +171,7 @@ class EventCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
+                            '${LunarUtils.formatDateWithYear(event.targetDate, event.isLunar, context)} ${LunarUtils.getWeekDay(event.targetDate, context, useShort: true)}',
                             style: dateWeekStyle ?? TextStyle(
                               fontSize: 12,
                               color: BackgroundUtils.getEventTextColor(event, context),

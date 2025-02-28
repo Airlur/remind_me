@@ -180,6 +180,11 @@
     "description": "Timeline"
   },
   
+  "sort": "Sort",
+  "@sort": {
+    "description": "Sort"
+  },
+  
   "unpin": "Unpin",
   "@unpin": {
     "description": "Unpin"
@@ -188,6 +193,11 @@
   "pin": "Pin",
   "@pin": {
     "description": "Pin"
+  },
+  
+  "pinMode": "Pin Mode",
+  "@pinMode": {
+    "description": "Pin Mode"
   },
   
   "addSpecialDay": "Add Special Day",
@@ -200,9 +210,34 @@
     "description": "Enter Title"
   },
   
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Start date label"
+  },
+
   "targetDate": "Target Date",
   "@targetDate": {
-    "description": "Target Date"
+    "description": "Target date label"
+  },
+
+  "solarDate": "Solar",
+  "@solarDate": {
+    "description": "Solar calendar label"
+  },
+
+  "lunarDate": "Lunar",
+  "@lunarDate": {
+    "description": "Lunar calendar label"
+  },
+
+  "weekday": "{day}",
+  "@weekday": {
+    "description": "Weekday format",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
   },
   
   "backgroundSettings": "Background Settings",
@@ -286,6 +321,58 @@
   "@confirm": {
     "description": "Confirm"
   },
+  "share": "Share",
+  "@share": {
+    "description": "Share"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Category"
+  },
+  "reminderTime": "Reminder Time",
+  "@reminderTime": {
+    "description": "Reminder Time"
+  },
+  "endTime": "End Time",
+  "@endTime": {
+    "description": "End Time"
+  },
+  "repeat": "Repeat",
+  "@repeat": {
+    "description": "Repeat"
+  },
+  "includeStartDate": "Include Start Date",
+  "@includeStartDate": {
+    "description": "Include Start Date"
+  },
+  "styleSettings": "Style Settings",
+  "@styleSettings": {
+    "description": "Style Settings"
+  },
+  "background": "Background",
+  "@background": {
+    "description": "Background"
+  },
+  "pureColor": "Pure Color",
+  "@pureColor": {
+    "description": "Pure Color"
+  },
+  "gradient": "Gradient",
+  "@gradient": {
+    "description": "Gradient"
+  },
+  "custom": "Custom",
+  "@custom": {
+    "description": "Custom"
+  },
+  "font": "Font",
+  "@font": {
+    "description": "Font"
+  },
+  "icon": "Icon",
+  "@icon": {
+    "description": "Icon"
+  },
 
   "eventPrefixToday": "",
   "eventPrefixTodayOrdinal": "The",
@@ -298,5 +385,23 @@
   "ordinalSuffix3": "rd",
   "ordinalSuffixOther": "th",
 
-  "eventToday": "today"
+  "eventToday": "today",
+
+  "monday": "Monday",
+  "mondayShort": "Mon",
+  "tuesday": "Tuesday",
+  "tuesdayShort": "Tue",
+  "wednesday": "Wednesday",
+  "wednesdayShort": "Wed",
+  "thursday": "Thursday",
+  "thursdayShort": "Thu",
+  "friday": "Friday",
+  "fridayShort": "Fri",
+  "saturday": "Saturday",
+  "saturdayShort": "Sat",
+  "sunday": "Sunday",
+  "sundayShort": "Sun",
+  "@monday": {
+    "description": "Monday full name"
+  }
 }

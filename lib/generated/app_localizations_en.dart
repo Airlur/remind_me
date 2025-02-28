@@ -113,10 +113,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeline => 'Timeline';
 
   @override
+  String get sort => 'Sort';
+
+  @override
   String get unpin => 'Unpin';
 
   @override
   String get pin => 'Pin';
+
+  @override
+  String get pinMode => 'Pin Mode';
 
   @override
   String get addSpecialDay => 'Add Special Day';
@@ -125,7 +131,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterTitle => 'Enter Title';
 
   @override
+  String get startDate => 'Start Date';
+
+  @override
   String get targetDate => 'Target Date';
+
+  @override
+  String get solarDate => 'Solar';
+
+  @override
+  String get lunarDate => 'Lunar';
+
+  @override
+  String weekday(String day) {
+    return '$day';
+  }
 
   @override
   String get backgroundSettings => 'Background Settings';
@@ -185,6 +205,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirm => 'Confirm';
 
   @override
+  String get share => 'Share';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get reminderTime => 'Reminder Time';
+
+  @override
+  String get endTime => 'End Time';
+
+  @override
+  String get repeat => 'Repeat';
+
+  @override
+  String get includeStartDate => 'Include Start Date';
+
+  @override
+  String get styleSettings => 'Style Settings';
+
+  @override
+  String get background => 'Background';
+
+  @override
+  String get pureColor => 'Pure Color';
+
+  @override
+  String get gradient => 'Gradient';
+
+  @override
+  String get custom => 'Custom';
+
+  @override
+  String get font => 'Font';
+
+  @override
+  String get icon => 'Icon';
+
+  @override
   String get eventPrefixToday => '';
 
   @override
@@ -213,4 +272,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventToday => 'today';
+
+  @override
+  String get monday => 'Monday';
+
+  @override
+  String get mondayShort => 'Mon';
+
+  @override
+  String get tuesday => 'Tuesday';
+
+  @override
+  String get tuesdayShort => 'Tue';
+
+  @override
+  String get wednesday => 'Wednesday';
+
+  @override
+  String get wednesdayShort => 'Wed';
+
+  @override
+  String get thursday => 'Thursday';
+
+  @override
+  String get thursdayShort => 'Thu';
+
+  @override
+  String get friday => 'Friday';
+
+  @override
+  String get fridayShort => 'Fri';
+
+  @override
+  String get saturday => 'Saturday';
+
+  @override
+  String get saturdayShort => 'Sat';
+
+  @override
+  String get sunday => 'Sunday';
+
+  @override
+  String get sundayShort => 'Sun';
 }

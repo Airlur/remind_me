@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:lunar/lunar.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+import 'package:remind_me/utils/common/lunar_utils.dart';
 
 class DatePickerWidget extends StatefulWidget {
   final DateTime initialDate;
@@ -73,11 +74,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     _initializeDate();
   }
 
-  String _getWeekDay(DateTime date) {
-    final weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-    return weekDays[date.weekday % 7];
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -101,7 +97,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                     child: Text(context.l10n.cancel),
                   ),
                   Text(
-                    _getWeekDay(currentDate),
+                    LunarUtils.getWeekDay(currentDate, context, useShort: false),
                     style: TextStyle(
                       fontSize: 15,
                       color: theme.colorScheme.onSurface,
@@ -136,7 +132,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         ),
                         child: Center(
                           child: Text(
-                            '公历',
+                            context.l10n.solarDate,
                             style: TextStyle(
                               color: !isLunar ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                             ),
@@ -156,7 +152,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         ),
                         child: Center(
                           child: Text(
-                            '农历',
+                            context.l10n.lunarDate,
                             style: TextStyle(
                               color: isLunar ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                             ),

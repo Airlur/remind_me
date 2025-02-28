@@ -193,53 +193,58 @@ class _EventDetailPageState extends State<EventDetailPage> {
   Widget _buildDaysCounter(Event event) {
     return GestureDetector(
       onTap: () => _toggleDisplayUnit(event),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-     
-              Text(
-                event.getFormattedNumber(context),
-                style: TextStyle(
-                  fontSize: 64,
-                  fontWeight: FontWeight.bold,
-                  color: BackgroundUtils.getEventTextColor(event, context),
-                ),
+      child: Container(
+        height: 160,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              event.getFormattedNumber(context).replaceAll('\n', ' '),
+              style: TextStyle(
+                fontSize: 64,
+                fontWeight: FontWeight.bold,
+                color: BackgroundUtils.getEventTextColor(event, context),
               ),
-            ],
+              textAlign: TextAlign.center,
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
 
   // 下部分：起始日期
   Widget _buildFooter(Event event) {
+    final l10n = context.l10n;
+    final isCountdown = event.targetDate.isAfter(DateTime.now());
+    
     return Column(
       children: [
         Text(
-          '起始日: ${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
+          '${isCountdown ? l10n.targetDate : l10n.startDate}: '
+          '${LunarUtils.formatDateWithYear(event.targetDate, event.isLunar, context)} '
+          '${l10n.weekday(LunarUtils.getWeekDay(event.targetDate, context, useShort: true))}',
           style: TextStyle(
             fontSize: 16,
+            fontWeight: FontWeight.bold,
             color: BackgroundUtils.getEventTextColor(event, context),
           ),
           textAlign: TextAlign.center,
         ),
-        if (event.isLunar)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              '公历: ${LunarUtils.formatDate(event.targetDate, false)} ${LunarUtils.getWeekDay(event.targetDate)}',
-              style: TextStyle(
-                fontSize: 14,
-                color: BackgroundUtils.getEventTextColor(event, context).withOpacity(0.8),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
+        // if (event.isLunar)
+        //   Padding(
+        //     padding: const EdgeInsets.only(top: 4),
+        //     child: Text(
+        //       '${l10n.solarDate}: ${LunarUtils.formatDateWithYear(event.targetDate, false, context)} '
+        //       '${l10n.weekday(LunarUtils.getWeekDay(event.targetDate, context, useShort: true))}',
+        //       style: TextStyle(
+        //         fontSize: 14,
+        //         color: BackgroundUtils.getEventTextColor(event, context).withOpacity(0.8),
+        //       ),
+        //       textAlign: TextAlign.center,
+        //     ),
+        //   ),
       ],
     );
   }
@@ -257,7 +262,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
         children: [
           _buildActionButton(
             icon: Icons.share,
-            label: '分享',
+            label: context.l10n.share,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('分享功能正在开发中')),

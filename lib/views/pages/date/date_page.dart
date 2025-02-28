@@ -468,7 +468,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '${LunarUtils.formatDate(event.targetDate, event.isLunar)} ${LunarUtils.getWeekDay(event.targetDate)}',
+                          '${LunarUtils.formatDateWithYear(event.targetDate, event.isLunar, context)} ${LunarUtils.getWeekDay(event.targetDate, context, useShort: true)}',
                           style: TextStyle(
                             fontSize: 16,
                             color: BackgroundUtils.getEventTextColor(event, context),
