@@ -18,6 +18,7 @@ import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/lunar_utils.dart';
 import 'package:remind_me/utils/ui/background_utils.dart';
 import 'package:remind_me/views/pages/date/event_detail_page.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class DatePage extends StatelessWidget {
   const DatePage({super.key});
@@ -360,42 +361,48 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
         // 构建事件列表
         return Column(
           children: [
+            // 构建置顶项区域
             if (pinnedEvents.isNotEmpty) ...[
               _buildPinnedArea(pinnedEvents, state.pinnedDisplayMode),
-              const SizedBox(height: 8),  // 固定间距
             ],
-            
+            const SizedBox(height: 8),
+            // 修改列表区域
             Expanded(
-              child: ReorderableListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 64),
-                proxyDecorator: (child, index, animation) {
-                  return Material(
-                    color: Colors.transparent,  // 移除拖动时的背景色
-                    child: child,
-                  );
-                },
-                itemCount: filteredEvents.length,
-                onReorder: (oldIndex, newIndex) {
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-                  context.read<EventBloc>().add(EventReordered(
-                    oldIndex: oldIndex,
-                    newIndex: newIndex,
-                  ));
-                },
-                itemBuilder: (context, index) {
-                  return Column(
-                    key: ValueKey(filteredEvents[index].id),
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (index > 0) const SizedBox(height: 8),
-                      EventCard(
-                        event: filteredEvents[index],
+              child: SlidableAutoCloseBehavior(  // 添加自动关闭行为
+                child: ReorderableListView.builder(
+                  padding: const EdgeInsets.only(bottom: 64),  // 只保留底部间距
+                  proxyDecorator: (child, index, animation) {
+                    return Material(
+                      color: Colors.transparent,
+                      child: child,
+                    );
+                  },
+                  itemCount: filteredEvents.length,
+                  onReorder: (oldIndex, newIndex) {
+                    if (oldIndex < newIndex) {
+                      newIndex -= 1;
+                    }
+                    context.read<EventBloc>().add(EventReordered(
+                      oldIndex: oldIndex,
+                      newIndex: newIndex,
+                    ));
+                  },
+                  itemBuilder: (context, index) {
+                    return Padding(  // 添加 Padding 来控制滑动边界
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      key: ValueKey(filteredEvents[index].id),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (index > 0) const SizedBox(height: 8),
+                          EventCard(
+                            event: filteredEvents[index],
+                          ),
+                        ],
                       ),
-                    ],
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],

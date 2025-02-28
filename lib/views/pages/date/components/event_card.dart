@@ -35,9 +35,12 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Slidable(
+      key: ValueKey(event.id),
+      closeOnScroll: true,
+      groupTag: 'eventGroup',
       startActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        extentRatio: 0.7, // 增加左侧滑块宽度比例
+        motion: const DrawerMotion(),
+        extentRatio: 0.7,
         children: [
           SlidableAction(
             flex: 1,
@@ -86,8 +89,8 @@ class EventCard extends StatelessWidget {
         ],
       ),
       endActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        extentRatio: 0.6, // 增加右侧滑块宽度比例
+        motion: const DrawerMotion(),
+        extentRatio: 0.6,
         children: [
           SlidableAction(
             flex: 1,
