@@ -362,12 +362,18 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
           children: [
             if (pinnedEvents.isNotEmpty) ...[
               _buildPinnedArea(pinnedEvents, state.pinnedDisplayMode),
-              const SizedBox(height: 4),  // 固定间距
+              const SizedBox(height: 8),  // 固定间距
             ],
             
             Expanded(
               child: ReorderableListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 64),
+                proxyDecorator: (child, index, animation) {
+                  return Material(
+                    color: Colors.transparent,  // 移除拖动时的背景色
+                    child: child,
+                  );
+                },
                 itemCount: filteredEvents.length,
                 onReorder: (oldIndex, newIndex) {
                   if (oldIndex < newIndex) {
@@ -379,9 +385,15 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                   ));
                 },
                 itemBuilder: (context, index) {
-                  return EventCard(
+                  return Column(
                     key: ValueKey(filteredEvents[index].id),
-                    event: filteredEvents[index],
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (index > 0) const SizedBox(height: 8),
+                      EventCard(
+                        event: filteredEvents[index],
+                      ),
+                    ],
                   );
                 },
               ),
@@ -397,7 +409,7 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
     if (pinnedEvents.isEmpty) return const SizedBox();
     
     return SizedBox(
-      height: 100,
+      height: 120,
       child: CustomPageView(
         controller: _pageController,
         physics: mode == PinnedDisplayMode.carousel 
@@ -477,29 +489,29 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                       ],
                     ),
                   ),
-                  Container(
-                    width: 48,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      event.getDisplayPrefix(context),
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: BackgroundUtils.getEventTextColor(event, context),
-                      ),
-                    ),
-                  ),
                   Text(
-                    event.getDisplayDays(context),
+                    event.getDisplayPrefix(context),
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: BackgroundUtils.getEventTextColor(event, context),
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  Text(
+                    event.getDisplayDays(context),
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: BackgroundUtils.getEventTextColor(event, context),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Text(
                     event.getDisplayUnit(context),
                     style: TextStyle(
                       fontSize: 24,
+                      fontWeight: FontWeight.bold,
                       color: BackgroundUtils.getEventTextColor(event, context),
                     ),
                   ),

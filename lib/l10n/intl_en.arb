@@ -375,33 +375,102 @@
   },
 
   "eventPrefixToday": "",
+  "@eventPrefixToday": {
+    "description": ""
+  },
   "eventPrefixTodayOrdinal": "The",
+  "@eventPrefixTodayOrdinal": {
+    "description": "The"
+  },
   "eventPrefixFuture": "In",
+  "@eventPrefixFuture": {
+    "description": "In"
+  },
   "eventPrefixPastOrdinal": "The",
+  "@eventPrefixPastOrdinal": {
+    "description": "The"
+  },
   "eventPrefixPast": "",
+  "@eventPrefixPast": {
+    "description": ""
+  },
 
   "ordinalSuffix1": "st",
+  "@ordinalSuffix1": {
+    "description": "st"
+  },
   "ordinalSuffix2": "nd",
+  "@ordinalSuffix2": {
+    "description": "nd"
+  },
   "ordinalSuffix3": "rd",
+  "@ordinalSuffix3": {
+    "description": "rd"
+  },
   "ordinalSuffixOther": "th",
+  "@ordinalSuffixOther": {
+    "description": "th"
+  },
 
   "eventToday": "today",
+  "@eventToday": {
+    "description": "today"
+  },
 
   "monday": "Monday",
-  "mondayShort": "Mon",
-  "tuesday": "Tuesday",
-  "tuesdayShort": "Tue",
-  "wednesday": "Wednesday",
-  "wednesdayShort": "Wed",
-  "thursday": "Thursday",
-  "thursdayShort": "Thu",
-  "friday": "Friday",
-  "fridayShort": "Fri",
-  "saturday": "Saturday",
-  "saturdayShort": "Sat",
-  "sunday": "Sunday",
-  "sundayShort": "Sun",
   "@monday": {
-    "description": "Monday full name"
+    "description": "Monday"
+  },
+  "mondayShort": "Mon",
+  "@mondayShort": {
+    "description": "Monday abbreviation"
+  },
+  "tuesday": "Tuesday",
+  "@tuesday": {
+    "description": "Tuesday"
+  },
+  "tuesdayShort": "Tue",
+  "@tuesdayShort": {
+    "description": "Tuesday abbreviation"
+  },
+  "wednesday": "Wednesday",
+  "@wednesday": {
+    "description": "Wednesday"
+  },
+  "wednesdayShort": "Wed",
+  "@wednesdayShort": {
+    "description": "Wednesday abbreviation"
+  },
+  "thursday": "Thursday",
+  "@thursday": {
+    "description": "Thursday"
+  },
+  "thursdayShort": "Thu",
+  "@thursdayShort": {
+    "description": "Thursday abbreviation"
+  },
+  "friday": "Friday",
+  "@friday": {
+    "description": "Friday"
+  },
+  "fridayShort": "Fri",
+  "@fridayShort": {
+    "description": "Friday abbreviation"
+  },
+  "saturday": "Saturday",
+  "@saturday": {
+    "description": "Saturday"
+  },
+  "saturdayShort": "Sat",
+  "@saturdayShort": {
+    "description": "Saturday abbreviation"
+  },
+  "sunday": "Sunday",
+  "@sunday": {
+    "description": "Sunday"
+  },
+  "sundayShort": "Sun",
+  "@sundayShort": {
+    "description": "Sunday abbreviation"
   }
 }

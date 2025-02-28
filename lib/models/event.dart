@@ -156,7 +156,7 @@ class Event extends Equatable {
     final l10n = context.l10n;
     
     if (isToday) {
-      return includeStartDay ? l10n.eventPrefixTodayOrdinal : l10n.eventPrefixToday;
+      return includeStartDay  ? l10n.eventPrefixTodayOrdinal : l10n.eventPrefixToday;
     } else {
       return isCountdown 
           ? l10n.eventPrefixFuture 
@@ -188,10 +188,14 @@ class Event extends Equatable {
   // 获取单位
   String getDisplayUnit(BuildContext context) {
     final l10n = context.l10n;
-    if (absDays == 0) {
-      return includeStartDay ? " ${l10n.day}" : "";  // 序数词用单数
+     if (includeStartDay) {
+      return l10n.day;  // 序数词情况始终使用单数形式
     }
-    return absDays == 1 ? " ${l10n.day}" : " ${l10n.days}";  // 根据天数使用单复数
+    // 非序数词情况才考虑单复数
+    if (absDays == 0) {
+      return "";
+    }
+    return absDays == 1 ? l10n.day : l10n.days;  // 根据天数使用单复数
   }
 
   String getFormattedNumber(BuildContext context) {

@@ -35,55 +35,6 @@ class _AddEventPageState extends State<AddEventPage> {
   String? _animationType;
   String? _iconName;
   String? _fontFamily;
-  
-  bool get _isToday {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final target = DateTime(_targetDate.year, _targetDate.month, _targetDate.day);
-    return today.isAtSameMomentAs(target);
-  }
-
-  bool get _isCountdown {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final target = DateTime(_targetDate.year, _targetDate.month, _targetDate.day);
-    return target.isAfter(today);
-  }
-
-  int get _absDays {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final target = DateTime(_targetDate.year, _targetDate.month, _targetDate.day);
-    return target.difference(today).inDays.abs();
-  }
-
-  String get _prefix {
-    if (_isToday) {
-      return _includeStartDay ? '第' : '就是';
-    } else {
-      return _isCountdown ? context.l10n.daysLeft : (_includeStartDay ? '第' : context.l10n.daysAgo);
-    }
-  }
-
-  int get _displayDays {
-    if (_isToday) {
-      return _includeStartDay ? 1 : 0;
-    } else if (_isCountdown) {
-      return _absDays;
-    } else {
-      return _includeStartDay ? _absDays + 1 : _absDays;
-    }
-  }
-  // String get _previewText {
-  //   if (_titleController.text.isEmpty) return context.l10n.preview;
-  //   final daysText = _isToday ? '今天' : '${_absDays}天';
-  //   return '${_titleController.text} $_prefix $daysText';
-  // }
-
-  String _getWeekDay(DateTime date) {
-    final weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    return weekDays[date.weekday % 7];
-  }
 
   @override
   void dispose() {
@@ -217,7 +168,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.category),
-                    title: const Text('分类'),
+                    title: Text(context.l10n.category),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -253,7 +204,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ListTile(
                     leading: const Icon(Icons.access_time),
                     // title: Text(context.l10n.reminderTime),
-                    title: const Text('提醒时间'),
+                    title: Text(context.l10n.reminderTime),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现提醒时间选择
@@ -262,7 +213,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ListTile(
                     leading: const Icon(Icons.repeat),
                     // title: Text(context.l10n.repeat),
-                    title: const Text('重复'),
+                    title: Text(context.l10n.repeat),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现重复规则选择
@@ -270,8 +221,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.event_busy),
-                    // title: Text(context.l10n.endDate),
-                    title: const Text('结束时间'),
+                    title: Text(context.l10n.endTime),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     onTap: () {
                       // TODO: 实现结束时间选择
@@ -295,8 +245,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   ),
                   SwitchListTile(
                     secondary: const Icon(Icons.plus_one),
-                    // title: Text(context.l10n.includeStartDay),
-                    title: const Text('包含开始日期'),
+                    title: Text(context.l10n.includeStartDate),
                     value: _includeStartDay,
                     onChanged: (value) => setState(() => _includeStartDay = value),
                   ),
@@ -310,17 +259,33 @@ class _AddEventPageState extends State<AddEventPage> {
               margin: EdgeInsets.zero,
               child: ListTile(
                 leading: const Icon(Icons.palette),
-                // title: Text(context.l10n.style),  // "样式设置"
-                title: const Text('样式设置'),
+                title: Text(context.l10n.styleSettings),
                 trailing: const Icon(Icons.chevron_right, size: 20),
                 onTap: () {
+                  // 创建预览用的 Event 对象
+                  final previewEvent = Event(
+                    id: '0',  // 预览用，ID 不重要
+                    title: _titleController.text,
+                    targetDate: _targetDate,
+                    createdAt: DateTime.now(),
+                    isLunar: _isLunar,
+                    includeStartDay: _includeStartDay,
+                    backgroundType: _backgroundType ?? BackgroundType.color,
+                    backgroundColorValue: _backgroundColorValue,
+                    gradientColorValues: _gradientColorValues,
+                    localImagePath: _localImagePath,
+                    animationType: _animationType,
+                    iconName: _iconName,
+                    fontFamily: _fontFamily,
+                  );
+
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => StyleSettingsPage(
                         title: _titleController.text,
-                        dateText: '${_targetDate.year}-${_targetDate.month.toString().padLeft(2, '0')}-${_targetDate.day.toString().padLeft(2, '0')} ${_getWeekDay(_targetDate)}',
-                        prefix: _prefix,
-                        absDays: _displayDays,
+                        targetDate: _targetDate,
+                        isLunar: _isLunar,
+                        previewEvent: previewEvent,  // 传入预览 Event
                         backgroundType: _backgroundType,
                         backgroundColorValue: _backgroundColorValue,
                         gradientColorValues: _gradientColorValues,

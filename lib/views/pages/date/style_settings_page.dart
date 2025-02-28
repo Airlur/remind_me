@@ -5,12 +5,16 @@ import 'package:remind_me/theme/app_colors.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:collection/collection.dart';
 import 'package:remind_me/utils/ui/background_utils.dart';
+import 'package:remind_me/utils/common/lunar_utils.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class StyleSettingsPage extends StatefulWidget {
   final String title;
-  final String dateText;  // 新增：日期文本 (yyyy-MM-dd 周x)
-  final String prefix;    // 新增：前缀文本 ("还有"/"已经"等)
-  final int absDays;     // 新增：天数
+  final DateTime targetDate;  // 修改：使用目标日期
+  final bool isLunar;        // 修改：添加是否农历标志
+  final Event previewEvent;  // 修改：添加预览用的 Event 对象
+  // final String prefix;    // 新增：前缀文本 ("还有"/"已经"等)
+  // final int absDays;     // 新增：天数
   final BackgroundType? backgroundType;
   final int? backgroundColorValue;
   final List<int>? gradientColorValues;
@@ -25,9 +29,11 @@ class StyleSettingsPage extends StatefulWidget {
   const StyleSettingsPage({
     super.key,
     required this.title,
-    required this.dateText,  // 新增
-    required this.prefix,    // 新增
-    required this.absDays,   // 新增
+    required this.targetDate,
+    required this.isLunar,
+    required this.previewEvent,  // 添加 previewEvent
+    // required this.prefix,    // 新增
+    // required this.absDays,   // 新增
     this.backgroundType,
     this.backgroundColorValue,
     this.gradientColorValues,
@@ -430,6 +436,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (_selectedIcon != null && _selectedIcon!.isNotEmpty)
                 Padding(
@@ -456,7 +463,8 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      widget.dateText,
+                      '${LunarUtils.formatDateWithYear(widget.targetDate, widget.isLunar, context)} '
+                      '${LunarUtils.getWeekDay(widget.targetDate, context, useShort: true)}',
                       style: TextStyle(
                         fontSize: 12,
                         color: textColor.withOpacity(0.8),
@@ -465,48 +473,29 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    widget.prefix,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: _selectedFontFamily,
-                      color: textColor,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  if (widget.prefix == '就是')
-                    Text(
-                      '今天',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: _selectedFontFamily,
-                        color: textColor,
-                      ),
-                    )
-                  else
-                    Text(
-                      '${widget.absDays}',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: _selectedFontFamily,
-                        color: textColor,
-                      ),
-                    ),
-                  if (widget.prefix != '就是')
-                    Text(
-                      ' 天',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: _selectedFontFamily,
-                        color: textColor,
-                      ),
-                    ),
-                ],
+              Text(
+                widget.previewEvent.getDisplayPrefix(context),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                widget.previewEvent.getDisplayDays(context),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                widget.previewEvent.getDisplayUnit(context),  // 使用 Event 的方法
+                style: TextStyle(
+                  fontSize: 16,
+                  color: textColor,
+                ),
               ),
             ],
           ),
@@ -519,7 +508,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('样式设置'),
+        title: Text(context.l10n.styleSettings),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -534,15 +523,18 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('背景', style: TextStyle(fontSize: 14)),
+                  Text(
+                    context.l10n.background, 
+                    style: const TextStyle(fontSize: 14),
+                  ),
                   TabBar(
                     controller: _tabController,
                     labelStyle: const TextStyle(fontSize: 13),
-                    tabs: const [
-                      Tab(text: '纯色'),
-                      Tab(text: '渐变'),
-                      Tab(text: '图案'),
-                      Tab(text: '自定义'),
+                    tabs: [
+                      Tab(text: context.l10n.pureColor),
+                      Tab(text: context.l10n.gradient),
+                      Tab(text: context.l10n.animation),
+                      Tab(text: context.l10n.custom),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -562,7 +554,10 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('字体', style: TextStyle(fontSize: 14)),
+                  Text(
+                    context.l10n.font, 
+                    style: const TextStyle(fontSize: 14),
+                  ),
                   const SizedBox(height: 8),
                   _buildFontOptions(),
                 ],
@@ -578,7 +573,10 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('图标', style: TextStyle(fontSize: 14)),
+                  Text(
+                    context.l10n.icon, 
+                    style: const TextStyle(fontSize: 14),
+                  ),
                   const SizedBox(height: 8),
                   _buildIconOptions(), // 使用修改后的图标选项
                 ],

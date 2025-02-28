@@ -375,33 +375,102 @@
   },
 
   "eventPrefixToday": "就是",
+  "@eventPrefixToday": {
+    "description": "Event prefix for today"
+  },
   "eventPrefixTodayOrdinal": "第",
+  "@eventPrefixTodayOrdinal": {
+    "description": "Event prefix for today ordinal"
+  },
   "eventPrefixFuture": "还有",
+  "@eventPrefixFuture": {
+    "description": "Event prefix for future"
+  },
   "eventPrefixPastOrdinal": "第",
+  "@eventPrefixPastOrdinal": {
+    "description": "Event prefix for past ordinal"
+  },
   "eventPrefixPast": "已经",
+  "@eventPrefixPast": {
+    "description": "Event prefix for past"
+  },
 
   "ordinalSuffix1": "st",
+  "@ordinalSuffix1": {
+    "description": "Ordinal suffix for 1st"
+  },
   "ordinalSuffix2": "nd",
+  "@ordinalSuffix2": {
+    "description": "Ordinal suffix for 2nd"
+  },
   "ordinalSuffix3": "rd",
+  "@ordinalSuffix3": {
+    "description": "Ordinal suffix for 3rd"
+  },
   "ordinalSuffixOther": "th",
+  "@ordinalSuffixOther": {
+    "description": "Ordinal suffix for other"
+  },
 
   "eventToday": "今天",
-
+  "@eventToday": {
+    "description": "Event for today"
+  },
+  
   "monday": "周一",
-  "mondayShort": "周一",
-  "tuesday": "周二",
-  "tuesdayShort": "周二",
-  "wednesday": "周三",
-  "wednesdayShort": "周三",
-  "thursday": "周四",
-  "thursdayShort": "周四",
-  "friday": "周五",
-  "fridayShort": "周五",
-  "saturday": "周六",
-  "saturdayShort": "周六",
-  "sunday": "周日",
-  "sundayShort": "周日",
   "@monday": {
-    "description": "Monday in Chinese"
+    "description": "Monday"
+  },
+  "mondayShort": "周一",
+  "@mondayShort": {
+    "description": "Monday abbreviation"
+  },
+  "tuesday": "周二",
+  "@tuesday": {
+    "description": "Tuesday"
+  },
+  "tuesdayShort": "周二",
+  "@tuesdayShort": {
+    "description": "Tuesday abbreviation"
+  },
+  "wednesday": "周三",
+  "@wednesday": {
+    "description": "Wednesday"
+  },
+  "wednesdayShort": "周三",
+  "@wednesdayShort": {
+    "description": "Wednesday abbreviation"
+  },
+  "thursday": "周四",
+  "@thursday": {
+    "description": "Thursday"
+  },
+  "thursdayShort": "周四",
+  "@thursdayShort": {
+    "description": "Thursday abbreviation"
+  },
+  "friday": "周五",
+  "@friday": {
+    "description": "Friday"
+  },
+  "fridayShort": "周五",
+  "@fridayShort": {
+    "description": "Friday abbreviation"
+  },
+  "saturday": "周六",
+  "@saturday": {
+    "description": "Saturday"
+  },
+  "saturdayShort": "周六",
+  "@saturdayShort": {
+    "description": "Saturday abbreviation"
+  },
+  "sunday": "周日",
+  "@sunday": {
+    "description": "Sunday"
+  },
+  "sundayShort": "周日",
+  "@sundayShort": {
+    "description": "Sunday abbreviation"
   }
 }

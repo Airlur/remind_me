@@ -567,145 +567,145 @@ abstract class AppLocalizations {
   /// **'Icon'**
   String get icon;
 
-  /// No description provided for @eventPrefixToday.
+  ///
   ///
   /// In en, this message translates to:
   /// **''**
   String get eventPrefixToday;
 
-  /// No description provided for @eventPrefixTodayOrdinal.
+  /// The
   ///
   /// In en, this message translates to:
   /// **'The'**
   String get eventPrefixTodayOrdinal;
 
-  /// No description provided for @eventPrefixFuture.
+  /// In
   ///
   /// In en, this message translates to:
   /// **'In'**
   String get eventPrefixFuture;
 
-  /// No description provided for @eventPrefixPastOrdinal.
+  /// The
   ///
   /// In en, this message translates to:
   /// **'The'**
   String get eventPrefixPastOrdinal;
 
-  /// No description provided for @eventPrefixPast.
+  ///
   ///
   /// In en, this message translates to:
   /// **''**
   String get eventPrefixPast;
 
-  /// No description provided for @ordinalSuffix1.
+  /// st
   ///
   /// In en, this message translates to:
   /// **'st'**
   String get ordinalSuffix1;
 
-  /// No description provided for @ordinalSuffix2.
+  /// nd
   ///
   /// In en, this message translates to:
   /// **'nd'**
   String get ordinalSuffix2;
 
-  /// No description provided for @ordinalSuffix3.
+  /// rd
   ///
   /// In en, this message translates to:
   /// **'rd'**
   String get ordinalSuffix3;
 
-  /// No description provided for @ordinalSuffixOther.
+  /// th
   ///
   /// In en, this message translates to:
   /// **'th'**
   String get ordinalSuffixOther;
 
-  /// No description provided for @eventToday.
+  /// today
   ///
   /// In en, this message translates to:
   /// **'today'**
   String get eventToday;
 
-  /// Monday full name
+  /// Monday
   ///
   /// In en, this message translates to:
   /// **'Monday'**
   String get monday;
 
-  /// No description provided for @mondayShort.
+  /// Monday abbreviation
   ///
   /// In en, this message translates to:
   /// **'Mon'**
   String get mondayShort;
 
-  /// No description provided for @tuesday.
+  /// Tuesday
   ///
   /// In en, this message translates to:
   /// **'Tuesday'**
   String get tuesday;
 
-  /// No description provided for @tuesdayShort.
+  /// Tuesday abbreviation
   ///
   /// In en, this message translates to:
   /// **'Tue'**
   String get tuesdayShort;
 
-  /// No description provided for @wednesday.
+  /// Wednesday
   ///
   /// In en, this message translates to:
   /// **'Wednesday'**
   String get wednesday;
 
-  /// No description provided for @wednesdayShort.
+  /// Wednesday abbreviation
   ///
   /// In en, this message translates to:
   /// **'Wed'**
   String get wednesdayShort;
 
-  /// No description provided for @thursday.
+  /// Thursday
   ///
   /// In en, this message translates to:
   /// **'Thursday'**
   String get thursday;
 
-  /// No description provided for @thursdayShort.
+  /// Thursday abbreviation
   ///
   /// In en, this message translates to:
   /// **'Thu'**
   String get thursdayShort;
 
-  /// No description provided for @friday.
+  /// Friday
   ///
   /// In en, this message translates to:
   /// **'Friday'**
   String get friday;
 
-  /// No description provided for @fridayShort.
+  /// Friday abbreviation
   ///
   /// In en, this message translates to:
   /// **'Fri'**
   String get fridayShort;
 
-  /// No description provided for @saturday.
+  /// Saturday
   ///
   /// In en, this message translates to:
   /// **'Saturday'**
   String get saturday;
 
-  /// No description provided for @saturdayShort.
+  /// Saturday abbreviation
   ///
   /// In en, this message translates to:
   /// **'Sat'**
   String get saturdayShort;
 
-  /// No description provided for @sunday.
+  /// Sunday
   ///
   /// In en, this message translates to:
   /// **'Sunday'**
   String get sunday;
 
-  /// No description provided for @sundayShort.
+  /// Sunday abbreviation
   ///
   /// In en, this message translates to:
   /// **'Sun'**
