@@ -36,13 +36,15 @@ class EventAdapter extends TypeAdapter<Event> {
       iconName: fields[16] as String?,
       reminderTime: fields[17] as DateTime?,
       includeStartDay: fields[18] == null ? false : fields[18] as bool,
+      repeat: fields[19] as Repeat?,
+      endTime: fields[20] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -80,7 +82,11 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(17)
       ..write(obj.reminderTime)
       ..writeByte(18)
-      ..write(obj.includeStartDay);
+      ..write(obj.includeStartDay)
+      ..writeByte(19)
+      ..write(obj.repeat)
+      ..writeByte(20)
+      ..write(obj.endTime);
   }
 
   @override
@@ -188,6 +194,65 @@ class BackgroundTypeAdapter extends TypeAdapter<BackgroundType> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is BackgroundTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class RepeatAdapter extends TypeAdapter<Repeat> {
+  @override
+  final int typeId = 3;
+
+  @override
+  Repeat read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return Repeat.none;
+      case 1:
+        return Repeat.daily;
+      case 2:
+        return Repeat.weekly;
+      case 3:
+        return Repeat.monthly;
+      case 4:
+        return Repeat.yearly;
+      case 5:
+        return Repeat.custom;
+      default:
+        return Repeat.none;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, Repeat obj) {
+    switch (obj) {
+      case Repeat.none:
+        writer.writeByte(0);
+        break;
+      case Repeat.daily:
+        writer.writeByte(1);
+        break;
+      case Repeat.weekly:
+        writer.writeByte(2);
+        break;
+      case Repeat.monthly:
+        writer.writeByte(3);
+        break;
+      case Repeat.yearly:
+        writer.writeByte(4);
+        break;
+      case Repeat.custom:
+        writer.writeByte(5);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RepeatAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

@@ -29,6 +29,22 @@ enum BackgroundType {
   animation
 }
 
+@HiveType(typeId: 3)
+enum Repeat {
+  @HiveField(0)
+  none,
+  @HiveField(1)
+  daily,
+  @HiveField(2)
+  weekly,
+  @HiveField(3)
+  monthly,
+  @HiveField(4)
+  yearly,
+  @HiveField(5)
+  custom,
+}
+
 @HiveType(typeId: 0)
 class Event extends Equatable {
   @HiveField(0)
@@ -88,6 +104,12 @@ class Event extends Equatable {
   @HiveField(18, defaultValue: false)
   final bool includeStartDay;
 
+  @HiveField(19)
+  final Repeat? repeat;
+
+  @HiveField(20)
+  final DateTime? endTime;
+
   const Event({
     required this.id,
     required this.title,
@@ -108,6 +130,8 @@ class Event extends Equatable {
     this.iconName,
     this.reminderTime,
     this.includeStartDay = false,
+    this.repeat,
+    this.endTime,
   });
 
   Color? get backgroundColor => 
@@ -347,6 +371,8 @@ class Event extends Equatable {
     String? iconName,
     DateTime? reminderTime,
     bool? includeStartDay,
+    Repeat? repeat,
+    DateTime? endTime,
   }) {
     return Event(
       id: id ?? this.id,
@@ -368,6 +394,8 @@ class Event extends Equatable {
       iconName: iconName ?? this.iconName,
       reminderTime: reminderTime ?? this.reminderTime,
       includeStartDay: includeStartDay ?? this.includeStartDay,
+      repeat: repeat ?? this.repeat,
+      endTime: endTime ?? this.endTime,
     );
   }
 
@@ -392,5 +420,8 @@ class Event extends Equatable {
     iconName,
     reminderTime,
     includeStartDay,
+    repeat,
+    endTime,
   ];
 }
+

@@ -4,7 +4,7 @@ import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:uuid/uuid.dart';
-import 'components/date_picker.dart';
+import 'components/picker/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'style_settings_page.dart';
 import 'components/category/category_select_page.dart';
@@ -12,6 +12,11 @@ import 'package:remind_me/models/category.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:remind_me/utils/common/lunar_utils.dart';
+import 'package:intl/intl.dart';
+import 'package:remind_me/theme/app_colors.dart';
+import 'components/picker/reminder_time_picker.dart';
+import 'components/picker/repeat_rule_picker.dart';
+import 'components/picker/end_time_picker.dart';
 
 class AddEventPage extends StatefulWidget {
   const AddEventPage({super.key});
@@ -35,6 +40,9 @@ class _AddEventPageState extends State<AddEventPage> {
   String? _animationType;
   String? _iconName;
   String? _fontFamily;
+  DateTime? _reminderTime;
+  Repeat? _repeat;
+  DateTime? _endTime;
 
   @override
   void dispose() {
@@ -66,13 +74,15 @@ class _AddEventPageState extends State<AddEventPage> {
       animationType: _animationType,
       iconName: _iconName,
       fontFamily: _fontFamily,
+      repeat: _repeat,
+      endTime: _endTime,
     );
 
     context.read<EventBloc>().add(AddEvent(event));
     Navigator.of(context).pop();
   }
 
-  Future<void> _showDatePicker() async {
+  Future<void> _showDatePicker(T) async {
     await showModalBottomSheet(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -122,8 +132,60 @@ class _AddEventPageState extends State<AddEventPage> {
     });
   }
 
+  Future<void> _showReminderTimePicker() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ReminderTimePicker(
+          initialTime: _reminderTime ?? DateTime.now(),
+          onTimeChanged: (newTime) {
+            setState(() {
+              _reminderTime = newTime;
+            });
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showRepeatRulePicker() async {
+    // TODO: 实现重复规则选择
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return RepeatRulePicker(
+          initialRepeat: _repeat ?? Repeat.none,
+          onRepeatChanged: (newRepeat) {
+            setState(() {
+              _repeat = newRepeat;
+            });
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showEndTimePicker() async {
+    // TODO: 实现结束时间选择
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return EndTimePicker(
+          initialTime: _endTime ?? DateTime.now(),
+          onTimeChanged: (newTime) {
+            setState(() {
+              _endTime = newTime;
+            });
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.addSpecialDay),
@@ -164,7 +226,7 @@ class _AddEventPageState extends State<AddEventPage> {
                       LunarUtils.formatDate(_targetDate, _isLunar),
                       style: const TextStyle(fontSize: 16, color: Colors.blue),
                     ),
-                    onTap: _showDatePicker,
+                    onTap: () => _showDatePicker(theme),
                   ),
                   ListTile(
                     leading: const Icon(Icons.category),
@@ -175,13 +237,13 @@ class _AddEventPageState extends State<AddEventPage> {
                         if (_categoryIconName != null) Icon(
                           CategoryIconMapping.getIcon(_categoryIconName!),
                           size: 20,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: theme.colorScheme.primary,
                         ),
                         if (_category != null) const SizedBox(width: 4),
                         Text(
                           _category ?? context.l10n.all, 
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: theme.colorScheme.primary,
                             fontSize: 16
                           )
                         ),
@@ -202,30 +264,73 @@ class _AddEventPageState extends State<AddEventPage> {
               child: Column(
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.access_time),
-                    // title: Text(context.l10n.reminderTime),
+                    leading: const Icon(Icons.access_alarm),
                     title: Text(context.l10n.reminderTime),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () {
-                      // TODO: 实现提醒时间选择
-                    },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _reminderTime != null 
+                            ? DateFormat('yyyy-MM-dd HH:mm').format(_reminderTime!) 
+                            : '无',
+                          style: TextStyle(
+                            color: _reminderTime != null 
+                              ? theme.colorScheme.primary 
+                              : AppColors.iconGrayColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.chevron_right, size: 20),
+                      ],
+                    ),
+                    onTap: _showReminderTimePicker,
                   ),
                   ListTile(
                     leading: const Icon(Icons.repeat),
-                    // title: Text(context.l10n.repeat),
                     title: Text(context.l10n.repeat),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () {
-                      // TODO: 实现重复规则选择
-                    },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _repeat != null 
+                            ? _repeat.toString().split('.').last 
+                            : '不重复',
+                          style: TextStyle(
+                            color: _repeat != null 
+                              ? theme.colorScheme.primary 
+                              : AppColors.iconGrayColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.chevron_right, size: 20),
+                      ],
+                    ),
+                    onTap: _showRepeatRulePicker,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.event_busy),
+                    leading: const Icon(Icons.timer_off),
                     title: Text(context.l10n.endTime),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () {
-                      // TODO: 实现结束时间选择
-                    },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _endTime != null 
+                            ? DateFormat('yyyy-MM-dd HH:mm').format(_endTime!) 
+                            : '无',
+                          style: TextStyle(
+                            color: _endTime != null 
+                              ? theme.colorScheme.primary 
+                              : AppColors.iconGrayColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.chevron_right, size: 20),
+                      ],
+                    ),
+                    onTap: _showEndTimePicker,
                   ),
                 ],
               ),

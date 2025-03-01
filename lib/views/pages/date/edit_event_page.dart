@@ -4,7 +4,7 @@ import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
 import 'package:remind_me/models/event.dart';
-import 'components/date_picker.dart';
+import 'components/picker/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'style_settings_page.dart';
 import 'components/category/category_select_page.dart';
