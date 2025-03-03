@@ -3,6 +3,7 @@ import '../../widgets/common/swipe_action_card.dart';
 import 'package:remind_me/services/reminder_service.dart';
 import 'package:remind_me/core/di.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+
 class TimePage extends StatelessWidget {
   const TimePage({super.key});
 
@@ -41,7 +42,8 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.blue,
-                        onTrigger: () => LoggerUtils.i('详情 ${items[index].title}', 'TimePage'),
+                        onTrigger: () => LoggerUtils.i(
+                            '详情 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
                         flex: 1,
@@ -54,7 +56,8 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.orange,
-                        onTrigger: () => LoggerUtils.i('置顶 ${items[index].title}', 'TimePage'),
+                        onTrigger: () => LoggerUtils.i(
+                            '置顶 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
                         flex: 1,
@@ -67,7 +70,8 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.green,
-                        onTrigger: () => LoggerUtils.i('时间线 ${items[index].title}', 'TimePage'),
+                        onTrigger: () => LoggerUtils.i(
+                            '时间线 ${items[index].title}', 'TimePage'),
                       ),
                     ],
                     endActions: [
@@ -99,7 +103,8 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.amber,
-                        onTrigger: () => LoggerUtils.i('编辑 ${items[index].title}', 'TimePage'),
+                        onTrigger: () => LoggerUtils.i(
+                            '编辑 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
                         flex: 1,
@@ -112,7 +117,8 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.red,
-                        onTrigger: () => LoggerUtils.i('删除 ${items[index].title}', 'TimePage'),
+                        onTrigger: () => LoggerUtils.i(
+                            '删除 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
                         flex: 1,
@@ -125,18 +131,19 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.purple,
-                        onTrigger: () => LoggerUtils.i('分享 ${items[index].title}', 'TimePage'),
+                        onTrigger: () => LoggerUtils.i(
+                            '分享 ${items[index].title}', 'TimePage'),
                       ),
                     ],
                     borderRadius: borderRadius,
-                    child: TimeItemCard(item: items[index]),  // 传入圆角值
+                    child: TimeItemCard(item: items[index]), // 传入圆角值
                   ),
                 ),
               );
             },
           ),
         ),
-        
+
         // 添加测试通知部分
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -160,7 +167,8 @@ class TimePage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             final reminderService = getIt<ReminderService>();
-                            reminderService.showTestNotification(isAlarmStyle: false);
+                            reminderService.showTestNotification(
+                                isAlarmStyle: false);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('已发送普通测试通知')),
                             );
@@ -173,12 +181,39 @@ class TimePage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             final reminderService = getIt<ReminderService>();
-                            reminderService.showTestNotification(isAlarmStyle: true);
+                            reminderService.showTestNotification(
+                                isAlarmStyle: true);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('已发送闹钟样式通知')),
                             );
                           },
                           child: const Text('闹钟通知'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final reminderService = getIt<ReminderService>();
+                            reminderService.showTestNotification(
+                              isAlarmStyle: true,
+                              delay: const Duration(seconds: 5),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('已设置5秒后的闹钟通知'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                          ),
+                          child: const Text('5秒后闹钟'),
                         ),
                       ),
                     ],

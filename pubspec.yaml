@@ -33,7 +33,7 @@ dependencies:
   connectivity_plus: ^5.0.1
   
   # 通知
-  flutter_local_notifications: ^16.1.0
+  flutter_local_notifications: ^18.0.1
   
   # 工具
   intl: ^0.19.0

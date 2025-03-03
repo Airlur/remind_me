@@ -103,7 +103,7 @@ class ReminderService {
   }
   
   // 添加测试通知方法
-  Future<void> showTestNotification({bool isAlarmStyle = false}) async {
-    await _notificationService.showTestNotification(isAlarmStyle: isAlarmStyle);
+  Future<void> showTestNotification({bool isAlarmStyle = false, Duration? delay}) async {
+    await _notificationService.showTestNotification(isAlarmStyle: isAlarmStyle, delay: delay);
   }
 } 
