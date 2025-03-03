@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/common/swipe_action_card.dart';
 import 'package:remind_me/services/reminder_service.dart';
 import 'package:remind_me/core/di.dart';
-
+import 'package:remind_me/utils/common/logger_utils.dart';
 class TimePage extends StatelessWidget {
   const TimePage({super.key});
 
@@ -41,7 +41,7 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.blue,
-                        onTrigger: () => print('详情 ${items[index].title}'),
+                        onTrigger: () => LoggerUtils.i('详情 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
                         flex: 1,
@@ -54,7 +54,7 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.orange,
-                        onTrigger: () => print('置顶 ${items[index].title}'),
+                        onTrigger: () => LoggerUtils.i('置顶 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
                         flex: 1,
@@ -67,7 +67,7 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.green,
-                        onTrigger: () => print('时间线 ${items[index].title}'),
+                        onTrigger: () => LoggerUtils.i('时间线 ${items[index].title}', 'TimePage'),
                       ),
                     ],
                     endActions: [
@@ -85,7 +85,7 @@ class TimePage extends StatelessWidget {
                         backgroundColor: Colors.grey,
                         onTrigger: () {
                           // 取消操作，恢复到原位
-                          print('取消 ${items[index].title}');
+                          LoggerUtils.i('取消 ${items[index].title}', 'TimePage');
                         },
                       ),
                       SwipeAction(
@@ -99,7 +99,7 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.amber,
-                        onTrigger: () => print('编辑 ${items[index].title}'),
+                        onTrigger: () => LoggerUtils.i('编辑 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
                         flex: 1,
@@ -112,7 +112,7 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.red,
-                        onTrigger: () => print('删除 ${items[index].title}'),
+                        onTrigger: () => LoggerUtils.i('删除 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
                         flex: 1,
@@ -125,7 +125,7 @@ class TimePage extends StatelessWidget {
                           ],
                         ),
                         backgroundColor: Colors.purple,
-                        onTrigger: () => print('分享 ${items[index].title}'),
+                        onTrigger: () => LoggerUtils.i('分享 ${items[index].title}', 'TimePage'),
                       ),
                     ],
                     borderRadius: borderRadius,
@@ -215,11 +215,11 @@ class TimeItemCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Icon(Icons.access_time),
-            SizedBox(width: 16),
+            const Icon(Icons.access_time),
+            const SizedBox(width: 16),
             Text(
               item.title,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
           ],
         ),

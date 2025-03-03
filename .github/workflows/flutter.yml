@@ -16,7 +16,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      APP_VERSION: 0.1.0
       KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -24,6 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      # 添加新步骤：读取 pubspec.yaml 中的版本号
+      - name: Get version from pubspec.yaml
+        id: get_version
+        run: |
+          VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -34,8 +40,7 @@ jobs:
         run: flutter pub get
         
       - name: Analyze project source
-        # run: flutter analyze --no-fatal-infos
-        run: flutter analyze --no-fatal-infos --ignore=unnecessary_string_interpolations --ignore=unnecessary_brace_in_string_interps --ignore=unused_import --ignore=sized_box_for_whitespace --ignore=use_build_context_synchronously --ignore=avoid_print --ignore=prefer_const_constructors
+        run: flutter analyze --no-fatal-infos
         
       - name: Create keystore
         run: |
@@ -52,13 +57,13 @@ jobs:
         shell: bash
         run: |
           cd build/app/outputs/flutter-apk/
-          mv app-release.apk "remind_me_v${{ env.APP_VERSION }}_arm64.apk"
+          mv app-release.apk "remind_me_v${{ steps.get_version.outputs.version }}_arm64.apk"
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/app/outputs/flutter-apk/remind_me_v${{ env.APP_VERSION }}_arm64.apk
-          tag_name: v${{ env.APP_VERSION }}
+          files: build/app/outputs/flutter-apk/remind_me_v${{ steps.get_version.outputs.version }}_arm64.apk
+          tag_name: v${{ steps.get_version.outputs.version }}
           draft: false
           prerelease: false
         env:

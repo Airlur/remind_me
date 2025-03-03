@@ -89,7 +89,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
       body: Column(
         children: [
           // 双列选择器
-          Container(
+          SizedBox(
             height: 150,
             child: Row(
               children: [

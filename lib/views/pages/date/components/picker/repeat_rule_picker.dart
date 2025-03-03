@@ -53,7 +53,7 @@ class _RepeatRulePickerState extends State<RepeatRulePicker> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       child: Container(
@@ -63,7 +63,8 @@ class _RepeatRulePickerState extends State<RepeatRulePicker> {
           children: [
             // 标题
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: Row(
                 children: [
                   Text(
@@ -78,11 +79,12 @@ class _RepeatRulePickerState extends State<RepeatRulePicker> {
               ),
             ),
             const Divider(height: 1),
-            
+
             // 重复规则列表 - 使用约束高度的容器
             ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.4, // 限制最大高度为屏幕高度的40%
+                maxHeight:
+                    MediaQuery.of(context).size.height * 0.4, // 限制最大高度为屏幕高度的40%
               ),
               child: ListView.builder(
                 shrinkWrap: true,
@@ -91,16 +93,19 @@ class _RepeatRulePickerState extends State<RepeatRulePicker> {
                 itemBuilder: (context, index) {
                   final repeat = Repeat.values[index];
                   final isSelected = repeat == selectedRepeat;
-                  
+
                   return ListTile(
                     title: Text(
                       repeat.description,
                       style: TextStyle(
-                        color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
-                    trailing: isSelected 
+                    trailing: isSelected
                         ? Icon(Icons.check, color: theme.colorScheme.primary)
                         : null,
                     onTap: () {
@@ -143,8 +148,8 @@ class _RepeatRulePickerState extends State<RepeatRulePicker> {
         ),
       ),
     );
-    
-    if (result != null) {
+
+    if (result != null && mounted) {
       Navigator.pop(context);
     }
   }

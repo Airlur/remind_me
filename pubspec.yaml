@@ -1,7 +1,7 @@
 name: remind_me
 description: "一个简洁的时间管理应用."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.1.1+1
 
 environment:
   sdk: '>=3.2.3 <4.0.0'
