@@ -5,15 +5,19 @@ import 'package:remind_me/blocs/event/event_state.dart';
 import 'dart:async';
 import 'package:remind_me/repositories/event_repository.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+import 'package:remind_me/services/reminder_service.dart';
 
 class EventBloc extends HydratedBloc<EventEvent, EventState> {
   final EventRepository _repository;
+  final ReminderService _reminderService;
   Timer? _midnightTimer;
   Timer? _deleteTimer;
 
   EventBloc({
     required EventRepository repository,
+    required ReminderService reminderService,
   }) : _repository = repository,
+       _reminderService = reminderService,
        super(const EventState()) {
     on<LoadEvents>(_onLoadEvents);
     on<AddEvent>(_onAddEvent);
@@ -56,6 +60,14 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   Future<void> _onAddEvent(AddEvent event, Emitter<EventState> emit) async {
     try {
       await _repository.saveEvent(event.event);
+      
+      // 打印当前时间和设置的提醒时间
+      LoggerUtils.i('当前时间: ${DateTime.now()}, 设置的提醒时间: ${event.event.reminderTime}', 'EventBloc');
+      
+      if (event.event.reminderTime != null) {
+        await _reminderService.setReminder(event.event);
+      }
+      
       final events = await _repository.getAllEvents();
       emit(state.copyWith(
         status: EventStatus.success,
@@ -82,14 +94,20 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       // 1. 更新数据库
       await _repository.updateEvent(event.event);
       
-      // 2. 只更新当前事件，保持其他状态不变
+      // 打印当前时间和设置的提醒时间
+      LoggerUtils.i('当前时间: ${DateTime.now()}, 设置的提醒时间: ${event.event.reminderTime}', 'EventBloc');
+      
+      // 2. 更新提醒
+      await _reminderService.updateReminder(event.event);
+      
+      // 3. 只更新当前事件，保持其他状态不变
       final events = List<Event>.from(state.events);
       final index = events.indexWhere((e) => e.id == event.event.id);
       if (index != -1) {
         events[index] = event.event;
       }
       
-      // 3. 发出新状态前记录
+      // 4. 发出新状态前记录
       // LoggerUtils.i('''【EventBloc】即将发出新状态:
       //   事件ID: ${event.event.id}
       //   当前分类: ${state.selectedCategory ?? "全部"}
@@ -130,11 +148,20 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   Future<void> _onDeleteEvent(DeleteEvent event, Emitter<EventState> emit) async {
     try {
       await _repository.deleteEvent(event.eventId);
+      await _reminderService.cancelReminder(event.eventId);
+      
       // 如果是当前待删除的事件，清除待删除状态
       if (state.pendingDeleteEvent?.id == event.eventId) {
         emit(state.copyWith(pendingDeleteEvent: null));
       }
       // 注意：不需要重新加载事件列表，因为我们已经在UI上移除了该事件
+      
+      final events = await _repository.getAllEvents();
+      emit(state.copyWith(
+        status: EventStatus.success,
+        events: events,
+        pendingDeleteEvent: null,
+      ));
     } catch (e) {
       emit(state.copyWith(
         status: EventStatus.failure,

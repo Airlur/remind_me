@@ -436,7 +436,9 @@ class Event extends Equatable {
     }
   }
 
-  // 检查是否已过期
+  // 检查是否已过期，过期规则是：
+  // 1. 如果设置了结束时间，且当前时间大于结束时间，则认为已过期
+  // 2. 如果未设置结束时间，则认为未过期  
   bool isExpired() {
     final now = DateTime.now();
     if (endTime != null && now.isAfter(endTime!)) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:remind_me/l10n/l10n.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
 
 class ReminderTimePicker extends StatefulWidget {
   final DateTime? initialTime;
@@ -46,8 +47,12 @@ class _ReminderTimePickerState extends State<ReminderTimePicker> {
     } else {
       // 根据初始时间判断类型
       final targetDate = widget.targetDate;
+      // 计算天数差异（注意：可能为负数）
       final diff = targetDate.difference(widget.initialTime!).inDays;
       
+      LoggerUtils.i('【ReminderTimePicker】初始化 - 目标日期: $targetDate, 提醒时间: ${widget.initialTime}, 差异天数: $diff', 'ReminderTimePicker');
+      
+      // 修改判断逻辑，处理负数情况
       if (diff == 0) {
         selectedTypeIndex = 1; // 当天
       } else if (diff == 1) {
@@ -59,11 +64,21 @@ class _ReminderTimePickerState extends State<ReminderTimePicker> {
       } else if (diff == 7) {
         selectedTypeIndex = 5; // 提前1周
       } else {
-        selectedTypeIndex = 0; // 默认不提醒
+        // 如果不匹配任何预设选项，但确实有提醒时间
+        // 选择最接近的预设选项或使用自定义选项
+        if (diff > 0 && diff < 7) {
+          // 选择最接近的天数
+          selectedTypeIndex = diff > 3 ? 5 : diff + 1;
+        } else {
+          // 如果差异为负数或大于7天，使用当天选项
+          selectedTypeIndex = 1;
+        }
       }
       
       selectedHour = widget.initialTime!.hour;
       selectedMinute = widget.initialTime!.minute;
+      
+      LoggerUtils.i('【ReminderTimePicker】选择的类型索引: $selectedTypeIndex, 小时: $selectedHour, 分钟: $selectedMinute', 'ReminderTimePicker');
     }
   }
 
