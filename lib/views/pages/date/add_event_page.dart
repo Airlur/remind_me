@@ -135,12 +135,18 @@ class _AddEventPageState extends State<AddEventPage> {
   Future<void> _showReminderTimePicker() async {
     await showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (BuildContext context) {
         return ReminderTimePicker(
-          initialTime: _reminderTime ?? DateTime.now(),
-          onTimeChanged: (newTime) {
+          initialTime: _reminderTime,
+          targetDate: _targetDate,
+          onTimeChanged: (time) {
             setState(() {
-              _reminderTime = newTime;
+              _reminderTime = time;
             });
           },
         );
@@ -149,7 +155,6 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   Future<void> _showRepeatRulePicker() async {
-    // TODO: 实现重复规则选择
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -166,7 +171,6 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   Future<void> _showEndTimePicker() async {
-    // TODO: 实现结束时间选择
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -271,7 +275,7 @@ class _AddEventPageState extends State<AddEventPage> {
                       children: [
                         Text(
                           _reminderTime != null 
-                            ? DateFormat('yyyy-MM-dd HH:mm').format(_reminderTime!) 
+                            ? _formatReminderTime(_reminderTime!)
                             : '无',
                           style: TextStyle(
                             color: _reminderTime != null 
@@ -294,10 +298,10 @@ class _AddEventPageState extends State<AddEventPage> {
                       children: [
                         Text(
                           _repeat != null 
-                            ? _repeat.toString().split('.').last 
+                            ? _repeat!.description
                             : '不重复',
                           style: TextStyle(
-                            color: _repeat != null 
+                            color: _repeat != null && _repeat != Repeat.none
                               ? theme.colorScheme.primary 
                               : AppColors.iconGrayColor,
                             fontSize: 16,
@@ -317,7 +321,7 @@ class _AddEventPageState extends State<AddEventPage> {
                       children: [
                         Text(
                           _endTime != null 
-                            ? DateFormat('yyyy-MM-dd HH:mm').format(_endTime!) 
+                            ? DateFormat('yyyy-MM-dd').format(_endTime!)
                             : '无',
                           style: TextStyle(
                             color: _endTime != null 
@@ -427,5 +431,9 @@ class _AddEventPageState extends State<AddEventPage> {
         ),
       ),
     );
+  }
+
+  String _formatReminderTime(DateTime time) {
+    return DateFormat('yyyy-MM-dd HH:mm').format(time);
   }
 } 

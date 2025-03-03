@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:remind_me/l10n/l10n.dart';
 import 'package:remind_me/models/event.dart';
+import 'package:remind_me/models/custom_repeat_rule.dart';
+import 'custom_repeat_rule_picker.dart';
 
 // 为 Repeat 枚举添加中文描述
 extension RepeatExtension on Repeat {
-  String get chineseDescription {
+  String get description {
     switch (this) {
       case Repeat.none:
         return '不重复';
@@ -24,92 +27,125 @@ extension RepeatExtension on Repeat {
 class RepeatRulePicker extends StatefulWidget {
   final Repeat initialRepeat;
   final ValueChanged<Repeat> onRepeatChanged;
+  final ValueChanged<CustomRepeatRule>? onCustomRuleChanged;
 
   const RepeatRulePicker({
-    Key? key,
+    super.key,
     required this.initialRepeat,
     required this.onRepeatChanged,
-  }) : super(key: key);
+    this.onCustomRuleChanged,
+  });
 
   @override
-  _RepeatRulePickerState createState() => _RepeatRulePickerState();
+  State<RepeatRulePicker> createState() => _RepeatRulePickerState();
 }
 
 class _RepeatRulePickerState extends State<RepeatRulePicker> {
   late Repeat selectedRepeat;
-  bool _isScrolled = false; // 标记列表是否滑动
-  final ScrollController _scrollController = ScrollController();
+  CustomRepeatRule? customRule;
 
   @override
   void initState() {
     super.initState();
     selectedRepeat = widget.initialRepeat;
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 0 && !_isScrolled) {
-        setState(() {
-          _isScrolled = true;
-        });
-      } else if (_scrollController.offset == 0 && _isScrolled) {
-        setState(() {
-          _isScrolled = false;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('重复', style: TextStyle(fontSize: 18)),
-          if (_isScrolled) const Divider(), // 只有在列表滑动时才显示分割线
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: Repeat.values.length,
-              itemBuilder: (context, index) {
-                final repeat = Repeat.values[index];
-                return Column(
-                  children: [
-                    ListTile(
-                      title: Text(repeat.chineseDescription), // 显示中文描述
-                      trailing: selectedRepeat == repeat
-                          ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
-                          : null,
-                      onTap: () {
+    final theme = Theme.of(context);
+    
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      child: Container(
+        color: theme.colorScheme.surface,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 标题
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              child: Row(
+                children: [
+                  Text(
+                    context.l10n.repeat,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            
+            // 重复规则列表 - 使用约束高度的容器
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.4, // 限制最大高度为屏幕高度的40%
+              ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                itemCount: Repeat.values.length,
+                itemBuilder: (context, index) {
+                  final repeat = Repeat.values[index];
+                  final isSelected = repeat == selectedRepeat;
+                  
+                  return ListTile(
+                    title: Text(
+                      repeat.description,
+                      style: TextStyle(
+                        color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    trailing: isSelected 
+                        ? Icon(Icons.check, color: theme.colorScheme.primary)
+                        : null,
+                    onTap: () {
+                      if (repeat == Repeat.custom) {
+                        _showCustomRulePicker();
+                      } else {
                         setState(() {
                           selectedRepeat = repeat;
-                          widget.onRepeatChanged(selectedRepeat);
-                          Navigator.pop(context);
                         });
-                      },
-                      tileColor: selectedRepeat == repeat
-                          ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-                          : null,
-                    ),
-                    if (index < Repeat.values.length - 1) 
-                    // 列表项之间的分割线不要有padding
-                      const Divider(height: 0,),
-                  ],
-                );
-              },
+                        widget.onRepeatChanged(repeat);
+                        Navigator.pop(context);
+                      }
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  void _showCustomRulePicker() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CustomRepeatRulePicker(
+          initialRule: customRule,
+          onRuleChanged: (rule) {
+            setState(() {
+              customRule = rule;
+              selectedRepeat = Repeat.custom;
+            });
+            widget.onRepeatChanged(Repeat.custom);
+            if (widget.onCustomRuleChanged != null) {
+              widget.onCustomRuleChanged!(rule);
+            }
+          },
+        ),
+      ),
+    );
+    
+    if (result != null) {
+      Navigator.pop(context);
+    }
   }
 }

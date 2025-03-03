@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:remind_me/models/event.dart';
 import 'package:remind_me/models/category.dart';
+import 'package:remind_me/models/custom_repeat_rule.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -28,6 +29,8 @@ class StorageService {
     Hive.registerAdapter(TimeUnitAdapter());
     Hive.registerAdapter(BackgroundTypeAdapter());
     Hive.registerAdapter(CategoryAdapter());
+    Hive.registerAdapter(RepeatAdapter());
+    Hive.registerAdapter(CustomRepeatRuleAdapter());
     
     _eventBox = await Hive.openBox<Event>(eventBoxName);
     _categoryBox = await Hive.openBox<Category>(categoryBoxName);

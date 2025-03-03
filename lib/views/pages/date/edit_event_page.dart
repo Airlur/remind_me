@@ -12,6 +12,10 @@ import 'package:remind_me/models/category.dart';
 import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:remind_me/utils/common/lunar_utils.dart';
+import 'package:intl/intl.dart';
+import 'components/picker/reminder_time_picker.dart';
+import 'components/picker/repeat_rule_picker.dart';
+import 'components/picker/end_time_picker.dart';
 
 class EditEventPage extends StatefulWidget {
   final Event event;
@@ -36,6 +40,9 @@ class _EditEventPageState extends State<EditEventPage> {
   late String? _animationType;
   late String? _iconName;
   late String? _fontFamily;
+  DateTime? _reminderTime;
+  Repeat? _repeat;
+  DateTime? _endTime;
   
   @override
   void initState() {
@@ -46,6 +53,10 @@ class _EditEventPageState extends State<EditEventPage> {
     _includeStartDay = widget.event.includeStartDay;
     _isLunar = widget.event.isLunar;
     _category = widget.event.category;
+    _reminderTime = widget.event.reminderTime;
+    _repeat = widget.event.repeat;
+    _endTime = widget.event.endTime;
+    
     final categories = context.read<EventBloc>().state.categories;
     _categoryIconName = categories
         .firstWhere(
@@ -112,8 +123,65 @@ class _EditEventPageState extends State<EditEventPage> {
     });
   }
 
+  Future<void> _showReminderTimePicker() async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (BuildContext context) {
+        return ReminderTimePicker(
+          initialTime: _reminderTime,
+          targetDate: _targetDate,
+          onTimeChanged: (time) {
+            setState(() {
+              _reminderTime = time;
+            });
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showRepeatRulePicker() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return RepeatRulePicker(
+          initialRepeat: _repeat ?? Repeat.none,
+          onRepeatChanged: (newRepeat) {
+            setState(() {
+              _repeat = newRepeat;
+            });
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showEndTimePicker() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return EndTimePicker(
+          initialTime: _endTime,
+          onTimeChanged: (newTime) {
+            setState(() {
+              _endTime = newTime;
+            });
+          },
+        );
+      },
+    );
+  }
+
+  String _formatReminderTime(DateTime time) {
+    return DateFormat('yyyy-MM-dd HH:mm').format(time);
+  }
+
   void _saveEvent() {
-    
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('请输入标题')),
@@ -139,11 +207,13 @@ class _EditEventPageState extends State<EditEventPage> {
       order: widget.event.order,
       fontFamily: _fontFamily,
       iconName: _iconName,
-      reminderTime: widget.event.reminderTime,
+      reminderTime: _reminderTime,
+      repeat: _repeat,
+      endTime: _endTime,
       includeStartDay: _includeStartDay,
     );
 
-    LoggerUtils.i('事件更新对象: background=${event.backgroundColorValue}, icon=${event.iconName}', 'EditEventPage');
+    LoggerUtils.i('事件更新对象: title=${event.title}, targetDate=${event.targetDate}, reminderTime=${event.reminderTime}, repeat=${event.repeat}, endTime=${event.endTime}', 'EditEventPage');
     context.read<EventBloc>().add(UpdateEvent(event));
     Navigator.of(context).pop();
   }
@@ -230,28 +300,73 @@ class _EditEventPageState extends State<EditEventPage> {
               child: Column(
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.access_time),
+                    leading: const Icon(Icons.access_alarm),
                     title: Text(context.l10n.reminderTime),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () {
-                      // TODO: 实现提醒时间选择
-                    },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _reminderTime != null 
+                            ? _formatReminderTime(_reminderTime!)
+                            : '无',
+                          style: TextStyle(
+                            color: _reminderTime != null 
+                              ? Theme.of(context).colorScheme.primary 
+                              : Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.chevron_right, size: 20),
+                      ],
+                    ),
+                    onTap: _showReminderTimePicker,
                   ),
                   ListTile(
                     leading: const Icon(Icons.repeat),
                     title: Text(context.l10n.repeat),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () {
-                      // TODO: 实现重复规则选择
-                    },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _repeat != null 
+                            ? _repeat!.description
+                            : '不重复',
+                          style: TextStyle(
+                            color: _repeat != null && _repeat != Repeat.none
+                              ? Theme.of(context).colorScheme.primary 
+                              : Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.chevron_right, size: 20),
+                      ],
+                    ),
+                    onTap: _showRepeatRulePicker,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.event_busy),
+                    leading: const Icon(Icons.timer_off),
                     title: Text(context.l10n.endTime),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () {
-                      // TODO: 实现结束时间选择
-                    },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _endTime != null 
+                            ? DateFormat('yyyy-MM-dd').format(_endTime!)
+                            : '无',
+                          style: TextStyle(
+                            color: _endTime != null 
+                              ? Theme.of(context).colorScheme.primary 
+                              : Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.chevron_right, size: 20),
+                      ],
+                    ),
+                    onTap: _showEndTimePicker,
                   ),
                 ],
               ),

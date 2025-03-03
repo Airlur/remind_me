@@ -1,162 +1,304 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class ReminderTimePicker extends StatefulWidget {
-  final DateTime initialTime;
-  final ValueChanged<DateTime> onTimeChanged;
+  final DateTime? initialTime;
+  final DateTime targetDate; // 目标日期参数
+  final ValueChanged<DateTime?> onTimeChanged;
 
   const ReminderTimePicker({
-    Key? key,
-    required this.initialTime,
+    super.key,
+    this.initialTime,
+    required this.targetDate,
     required this.onTimeChanged,
-  }) : super(key: key);
+  });
 
   @override
-  _ReminderTimePickerState createState() => _ReminderTimePickerState();
+  State<ReminderTimePicker> createState() => _ReminderTimePickerState();
 }
 
 class _ReminderTimePickerState extends State<ReminderTimePicker> {
+  late int selectedTypeIndex;
   late int selectedHour;
   late int selectedMinute;
-  late DateTime selectedDate;
-  late int selectedDateIndex;
+  
+  // 提醒类型选项
+  final List<String> _reminderTypes = [
+    '不提醒',
+    '当天',
+    '提前1天',
+    '提前2天',
+    '提前3天',
+    '提前1周',
+  ];
 
   @override
   void initState() {
     super.initState();
-    selectedHour = widget.initialTime.hour;
-    selectedMinute = widget.initialTime.minute;
-    selectedDate = widget.initialTime;
-    selectedDateIndex = _getSelectedDateIndex();
+    
+    if (widget.initialTime == null) {
+      selectedTypeIndex = 0; // 不提醒
+      // 当前时间
+      selectedHour = DateTime.now().hour;
+      selectedMinute = DateTime.now().minute;
+    } else {
+      // 根据初始时间判断类型
+      final targetDate = widget.targetDate;
+      final diff = targetDate.difference(widget.initialTime!).inDays;
+      
+      if (diff == 0) {
+        selectedTypeIndex = 1; // 当天
+      } else if (diff == 1) {
+        selectedTypeIndex = 2; // 提前1天
+      } else if (diff == 2) {
+        selectedTypeIndex = 3; // 提前2天
+      } else if (diff == 3) {
+        selectedTypeIndex = 4; // 提前3天
+      } else if (diff == 7) {
+        selectedTypeIndex = 5; // 提前1周
+      } else {
+        selectedTypeIndex = 0; // 默认不提醒
+      }
+      
+      selectedHour = widget.initialTime!.hour;
+      selectedMinute = widget.initialTime!.minute;
+    }
+  }
+
+  DateTime? _getSelectedDateTime() {
+    if (selectedTypeIndex == 0) return null; // 不提醒
+    
+    // 获取当前日期
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    
+    switch (selectedTypeIndex) {
+      case 1: // 当天
+        return DateTime(
+          today.year, 
+          today.month, 
+          today.day, 
+          selectedHour, 
+          selectedMinute
+        );
+      case 2: // 提前1天
+        return DateTime(
+          widget.targetDate.year, 
+          widget.targetDate.month, 
+          widget.targetDate.day - 1, 
+          selectedHour, 
+          selectedMinute
+        );
+      case 3: // 提前2天
+        return DateTime(
+          widget.targetDate.year, 
+          widget.targetDate.month, 
+          widget.targetDate.day - 2, 
+          selectedHour, 
+          selectedMinute
+        );
+      case 4: // 提前3天
+        return DateTime(
+          widget.targetDate.year, 
+          widget.targetDate.month, 
+          widget.targetDate.day - 3, 
+          selectedHour, 
+          selectedMinute
+        );
+      case 5: // 提前1周
+        return DateTime(
+          widget.targetDate.year, 
+          widget.targetDate.month, 
+          widget.targetDate.day - 7, 
+          selectedHour, 
+          selectedMinute
+        );
+      default:
+        return null;
+    }
+  }
+
+  // 获取显示文本 - 显示完整日期
+  String _getDisplayText() {
+    final dateTime = _getSelectedDateTime();
+    if (dateTime == null) return '不提醒';
+    
+    // 显示完整日期和时间
+    return DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
   }
 
   void _handleConfirm() {
-    final selectedTime = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, selectedHour, selectedMinute);
-    widget.onTimeChanged(selectedTime);
+    widget.onTimeChanged(_getSelectedDateTime());
     Navigator.pop(context);
-  }
-
-  void _handleCancel() {
-    Navigator.pop(context);
-  }
-
-  int _getSelectedDateIndex() {
-    if (selectedDate.isAtSameMomentAs(DateTime.now())) return 1;
-    if (selectedDate.isBefore(DateTime.now())) {
-      final difference = DateTime.now().difference(selectedDate).inDays;
-      if (difference == 1) return 2;
-      return 0;
-    }
-    if (selectedDate.isAtSameMomentAs(DateTime.now().add(Duration(days: 1)))) return 3;
-    if (selectedDate.isAtSameMomentAs(DateTime.now().add(Duration(days: 2)))) return 4;
-    if (selectedDate.isAtSameMomentAs(DateTime.now().add(Duration(days: 7)))) return 5;
-    return 1;
-  }
-
-  DateTime _calculateDate(int index) {
-    switch (index) {
-      case 0: return DateTime.now(); // 假设“无”表示当前时间
-      case 1: return DateTime.now();
-      case 2: return DateTime.now().subtract(Duration(days: 1));
-      case 3: return DateTime.now().add(Duration(days: 1));
-      case 4: return DateTime.now().add(Duration(days: 2));
-      case 5: return DateTime.now().add(Duration(days: 7));
-      default: return selectedDate;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.5, // 占据顶部以下一半的空间
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                onPressed: _handleCancel,
-                child: Text('取消'),
-              ),
-              Text(
-                '${DateFormat('yyyy年MM月dd日').format(selectedDate)} ${DateFormat('EEEE', 'zh_CN').format(selectedDate)}',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              TextButton(
-                onPressed: _handleConfirm,
-                child: Text('确认'),
-              ),
-            ],
-          ),
-          Divider(),
-          Expanded(
-            child: Row(
-              children: [
-                _buildPickerColumn(
-                  items: ['无', '当天', '提前1天', '提前2天', '提前1周'],
-                  selectedValue: selectedDateIndex,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedDateIndex = value;
-                      selectedDate = _calculateDate(value);
-                    });
-                  },
-                ),
-                _buildPickerColumn(
-                  items: List.generate(24, (index) => '${index}时'),
-                  selectedValue: selectedHour,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedHour = value;
-                    });
-                  },
-                ),
-                _buildPickerColumn(
-                  items: List.generate(60, (index) => '${index}分'),
-                  selectedValue: selectedMinute,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedMinute = value;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPickerColumn({
-    required List<String> items,
-    required int selectedValue,
-    required ValueChanged<int> onChanged,
-  }) {
-    return Expanded(
-      child: CupertinoPicker(
-        itemExtent: 40,
-        scrollController: FixedExtentScrollController(initialItem: selectedValue),
-        onSelectedItemChanged: onChanged,
-        children: items.map((item) {
-          final isSelected = items.indexOf(item) == selectedValue;
-          return Center(
-            child: Text(
-              item,
-              style: TextStyle(
-                fontSize: 16,
-                color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+    final theme = Theme.of(context);
+    
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      child: Container(
+        height: 340,
+        padding: const EdgeInsets.only(top: 6.0),
+        color: theme.colorScheme.surface,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(context.l10n.cancel),
+                  ),
+                  Text(
+                    _getDisplayText(),
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _handleConfirm,
+                    child: Text(context.l10n.confirm),
+                  ),
+                ],
               ),
             ),
-          );
-        }).toList(),
+            const Divider(),
+            
+            // 选择器主体
+            Expanded(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // 选中行背景
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 40,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            width: 1,
+                            color: theme.colorScheme.primary,
+                          ),
+                          bottom: BorderSide(
+                            width: 1,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      // 提醒类型选择器
+                      Expanded(
+                        flex: 2,
+                        child: CupertinoPicker(
+                          itemExtent: 40,
+                          diameterRatio: 4.0,
+                          squeeze: 1.0,
+                          useMagnifier: false,
+                          selectionOverlay: null,
+                          backgroundColor: Colors.transparent,
+                          scrollController: FixedExtentScrollController(
+                            initialItem: selectedTypeIndex,
+                          ),
+                          onSelectedItemChanged: (index) {
+                            setState(() {
+                              selectedTypeIndex = index;
+                            });
+                          },
+                          children: _reminderTypes.map((type) {
+                            return Center(
+                              child: Text(
+                                type,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      
+                      // 小时选择器
+                      if (selectedTypeIndex != 0) Expanded(
+                        child: CupertinoPicker(
+                          itemExtent: 40,
+                          diameterRatio: 4.0,
+                          squeeze: 1.0,
+                          useMagnifier: false,
+                          selectionOverlay: null,
+                          backgroundColor: Colors.transparent,
+                          scrollController: FixedExtentScrollController(
+                            initialItem: selectedHour,
+                          ),
+                          onSelectedItemChanged: (index) {
+                            setState(() {
+                              selectedHour = index;
+                            });
+                          },
+                          children: List.generate(24, (index) {
+                            return Center(
+                              child: Text(
+                                '$index时',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                      
+                      // 分钟选择器
+                      if (selectedTypeIndex != 0) Expanded(
+                        child: CupertinoPicker(
+                          itemExtent: 40,
+                          diameterRatio: 4.0,
+                          squeeze: 1.0,
+                          useMagnifier: false,
+                          selectionOverlay: null,
+                          backgroundColor: Colors.transparent,
+                          scrollController: FixedExtentScrollController(
+                            initialItem: selectedMinute,
+                          ),
+                          onSelectedItemChanged: (index) {
+                            setState(() {
+                              selectedMinute = index;
+                            });
+                          },
+                          children: List.generate(60, (index) {
+                            return Center(
+                              child: Text(
+                                '$index分',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

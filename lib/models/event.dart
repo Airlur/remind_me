@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:equatable/equatable.dart';
 import 'package:remind_me/l10n/l10n.dart';
+import 'package:remind_me/models/custom_repeat_rule.dart';
 
 part 'event.g.dart';  // part 指令必须在所有导入之后，声明之前
 
@@ -29,7 +30,7 @@ enum BackgroundType {
   animation
 }
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 4)
 enum Repeat {
   @HiveField(0)
   none,
@@ -110,6 +111,9 @@ class Event extends Equatable {
   @HiveField(20)
   final DateTime? endTime;
 
+  @HiveField(21)
+  final CustomRepeatRule? customRepeatRule;
+
   const Event({
     required this.id,
     required this.title,
@@ -132,6 +136,7 @@ class Event extends Equatable {
     this.includeStartDay = false,
     this.repeat,
     this.endTime,
+    this.customRepeatRule,
   });
 
   Color? get backgroundColor => 
@@ -373,6 +378,7 @@ class Event extends Equatable {
     bool? includeStartDay,
     Repeat? repeat,
     DateTime? endTime,
+    CustomRepeatRule? customRepeatRule,
   }) {
     return Event(
       id: id ?? this.id,
@@ -396,7 +402,47 @@ class Event extends Equatable {
       includeStartDay: includeStartDay ?? this.includeStartDay,
       repeat: repeat ?? this.repeat,
       endTime: endTime ?? this.endTime,
+      customRepeatRule: customRepeatRule ?? this.customRepeatRule,
     );
+  }
+
+  // 获取下一次重复的日期
+  DateTime? getNextOccurrence(DateTime from) {
+    if (repeat == null || repeat == Repeat.none) {
+      return null;
+    }
+    
+    if (repeat == Repeat.custom && customRepeatRule != null) {
+      return customRepeatRule!.getNextOccurrence(from);
+    }
+    
+    switch (repeat) {
+      case Repeat.daily:
+        return from.add(const Duration(days: 1));
+      case Repeat.weekly:
+        return from.add(const Duration(days: 7));
+      case Repeat.monthly:
+        var year = from.year;
+        var month = from.month + 1;
+        if (month > 12) {
+          year++;
+          month = 1;
+        }
+        return DateTime(year, month, from.day);
+      case Repeat.yearly:
+        return DateTime(from.year + 1, from.month, from.day);
+      default:
+        return null;
+    }
+  }
+
+  // 检查是否已过期
+  bool isExpired() {
+    final now = DateTime.now();
+    if (endTime != null && now.isAfter(endTime!)) {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -422,6 +468,7 @@ class Event extends Equatable {
     includeStartDay,
     repeat,
     endTime,
+    customRepeatRule,
   ];
 }
 

@@ -38,13 +38,14 @@ class EventAdapter extends TypeAdapter<Event> {
       includeStartDay: fields[18] == null ? false : fields[18] as bool,
       repeat: fields[19] as Repeat?,
       endTime: fields[20] as DateTime?,
+      customRepeatRule: fields[21] as CustomRepeatRule?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(21)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -86,7 +87,9 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(19)
       ..write(obj.repeat)
       ..writeByte(20)
-      ..write(obj.endTime);
+      ..write(obj.endTime)
+      ..writeByte(21)
+      ..write(obj.customRepeatRule);
   }
 
   @override
@@ -200,7 +203,7 @@ class BackgroundTypeAdapter extends TypeAdapter<BackgroundType> {
 
 class RepeatAdapter extends TypeAdapter<Repeat> {
   @override
-  final int typeId = 3;
+  final int typeId = 4;
 
   @override
   Repeat read(BinaryReader reader) {
