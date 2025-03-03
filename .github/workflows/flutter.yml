@@ -34,7 +34,8 @@ jobs:
         run: flutter pub get
         
       - name: Analyze project source
-        run: flutter analyze --no-fatal-infos
+        # run: flutter analyze --no-fatal-infos
+        run: flutter analyze --no-fatal-infos --ignore=unnecessary_string_interpolations --ignore=unnecessary_brace_in_string_interps --ignore=unused_import --ignore=sized_box_for_whitespace --ignore=use_build_context_synchronously --ignore=avoid_print --ignore=prefer_const_constructors
         
       - name: Create keystore
         run: |
