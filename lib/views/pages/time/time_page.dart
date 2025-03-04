@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../widgets/common/swipe_action_card.dart';
-import 'package:remind_me/services/reminder_service.dart';
-import 'package:remind_me/core/di.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
+import 'package:remind_me/services/notification_service.dart';
 
-class TimePage extends StatelessWidget {
+class TimePage extends StatefulWidget {
   const TimePage({super.key});
 
+  @override
+  State<TimePage> createState() => _TimePageState();
+}
+
+class _TimePageState extends State<TimePage> {
   @override
   Widget build(BuildContext context) {
     // 模拟一些测试数据
@@ -165,55 +169,15 @@ class TimePage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            final reminderService = getIt<ReminderService>();
-                            reminderService.showTestNotification(
-                                isAlarmStyle: false);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('已发送普通测试通知')),
-                            );
-                          },
-                          child: const Text('普通通知'),
+                          onPressed: _testInstantNotification,
+                          child: const Text('测试即时通知'),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            final reminderService = getIt<ReminderService>();
-                            reminderService.showTestNotification(
-                                isAlarmStyle: true);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('已发送闹钟样式通知')),
-                            );
-                          },
-                          child: const Text('闹钟通知'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            final reminderService = getIt<ReminderService>();
-                            reminderService.showTestNotification(
-                              isAlarmStyle: true,
-                              delay: const Duration(seconds: 5),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('已设置5秒后的闹钟通知'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                          ),
-                          child: const Text('5秒后闹钟'),
+                          onPressed: _testDelayedNotification,
+                          child: const Text('测试定时通知'),
                         ),
                       ),
                     ],
@@ -224,6 +188,43 @@ class TimePage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  /// 测试即时通知
+  Future<void> _testInstantNotification() async {
+    try {
+      await NotificationService().testInstantNotification();
+      if (!mounted) return;
+      _showMessage('即时通知已发送');
+    } catch (e) {
+      LoggerUtils.e('【时间页面】即时通知测试失败: $e', 'TimePage');
+      if (!mounted) return;
+      _showMessage('发送失败: $e', isError: true);
+    }
+  }
+
+  /// 测试定时通知（10秒后）
+  Future<void> _testDelayedNotification() async {
+    try {
+      await NotificationService().testDelayedNotification(
+        const Duration(seconds: 10),
+      );
+      if (!mounted) return;
+      _showMessage('定时通知已设置（10秒后触发）');
+    } catch (e) {
+      LoggerUtils.e('【时间页面】定时通知测试失败: $e', 'TimePage');
+      if (!mounted) return;
+      _showMessage('设置失败: $e', isError: true);
+    }
+  }
+
+  void _showMessage(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+      ),
     );
   }
 }

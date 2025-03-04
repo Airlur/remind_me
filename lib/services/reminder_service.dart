@@ -101,9 +101,20 @@ class ReminderService {
       }
     }
   }
-  
-  // 添加测试通知方法
-  Future<void> showTestNotification({bool isAlarmStyle = false, Duration? delay}) async {
-    await _notificationService.showTestNotification(isAlarmStyle: isAlarmStyle, delay: delay);
+
+  /// 测试通知功能
+  Future<void> testNotification({bool isDelayed = false}) async {
+    try {
+      if (isDelayed) {
+        await _notificationService.testDelayedNotification(const Duration(seconds: 10));
+        LoggerUtils.i('【提醒服务】定时通知测试已设置', 'ReminderService');
+      } else {
+        await _notificationService.testInstantNotification();
+        LoggerUtils.i('【提醒服务】即时通知测试已发送', 'ReminderService');
+      }
+    } catch (e) {
+      LoggerUtils.e('【提醒服务】通知测试失败: $e', 'ReminderService');
+      rethrow;
+    }
   }
 } 
