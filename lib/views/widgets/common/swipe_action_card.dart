@@ -150,11 +150,10 @@ class _SwipeActionCardState extends State<SwipeActionCard> with SingleTickerProv
     final actions = _dragOffset > 0 ? widget.startActions : widget.endActions;
     if (actions == null || _currentAction == null) return const SizedBox();
 
-    final totalFlex = actions.fold<int>(0, (sum, action) => sum + action.flex); // 计算总的 flex 值
-
-    // 计算当前操作项的宽度
+    final totalFlex = actions.fold<int>(0, (sum, action) => sum + action.flex);
     final currentActionIndex = actions.indexOf(_currentAction!);
     double currentActionWidth = 0;
+    
     for (int i = 0; i <= currentActionIndex; i++) {
       currentActionWidth += maxWidth * (actions[i].flex / totalFlex);
     }
@@ -168,12 +167,9 @@ class _SwipeActionCardState extends State<SwipeActionCard> with SingleTickerProv
         alignment: _dragOffset > 0 
           ? Alignment.centerLeft 
           : Alignment.centerRight,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _currentAction!.child, // 显示当前操作项的内容
-          ),
+        child: Container(
+          padding: _currentAction!.padding,
+          child: _currentAction!.buildActionContent(),  // 使用新的构建方法
         ),
       ),
     );
@@ -218,15 +214,63 @@ class _SwipeActionCardState extends State<SwipeActionCard> with SingleTickerProv
 }
 
 class SwipeAction {
-  final Widget child;
+  final Widget? child;        // 保留原有的自定义 child，但设为可选
+  final IconData? icon;       // 新增：图标
+  final String? label;        // 新增：文本标签
   final Color backgroundColor;
+  final Color? foregroundColor; // 新增：图标和文字颜色
   final VoidCallback onTrigger;
   final int flex;
+  final double? spacing;      // 新增：图标和文字间距
+  final EdgeInsets? padding;  // 新增：内边距
+  final Axis direction;       // 新增：布局方向（水平或垂直）
 
   SwipeAction({
-    required this.child,
+    this.child,
+    this.icon,
+    this.label,
     required this.backgroundColor,
+    this.foregroundColor = Colors.white,  // 默认白色，是图标和文字的颜色
     required this.onTrigger,
     this.flex = 1,
-  }) : assert(flex > 0, 'flex 值必须为正整数');
+    this.spacing = 8.0,     // 默认间距
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0),  // 默认内边距
+    this.direction = Axis.vertical,  // 默认垂直布局
+  }) : assert(
+         child != null || (icon != null || label != null),
+         '必须提供 child 或 icon/label 中的至少一个'
+       );
+
+  // 修改构建方法支持垂直布局
+  Widget buildActionContent() {
+    // 如果提供了自定义 child，直接使用
+    if (child != null) return child!;
+
+    return direction == Axis.horizontal
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) Icon(icon, color: foregroundColor),
+              if (icon != null && label != null) SizedBox(width: spacing),
+              if (label != null)
+                Text(
+                  label!,
+                  style: TextStyle(color: foregroundColor),
+                ),
+            ],
+          )
+        : Column(  // 垂直布局
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) Icon(icon, color: foregroundColor),
+              if (icon != null && label != null) SizedBox(height: spacing),
+              if (label != null)
+                Text(
+                  label!,
+                  style: TextStyle(color: foregroundColor),
+                ),
+            ],
+          );
+  }
 }

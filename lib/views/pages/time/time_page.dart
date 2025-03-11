@@ -37,128 +37,219 @@ class _TimePageState extends State<TimePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: SwipeActionCard(
                     startActions: [
-                      // 添加取消操作
                       SwipeAction(
                         flex: 3,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.cancel, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('取消', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        icon: Icons.cancel,
+                        label: '取消',
                         backgroundColor: Colors.grey,
+                        foregroundColor: Colors.white,
+                        spacing: 4,
                         onTrigger: () {
-                          // 取消操作，恢复到原位
                           LoggerUtils.i('取消 ${items[index].title}', 'TimePage');
                         },
                       ),
                       SwipeAction(
                         flex: 2,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.info, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('详情', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        icon: Icons.info,
+                        label: '详情',
                         backgroundColor: Colors.blue,
-                        onTrigger: () => Navigator.push(
-                          context,
-                          RouteUtils.buildPageRoute(page: const AddEventPage()),
-                        ), 
+                        foregroundColor: Colors.white,
+                        spacing: 4,
+                        onTrigger: () {
+                          Navigator.push(
+                            context,
+                            RouteUtils.buildPageRoute(page: const AddEventPage()),
+                          );
+                        },
                       ),
                       SwipeAction(
                         flex: 2,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.push_pin, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('置顶', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        icon: Icons.push_pin,
+                        label: '置顶',
                         backgroundColor: Colors.orange,
-                        onTrigger: () => LoggerUtils.i(
-                            '置顶 ${items[index].title}', 'TimePage'),
+                        foregroundColor: Colors.white,
+                        spacing: 4,
+                        onTrigger: () {
+                          LoggerUtils.i('置顶 ${items[index].title}', 'TimePage');
+                        },
                       ),
                       SwipeAction(
                         flex: 4,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.timeline, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('时间线', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        icon: Icons.timeline,
+                        label: '时间线',
                         backgroundColor: Colors.green,
-                        onTrigger: () => LoggerUtils.i(
-                            '时间线 ${items[index].title}', 'TimePage'),
+                        foregroundColor: Colors.white,
+                        spacing: 4,
+                        onTrigger: () {
+                          LoggerUtils.i('时间线 ${items[index].title}', 'TimePage');
+                        },
                       ),
+                      // // 添加取消操作
+                      // SwipeAction(
+                      //   flex: 3,
+                      //   child: const Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Icon(Icons.cancel, color: Colors.white),
+                      //       SizedBox(width: 8),
+                      //       Text('取消', style: TextStyle(color: Colors.white)),
+                      //     ],
+                      //   ),
+                      //   backgroundColor: Colors.grey,
+                      //   onTrigger: () {
+                      //     // 取消操作，恢复到原位
+                      //     LoggerUtils.i('取消 ${items[index].title}', 'TimePage');
+                      //   },
+                      // ),
+                      // SwipeAction(
+                      //   flex: 2,
+                      //   child: const Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Icon(Icons.info, color: Colors.white),
+                      //       SizedBox(width: 8),
+                      //       Text('详情', style: TextStyle(color: Colors.white)),
+                      //     ],
+                      //   ),
+                      //   backgroundColor: Colors.blue,
+                      //   onTrigger: () => Navigator.push(
+                      //     context,
+                      //     RouteUtils.buildPageRoute(page: const AddEventPage()),
+                      //   ), 
+                      // ),
+                      // SwipeAction(
+                      //   flex: 2,
+                      //   child: const Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Icon(Icons.push_pin, color: Colors.white),
+                      //       SizedBox(width: 8),
+                      //       Text('置顶', style: TextStyle(color: Colors.white)),
+                      //     ],
+                      //   ),
+                      //   backgroundColor: Colors.orange,
+                      //   onTrigger: () => LoggerUtils.i(
+                      //       '置顶 ${items[index].title}', 'TimePage'),
+                      // ),
+                      // SwipeAction(
+                      //   flex: 4,
+                      //   child: const Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Icon(Icons.timeline, color: Colors.white),
+                      //       SizedBox(width: 8),
+                      //       Text('时间线', style: TextStyle(color: Colors.white)),
+                      //     ],
+                      //   ),
+                      //   backgroundColor: Colors.green,
+                      //   onTrigger: () => LoggerUtils.i(
+                      //       '时间线 ${items[index].title}', 'TimePage'),
+                      // ),
                     ],
                     endActions: [
-                      // 添加取消操作
                       SwipeAction(
                         flex: 3,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.cancel, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('取消', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        icon: Icons.cancel,
+                        label: '取消',
                         backgroundColor: Colors.grey,
+                        foregroundColor: Colors.white,
+                        spacing: 4,
                         onTrigger: () {
-                          // 取消操作，恢复到原位
                           LoggerUtils.i('取消 ${items[index].title}', 'TimePage');
                         },
                       ),
                       SwipeAction(
-                        flex: 1,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.edit, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('编辑', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        flex: 2,
+                        icon: Icons.edit,
+                        label: '编辑',
                         backgroundColor: Colors.amber,
-                        onTrigger: () => LoggerUtils.i(
-                            '编辑 ${items[index].title}', 'TimePage'),
+                        foregroundColor: Colors.white,
+                        spacing: 4,
+                        onTrigger: () {
+                          LoggerUtils.i('编辑 ${items[index].title}', 'TimePage');
+                        },
                       ),
                       SwipeAction(
-                        flex: 1,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.delete, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('删除', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        flex: 2,
+                        icon: Icons.delete,
+                        label: '删除',
                         backgroundColor: Colors.red,
-                        onTrigger: () => LoggerUtils.i(
-                            '删除 ${items[index].title}', 'TimePage'),
+                        foregroundColor: Colors.white,
+                        spacing: 4,
+                        onTrigger: () {
+                          LoggerUtils.i('删除 ${items[index].title}', 'TimePage');
+                        },
                       ),
                       SwipeAction(
                         flex: 4,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.share, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('分享', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
+                        icon: Icons.share,
+                        label: '分享',
                         backgroundColor: Colors.purple,
-                        onTrigger: () => LoggerUtils.i(
-                            '分享 ${items[index].title}', 'TimePage'),
+                        foregroundColor: Colors.white,
+                        spacing: 4,
+                        onTrigger: () {
+                          LoggerUtils.i('分享 ${items[index].title}', 'TimePage');
+                        },
                       ),
+                      // // 添加取消操作
+                      // SwipeAction(
+                      //   flex: 3,
+                      //   child: const Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Icon(Icons.cancel, color: Colors.white),
+                      //       SizedBox(width: 8),
+                      //       Text('取消', style: TextStyle(color: Colors.white)),
+                      //     ],
+                      //   ),
+                      //   backgroundColor: Colors.grey,
+                      //   onTrigger: () {
+                      //     // 取消操作，恢复到原位
+                      //     LoggerUtils.i('取消 ${items[index].title}', 'TimePage');
+                      //   },
+                      // ),
+                      // SwipeAction(
+                      //   flex: 1,
+                      //   child: const Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Icon(Icons.edit, color: Colors.white),
+                      //       SizedBox(width: 8),
+                      //       Text('编辑', style: TextStyle(color: Colors.white)),
+                      //     ],
+                      //   ),
+                      //   backgroundColor: Colors.amber,
+                      //   onTrigger: () => LoggerUtils.i(
+                      //       '编辑 ${items[index].title}', 'TimePage'),
+                      // ),
+                      // SwipeAction(
+                      //   flex: 1,
+                      //   child: const Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Icon(Icons.delete, color: Colors.white),
+                      //       SizedBox(width: 8),
+                      //       Text('删除', style: TextStyle(color: Colors.white)),
+                      //     ],
+                      //   ),
+                      //   backgroundColor: Colors.red,
+                      //   onTrigger: () => LoggerUtils.i(
+                      //       '删除 ${items[index].title}', 'TimePage'),
+                      // ),
+                      // SwipeAction(
+                      //   flex: 4,
+                      //   child: const Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Icon(Icons.share, color: Colors.white),
+                      //       SizedBox(width: 8),
+                      //       Text('分享', style: TextStyle(color: Colors.white)),
+                      //     ],
+                      //   ),
+                      //   backgroundColor: Colors.purple,
+                      //   onTrigger: () => LoggerUtils.i(
+                      //       '分享 ${items[index].title}', 'TimePage'),
+                      // ),
                     ],
                     borderRadius: borderRadius,
                     child: TimeItemCard(item: items[index]), // 传入圆角值
