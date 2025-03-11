@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../widgets/common/swipe_action_card.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:remind_me/services/notification_service.dart';
+import 'package:remind_me/utils/common/route_utils.dart';
+import 'package:remind_me/views/pages/date/add_event_page.dart';
 
 class TimePage extends StatefulWidget {
   const TimePage({super.key});
@@ -35,8 +37,25 @@ class _TimePageState extends State<TimePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: SwipeActionCard(
                     startActions: [
+                      // 添加取消操作
                       SwipeAction(
-                        flex: 1,
+                        flex: 3,
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.cancel, color: Colors.white),
+                            SizedBox(width: 8),
+                            Text('取消', style: TextStyle(color: Colors.white)),
+                          ],
+                        ),
+                        backgroundColor: Colors.grey,
+                        onTrigger: () {
+                          // 取消操作，恢复到原位
+                          LoggerUtils.i('取消 ${items[index].title}', 'TimePage');
+                        },
+                      ),
+                      SwipeAction(
+                        flex: 2,
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -46,11 +65,13 @@ class _TimePageState extends State<TimePage> {
                           ],
                         ),
                         backgroundColor: Colors.blue,
-                        onTrigger: () => LoggerUtils.i(
-                            '详情 ${items[index].title}', 'TimePage'),
+                        onTrigger: () => Navigator.push(
+                          context,
+                          RouteUtils.buildPageRoute(page: const AddEventPage()),
+                        ), 
                       ),
                       SwipeAction(
-                        flex: 1,
+                        flex: 2,
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -64,7 +85,7 @@ class _TimePageState extends State<TimePage> {
                             '置顶 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
-                        flex: 1,
+                        flex: 4,
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -81,7 +102,7 @@ class _TimePageState extends State<TimePage> {
                     endActions: [
                       // 添加取消操作
                       SwipeAction(
-                        flex: 1,
+                        flex: 3,
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -125,7 +146,7 @@ class _TimePageState extends State<TimePage> {
                             '删除 ${items[index].title}', 'TimePage'),
                       ),
                       SwipeAction(
-                        flex: 1,
+                        flex: 4,
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

@@ -38,62 +38,102 @@ class SwipeActionCard extends StatefulWidget {
   State<SwipeActionCard> createState() => _SwipeActionCardState();
 }
 
-class _SwipeActionCardState extends State<SwipeActionCard> {
+class _SwipeActionCardState extends State<SwipeActionCard> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
   double _dragOffset = 0; // 当前拖动的偏移量
   SwipeAction? _currentAction; // 当前触发的操作项
   Color _currentBackgroundColor = Colors.transparent; // 当前操作项的背景颜色
+  double? _startDragOffset; // 记录开始回弹时的偏移量
+  double _maxWidth = 0; // 卡片的最大宽度
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: widget.slideAnimationDuration,
+    );
+
+    // 添加动画监听器
+    _animationController.addListener(() {
+      if (_startDragOffset != null) {
+        setState(() {
+          // 根据动画进度更新 dragOffset
+          _dragOffset = _startDragOffset! * (1 - _animationController.value);
+          
+          // 使用现有的 _updateCurrentAction 逻辑更新状态
+          final actions = _dragOffset > 0 ? widget.startActions : widget.endActions;
+          if (actions != null) {
+            final progress = _dragOffset.abs() / _maxWidth;
+            _updateCurrentAction(actions, progress);
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final maxWidth = constraints.maxWidth; // 获取最大宽度
+        _maxWidth = constraints.maxWidth;
 
         return ClipRRect(
-          borderRadius: widget.borderRadius,
+          borderRadius: widget.borderRadius, // 设置圆角
           child: Stack(
             children: [
-              _buildActionBackground(maxWidth), // 构建操作背景
-              TweenAnimationBuilder<double>(
-                // 控制卡片滑动过渡动画
-                tween: Tween<double>(begin: 0, end: _dragOffset),
-                duration: widget.slideAnimationDuration,
-                curve: widget.slideAnimationCurve,
-                builder: (context, value, child) {
+              _buildActionBackground(_maxWidth), // 构建操作项背景
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, child) {
                   return GestureDetector(
                     onHorizontalDragUpdate: (details) {
+                      if (_animationController.isAnimating) return;
+                      
                       setState(() {
-                        final newOffset = _dragOffset + details.delta.dx; // 更新偏移量
-
+                        final newOffset = _dragOffset + details.delta.dx;
+                        
                         // 限制滑动范围
                         if (widget.startActions == null && newOffset > 0) return;
                         if (widget.endActions == null && newOffset < 0) return;
-
-                        _dragOffset = newOffset.clamp(-maxWidth, maxWidth); // 限制偏移量在最大宽度范围内
-
-                        final actions = _dragOffset > 0 ? widget.startActions : widget.endActions;
+                        
+                        _dragOffset = newOffset.clamp(-_maxWidth, _maxWidth);
+                        
+                        final actions = _dragOffset > 0 
+                          ? widget.startActions 
+                          : widget.endActions;
                         if (actions == null) return;
-
-                        final progress = _dragOffset.abs() / maxWidth; // 计算滑动进度
-                        _updateCurrentAction(actions, progress); // 更新当前操作项
+                        
+                        final progress = _dragOffset.abs() / _maxWidth;
+                        _updateCurrentAction(actions, progress);
                       });
                     },
                     onHorizontalDragEnd: (details) {
                       if (_currentAction != null) {
                         _currentAction!.onTrigger(); // 触发当前操作项
                       }
-                      setState(() {
-                        // 回弹动画
-                        Future.delayed(Duration.zero, () {
-                          setState(() {
-                            _dragOffset = 0;
-                          });
+                      
+                      // 记录开始回弹时的偏移量
+                      _startDragOffset = _dragOffset;
+                      
+                      // 开始回弹动画
+                      _animationController.forward(from: 0).then((_) {
+                        setState(() {
+                          _dragOffset = 0;
+                          _startDragOffset = null;
+                          _currentAction = null;
+                          _currentBackgroundColor = Colors.transparent;
                         });
-                        _currentAction = null; // 清空当前操作项
                       });
                     },
                     child: Transform.translate(
-                      offset: Offset(value, 0), // 根据偏移量移动子组件
+                      offset: Offset(_dragOffset, 0),
                       child: widget.child,
                     ),
                   );
@@ -120,13 +160,14 @@ class _SwipeActionCardState extends State<SwipeActionCard> {
     }
 
     return Positioned.fill(
-      child: AnimatedContainer(
-        // 操作项颜色渐变动画
-        duration: widget.colorAnimationDuration,
-        curve: widget.colorAnimationCurve,
-        width: _dragOffset.abs() < currentActionWidth ? _dragOffset.abs() : currentActionWidth,
-        color: _currentBackgroundColor, // 背景颜色为当前操作项的颜色
-        alignment: _dragOffset > 0 ? Alignment.centerLeft : Alignment.centerRight,
+      child: Container(
+        width: _dragOffset.abs() < currentActionWidth 
+          ? _dragOffset.abs() 
+          : currentActionWidth,
+        color: _currentBackgroundColor,
+        alignment: _dragOffset > 0 
+          ? Alignment.centerLeft 
+          : Alignment.centerRight,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Container(
@@ -146,11 +187,27 @@ class _SwipeActionCardState extends State<SwipeActionCard> {
       final flexRatio = action.flex / totalFlex; // 计算每个操作项的比例
       if (progress <= flexProgress + flexRatio) {
         if (_currentAction != action) {
-          HapticFeedback.mediumImpact(); // 触觉反馈
-          _currentAction = action; // 更新当前操作项
+          // HapticFeedback.heavyImpact(); // 触觉反馈振动，调用位置在状态更新后可能有效
           setState(() {
-            // 更新当前操作项的背景颜色，触发颜色渐变动画
+            _currentAction = action;
             _currentBackgroundColor = action.backgroundColor;
+          });
+
+          // 获取操作项的文本内容
+          String actionName = '未知';
+          if (action.child is Row) {
+            final row = action.child as Row;
+            for (final child in row.children) {
+              if (child is Text) {
+                actionName = child.data ?? '未知';
+                break;
+              }
+            }
+          }
+          
+          // 状态更新后触发反馈
+          HapticFeedback.heavyImpact().then((_) {
+            debugPrint('触发触觉反馈: $actionName (${action.backgroundColor})'); // 添加调试日志
           });
         }
         break;
@@ -170,8 +227,6 @@ class SwipeAction {
     required this.child,
     required this.backgroundColor,
     required this.onTrigger,
-    int flex = 1,
-  }) : flex = flex >= 0
-      ? flex
-      : (throw ArgumentError('flex 值必须为非负整数')); // 验证 flex 值
+    this.flex = 1,
+  }) : assert(flex > 0, 'flex 值必须为正整数');
 }
