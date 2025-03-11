@@ -193,21 +193,21 @@ class _SwipeActionCardState extends State<SwipeActionCard> with SingleTickerProv
             _currentBackgroundColor = action.backgroundColor;
           });
 
-          // 获取操作项的文本内容
-          String actionName = '未知';
-          if (action.child is Row) {
-            final row = action.child as Row;
-            for (final child in row.children) {
-              if (child is Text) {
-                actionName = child.data ?? '未知';
-                break;
-              }
-            }
-          }
+          // // 获取操作项的文本内容
+          // String actionName = '未知';
+          // if (action.child is Row) {
+          //   final row = action.child as Row;
+          //   for (final child in row.children) {
+          //     if (child is Text) {
+          //       actionName = child.data ?? '未知';
+          //       break;
+          //     }
+          //   }
+          // }
           
           // 状态更新后触发反馈
           HapticFeedback.heavyImpact().then((_) {
-            debugPrint('触发触觉反馈: $actionName (${action.backgroundColor})'); // 添加调试日志
+            // debugPrint('触发触觉反馈: $actionName (${action.backgroundColor})'); // 添加调试日志
           });
         }
         break;

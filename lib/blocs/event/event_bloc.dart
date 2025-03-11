@@ -47,6 +47,9 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       emit(state.copyWith(
         status: EventStatus.success,
         events: events,
+        selectedCategory: state.selectedCategory, // 保持当前分类
+        sortType: state.sortType,
+        sortOrder: state.sortOrder,
       ));
     } catch (e) {
       LoggerUtils.e('Bloc LoadEvents error: $e', 'EventBloc');
@@ -297,6 +300,7 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
       sortType: event.sortType ?? state.sortType,
       sortOrder: event.sortOrder ?? state.sortOrder,
       selectedCategory: event.selectedCategory ?? state.selectedCategory,
+      clearSelectedCategory: event.selectedCategory == null,
     ));
   }
 
@@ -396,7 +400,12 @@ class EventBloc extends HydratedBloc<EventEvent, EventState> {
   Future<void> _onLoadCategories(LoadCategories event, Emitter<EventState> emit) async {
     try {
       final categories = await _repository.getCategories();
-      emit(state.copyWith(categories: categories));
+      emit(state.copyWith(
+        categories: categories,
+        error: null,
+        status: EventStatus.success,
+        selectedCategory: state.selectedCategory,
+      ));
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
     }
