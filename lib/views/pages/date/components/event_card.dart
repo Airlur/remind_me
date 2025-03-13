@@ -157,55 +157,74 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                   Expanded(
+                    flex: 3,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          event.title,
-                          style: titleStyle ?? TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: BackgroundUtils.getEventTextColor(event, context),
-                            fontFamily: event.fontFamily,
+                        SizedBox(
+                          height: 28,
+                          child: Text(
+                            event.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: BackgroundUtils.getEventTextColor(event, context),
+                              fontFamily: event.fontFamily,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          '${LunarUtils.formatDateWithYear(event.targetDate, event.isLunar, context)} ${LunarUtils.getWeekDay(event.targetDate, context, useShort: true)}',
-                          style: dateWeekStyle ?? TextStyle(
-                            fontSize: 12,
-                            color: BackgroundUtils.getEventTextColor(event, context),
+                        SizedBox(
+                          height: 18,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${LunarUtils.formatDateWithYear(event.targetDate, event.isLunar, context)} ${LunarUtils.getWeekDay(event.targetDate, context, useShort: true)}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: BackgroundUtils.getEventTextColor(event, context),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Text(
-                    event.getDisplayPrefix(context),
-                    style: prefixStyle ?? TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: BackgroundUtils.getEventTextColor(event, context),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    event.getDisplayDays(context),
-                    style: numberDayStyle ?? TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: BackgroundUtils.getEventTextColor(event, context),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    event.getDisplayUnit(context),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: BackgroundUtils.getEventTextColor(event, context),
-                    ),
+                  const SizedBox(width: 24),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        event.getDisplayPrefix(context),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: BackgroundUtils.getEventTextColor(event, context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        event.getDisplayDays(context),
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: BackgroundUtils.getEventTextColor(event, context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        event.getDisplayUnit(context),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: BackgroundUtils.getEventTextColor(event, context),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -161,29 +161,37 @@ class _EventDetailPageState extends State<EventDetailPage> {
             color: BackgroundUtils.getEventTextColor(event, context),
           ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              event.title,
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: BackgroundUtils.getEventTextColor(event, context),
-                fontFamily: event.fontFamily,
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  event.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: BackgroundUtils.getEventTextColor(event, context),
+                    fontFamily: event.fontFamily,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              event.getDisplayPrefix(context),
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: BackgroundUtils.getEventTextColor(event, context),
-                fontFamily: event.fontFamily,
+              const SizedBox(width: 8),
+              Text(
+                event.getDisplayPrefix(context),
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: BackgroundUtils.getEventTextColor(event, context),
+                  fontFamily: event.fontFamily,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

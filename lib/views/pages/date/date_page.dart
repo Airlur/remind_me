@@ -472,55 +472,75 @@ class _EventListState extends State<_EventList> with AutomaticKeepAliveClientMix
                       ),
                     ),
                   Expanded(
+                    flex: 3,  // 给左侧更多空间
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          event.title,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: BackgroundUtils.getEventTextColor(event, context),
-                            fontFamily: event.fontFamily,
+                        SizedBox(
+                          height: 32,
+                          child: Text(
+                            event.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,  // 添加省略号截断
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: BackgroundUtils.getEventTextColor(event, context),
+                              fontFamily: event.fontFamily,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          '${LunarUtils.formatDateWithYear(event.targetDate, event.isLunar, context)} ${LunarUtils.getWeekDay(event.targetDate, context, useShort: true)}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: BackgroundUtils.getEventTextColor(event, context),
+                        SizedBox(
+                          height: 20,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '${LunarUtils.formatDateWithYear(event.targetDate, event.isLunar, context)} ${LunarUtils.getWeekDay(event.targetDate, context, useShort: true)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: BackgroundUtils.getEventTextColor(event, context),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Text(
-                    event.getDisplayPrefix(context),
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: BackgroundUtils.getEventTextColor(event, context),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    event.getDisplayDays(context),
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: BackgroundUtils.getEventTextColor(event, context),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    event.getDisplayUnit(context),
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: BackgroundUtils.getEventTextColor(event, context),
-                    ),
+                  const SizedBox(width: 24),  // 增加与右侧的间距
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        event.getDisplayPrefix(context),
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: BackgroundUtils.getEventTextColor(event, context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        event.getDisplayDays(context),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: BackgroundUtils.getEventTextColor(event, context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        event.getDisplayUnit(context),
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: BackgroundUtils.getEventTextColor(event, context),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
