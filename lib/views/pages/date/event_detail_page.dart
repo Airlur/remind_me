@@ -161,17 +161,17 @@ class _EventDetailPageState extends State<EventDetailPage> {
             color: BackgroundUtils.getEventTextColor(event, context),
           ),
         const SizedBox(height: 8),
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
+              Flexible(
                 child: Text(
                   event.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
