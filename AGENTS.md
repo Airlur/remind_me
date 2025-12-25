@@ -3,7 +3,6 @@
 ## 项目介绍
 - 项目名称：Remind Me（中文名：醒我）
 - 定位：简洁的时间管理与提醒应用，提供倒数日/正数日、日历、倒计时、秒表与通知提醒。
-- 当前状态：项目约 9 个月前开发，现计划升级到 Flutter 3.35.7 / Dart 3.9.2。
 
 ## 业务背景
 来自 `docs/PRD.md`：
@@ -71,7 +70,7 @@ l10n.yaml              # i18n 生成配置
 - 代码检查：`flutter analyze`
 - 测试：`flutter test`
 - 代码生成（Hive/序列化等）：`flutter pub run build_runner build --delete-conflicting-outputs`
-- 国际化生成：依赖 `l10n.yaml`，`flutter pub get` 会触发生成（`flutter.generate: true`）
+- 国际化生成：依赖 `l10n.yaml`，使用 `flutter gen-l10n` 执行生成命令；`flutter pub get` 会触发生成（`flutter.generate: true`）
 
 ## 开发规范与注意事项（来自 `docs/TDD.md`）
 - Git 分支：`main` / `develop` / `feature/*` / `bugfix/*` / `release/*`
@@ -79,12 +78,13 @@ l10n.yaml              # i18n 生成配置
 - 版本号：`X.Y.Z+B`（语义化版本 + 构建号）
 - CI/CD：PR 触发构建与测试，Tag 触发发布
 - Lint：遵循 `flutter_lints`
+- 版本兼容：遇到弃用 API 需替换为当前推荐写法（如 `Color.withValues(alpha: ...)`）
 
 ## 环境与兼容性
 - 目标 SDK：Flutter 3.35.7 / Dart 3.9.2 / DevTools 2.48
 - 兼容目标（PRD）：Android 8.0+、iOS 12+
 
-## 已知问题（当前）
+## 已知问题
 - `device_info_plus` 相关依赖识别异常（构建期报错）
 - `CardTheme` 类型不匹配（Flutter 3.35.7 下要求 `CardThemeData?`）
 - 报错文件：`lib/services/notification_service.dart`、`lib/theme/app_theme.dart`、`lib/utils/common/permission_utils.dart`

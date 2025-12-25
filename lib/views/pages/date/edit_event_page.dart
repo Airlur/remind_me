@@ -308,7 +308,7 @@ class _EditEventPageState extends State<EditEventPage> {
                         Text(
                           _reminderTime != null 
                             ? _formatReminderTime(_reminderTime!)
-                            : '无',
+                            : context.l10n.none,
                           style: TextStyle(
                             color: _reminderTime != null 
                               ? Theme.of(context).colorScheme.primary 
@@ -330,8 +330,8 @@ class _EditEventPageState extends State<EditEventPage> {
                       children: [
                         Text(
                           _repeat != null 
-                            ? _repeat!.description
-                            : '不重复',
+                            ? _repeat!.description(context)
+                            : context.l10n.repeatNone,
                           style: TextStyle(
                             color: _repeat != null && _repeat != Repeat.none
                               ? Theme.of(context).colorScheme.primary 
@@ -354,7 +354,7 @@ class _EditEventPageState extends State<EditEventPage> {
                         Text(
                           _endTime != null 
                             ? DateFormat('yyyy-MM-dd').format(_endTime!)
-                            : '无',
+                            : context.l10n.none,
                           style: TextStyle(
                             color: _endTime != null 
                               ? Theme.of(context).colorScheme.primary 

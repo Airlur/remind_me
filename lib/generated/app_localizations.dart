@@ -320,6 +320,12 @@ abstract class AppLocalizations {
   /// **'Sort'**
   String get sort;
 
+  /// Switch view
+  ///
+  /// In en, this message translates to:
+  /// **'Switch View'**
+  String get switchView;
+
   /// Unpin
   ///
   /// In en, this message translates to:
@@ -337,6 +343,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pin Mode'**
   String get pinMode;
+
+  /// Single pin mode
+  ///
+  /// In en, this message translates to:
+  /// **'Single Pin'**
+  String get pinModeSingle;
+
+  /// Carousel pin mode
+  ///
+  /// In en, this message translates to:
+  /// **'Carousel'**
+  String get pinModeCarousel;
+
+  /// Detail
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get detail;
 
   /// Add Special Day
   ///
@@ -512,17 +536,83 @@ abstract class AppLocalizations {
   /// **'Reminder Time'**
   String get reminderTime;
 
+  /// None
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get none;
+
   /// End Time
   ///
   /// In en, this message translates to:
   /// **'End Time'**
   String get endTime;
 
+  /// No end time
+  ///
+  /// In en, this message translates to:
+  /// **'No End Time'**
+  String get noEndTime;
+
+  /// Set end time
+  ///
+  /// In en, this message translates to:
+  /// **'Set End Time'**
+  String get setEndTime;
+
   /// Repeat
   ///
   /// In en, this message translates to:
   /// **'Repeat'**
   String get repeat;
+
+  /// No repeat
+  ///
+  /// In en, this message translates to:
+  /// **'No Repeat'**
+  String get repeatNone;
+
+  /// Repeat daily
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get repeatDaily;
+
+  /// Repeat weekly
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get repeatWeekly;
+
+  /// Repeat monthly
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get repeatMonthly;
+
+  /// Repeat yearly
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get repeatYearly;
+
+  /// Repeat every day
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat daily'**
+  String get repeatEveryDay;
+
+  /// Repeat every year
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat yearly'**
+  String get repeatEveryYear;
+
+  /// Set as wallpaper
+  ///
+  /// In en, this message translates to:
+  /// **'Wallpaper'**
+  String get setAsWallpaper;
 
   /// Include Start Date
   ///

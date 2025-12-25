@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:remind_me/models/custom_repeat_rule.dart';
+import 'package:remind_me/l10n/l10n.dart';
 
 class CustomRepeatRulePicker extends StatefulWidget {
   final CustomRepeatRule? initialRule;
@@ -63,7 +64,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
         title: Text(
-          '自定义',
+          context.l10n.custom,
           style: TextStyle(
             color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.bold
@@ -77,7 +78,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
           TextButton(
             onPressed: _saveRule,
             child: Text(
-              '确定',
+              context.l10n.confirm,
               style: TextStyle(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -187,7 +188,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
       case RepeatUnit.day:
         return Center(
           child: Text(
-            '每天重复',
+            context.l10n.repeatEveryDay,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 16,
@@ -204,7 +205,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
       case RepeatUnit.year:
         return Center(
           child: Text(
-            '每年重复',
+            context.l10n.repeatEveryYear,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 16,

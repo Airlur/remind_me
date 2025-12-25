@@ -91,12 +91,11 @@ class DatePage extends StatelessWidget {
                   position: PopupMenuPosition.under,
                   itemBuilder: (context) => [
                     PopupMenuItem(
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.sort, size: 20),
-                          SizedBox(width: 12),
-                          // Text(context.l10n.sort),
-                          Text('排序'),
+                          const Icon(Icons.sort, size: 20),
+                          const SizedBox(width: 12),
+                          Text(context.l10n.sort),
                         ],
                       ),
                       onTap: () {
@@ -111,12 +110,11 @@ class DatePage extends StatelessWidget {
                       },
                     ),
                     PopupMenuItem(
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.view_list, size: 20),
-                          SizedBox(width: 12),
-                          // Text(context.l10n.switchView),
-                          Text('切换视图'),
+                          const Icon(Icons.view_list, size: 20),
+                          const SizedBox(width: 12),
+                          Text(context.l10n.switchView),
                         ],
                       ),
                       onTap: () {
@@ -124,12 +122,11 @@ class DatePage extends StatelessWidget {
                       },
                     ),
                     PopupMenuItem(
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.push_pin, size: 20),
-                          SizedBox(width: 12),
-                          // Text(context.l10n.pinnedMode),
-                          Text('置顶模式'),
+                          const Icon(Icons.push_pin, size: 20),
+                          const SizedBox(width: 12),
+                          Text(context.l10n.pinMode),
                         ],
                       ),
                       onTap: () {
@@ -217,7 +214,7 @@ class DatePage extends StatelessWidget {
               children: [
                 ListTile(
                   leading: const Icon(Icons.push_pin),
-                  title: const Text('单个置顶'),
+                  title: Text(context.l10n.pinModeSingle),
                   selected: state.pinnedDisplayMode == PinnedDisplayMode.single,
                   trailing: state.pinnedDisplayMode == PinnedDisplayMode.single 
                       ? const Icon(Icons.check, size: 20) 
@@ -233,7 +230,7 @@ class DatePage extends StatelessWidget {
                 ),
                 ListTile(
                   leading: const Icon(Icons.view_carousel),
-                  title: const Text('轮播展示'),
+                  title: Text(context.l10n.pinModeCarousel),
                   selected: state.pinnedDisplayMode == PinnedDisplayMode.carousel,
                   trailing: state.pinnedDisplayMode == PinnedDisplayMode.carousel 
                       ? const Icon(Icons.check, size: 20) 

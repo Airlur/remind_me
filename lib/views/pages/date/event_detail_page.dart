@@ -281,7 +281,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
           ),
           _buildActionButton(
             icon: Icons.wallpaper,
-            label: '设为壁纸',
+            label: context.l10n.setAsWallpaper,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('壁纸功能正在开发中')),

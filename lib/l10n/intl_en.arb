@@ -184,6 +184,10 @@
   "@sort": {
     "description": "Sort"
   },
+  "switchView": "Switch View",
+  "@switchView": {
+    "description": "Switch view"
+  },
   
   "unpin": "Unpin",
   "@unpin": {
@@ -198,6 +202,18 @@
   "pinMode": "Pin Mode",
   "@pinMode": {
     "description": "Pin Mode"
+  },
+  "pinModeSingle": "Single Pin",
+  "@pinModeSingle": {
+    "description": "Single pin mode"
+  },
+  "pinModeCarousel": "Carousel",
+  "@pinModeCarousel": {
+    "description": "Carousel pin mode"
+  },
+  "detail": "Details",
+  "@detail": {
+    "description": "Detail"
   },
   
   "addSpecialDay": "Add Special Day",
@@ -333,13 +349,57 @@
   "@reminderTime": {
     "description": "Reminder Time"
   },
+  "none": "None",
+  "@none": {
+    "description": "None"
+  },
   "endTime": "End Time",
   "@endTime": {
     "description": "End Time"
   },
+  "noEndTime": "No End Time",
+  "@noEndTime": {
+    "description": "No end time"
+  },
+  "setEndTime": "Set End Time",
+  "@setEndTime": {
+    "description": "Set end time"
+  },
   "repeat": "Repeat",
   "@repeat": {
     "description": "Repeat"
+  },
+  "repeatNone": "No Repeat",
+  "@repeatNone": {
+    "description": "No repeat"
+  },
+  "repeatDaily": "Daily",
+  "@repeatDaily": {
+    "description": "Repeat daily"
+  },
+  "repeatWeekly": "Weekly",
+  "@repeatWeekly": {
+    "description": "Repeat weekly"
+  },
+  "repeatMonthly": "Monthly",
+  "@repeatMonthly": {
+    "description": "Repeat monthly"
+  },
+  "repeatYearly": "Yearly",
+  "@repeatYearly": {
+    "description": "Repeat yearly"
+  },
+  "repeatEveryDay": "Repeat daily",
+  "@repeatEveryDay": {
+    "description": "Repeat every day"
+  },
+  "repeatEveryYear": "Repeat yearly",
+  "@repeatEveryYear": {
+    "description": "Repeat every year"
+  },
+  "setAsWallpaper": "Wallpaper",
+  "@setAsWallpaper": {
+    "description": "Set as wallpaper"
   },
   "includeStartDate": "Include Start Date",
   "@includeStartDate": {

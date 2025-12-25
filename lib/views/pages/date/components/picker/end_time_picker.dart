@@ -66,7 +66,7 @@ class _EndTimePickerState extends State<EndTimePicker> {
                   Text(
                     hasEndTime 
                         ? DateFormat('yyyy-MM-dd').format(DateTime(selectedYear, selectedMonth, selectedDay))
-                        : '无结束时间',
+                        : context.l10n.noEndTime,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -92,7 +92,7 @@ class _EndTimePickerState extends State<EndTimePicker> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '设置结束时间',
+                    context.l10n.setEndTime,
                     style: TextStyle(
                       fontSize: 16,
                       color: theme.colorScheme.onSurface,

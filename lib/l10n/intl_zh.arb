@@ -184,6 +184,10 @@
   "@sort": {
     "description": "Sort"
   },
+  "switchView": "切换视图",
+  "@switchView": {
+    "description": "Switch view"
+  },
 
   "unpin": "取消置顶",
   "@unpin": {
@@ -198,6 +202,18 @@
   "pinMode": "置顶模式",
   "@pinMode": {
     "description": "Pin Mode"
+  },
+  "pinModeSingle": "单个置顶",
+  "@pinModeSingle": {
+    "description": "Single pin mode"
+  },
+  "pinModeCarousel": "轮播展示",
+  "@pinModeCarousel": {
+    "description": "Carousel pin mode"
+  },
+  "detail": "详情",
+  "@detail": {
+    "description": "Detail"
   },
   
   "addSpecialDay": "添加特殊日",
@@ -333,13 +349,57 @@
   "@reminderTime": {
     "description": "Reminder Time"
   },
+  "none": "无",
+  "@none": {
+    "description": "None"
+  },
   "repeat": "重复",
   "@repeat": {
     "description": "Repeat"
   },
+  "repeatNone": "不重复",
+  "@repeatNone": {
+    "description": "No repeat"
+  },
+  "repeatDaily": "每天",
+  "@repeatDaily": {
+    "description": "Repeat daily"
+  },
+  "repeatWeekly": "每周",
+  "@repeatWeekly": {
+    "description": "Repeat weekly"
+  },
+  "repeatMonthly": "每月",
+  "@repeatMonthly": {
+    "description": "Repeat monthly"
+  },
+  "repeatYearly": "每年",
+  "@repeatYearly": {
+    "description": "Repeat yearly"
+  },
+  "repeatEveryDay": "每天重复",
+  "@repeatEveryDay": {
+    "description": "Repeat every day"
+  },
+  "repeatEveryYear": "每年重复",
+  "@repeatEveryYear": {
+    "description": "Repeat every year"
+  },
   "endTime": "结束时间",
   "@endTime": {
     "description": "End Time"
+  },
+  "noEndTime": "无结束时间",
+  "@noEndTime": {
+    "description": "No end time"
+  },
+  "setEndTime": "设置结束时间",
+  "@setEndTime": {
+    "description": "Set end time"
+  },
+  "setAsWallpaper": "设为壁纸",
+  "@setAsWallpaper": {
+    "description": "Set as wallpaper"
   },
   "includeStartDate": "包含开始日期",
   "@includeStartDate": {

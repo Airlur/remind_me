@@ -276,7 +276,7 @@ class _AddEventPageState extends State<AddEventPage> {
                         Text(
                           _reminderTime != null 
                             ? _formatReminderTime(_reminderTime!)
-                            : '无',
+                            : context.l10n.none,
                           style: TextStyle(
                             color: _reminderTime != null 
                               ? theme.colorScheme.primary 
@@ -298,8 +298,8 @@ class _AddEventPageState extends State<AddEventPage> {
                       children: [
                         Text(
                           _repeat != null 
-                            ? _repeat!.description
-                            : '不重复',
+                            ? _repeat!.description(context)
+                            : context.l10n.repeatNone,
                           style: TextStyle(
                             color: _repeat != null && _repeat != Repeat.none
                               ? theme.colorScheme.primary 
@@ -322,7 +322,7 @@ class _AddEventPageState extends State<AddEventPage> {
                         Text(
                           _endTime != null 
                             ? DateFormat('yyyy-MM-dd').format(_endTime!)
-                            : '无',
+                            : context.l10n.none,
                           style: TextStyle(
                             color: _endTime != null 
                               ? theme.colorScheme.primary 

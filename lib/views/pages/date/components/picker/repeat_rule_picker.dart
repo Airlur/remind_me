@@ -6,20 +6,21 @@ import 'custom_repeat_rule_picker.dart';
 
 // 为 Repeat 枚举添加中文描述
 extension RepeatExtension on Repeat {
-  String get description {
+  String description(BuildContext context) {
+    final l10n = context.l10n;
     switch (this) {
       case Repeat.none:
-        return '不重复';
+        return l10n.repeatNone;
       case Repeat.daily:
-        return '每天';
+        return l10n.repeatDaily;
       case Repeat.weekly:
-        return '每周';
+        return l10n.repeatWeekly;
       case Repeat.monthly:
-        return '每月';
+        return l10n.repeatMonthly;
       case Repeat.yearly:
-        return '每年';
+        return l10n.repeatYearly;
       case Repeat.custom:
-        return '自定义';
+        return l10n.custom;
     }
   }
 }
@@ -96,7 +97,7 @@ class _RepeatRulePickerState extends State<RepeatRulePicker> {
 
                   return ListTile(
                     title: Text(
-                      repeat.description,
+                      repeat.description(context),
                       style: TextStyle(
                         color: isSelected
                             ? theme.colorScheme.primary

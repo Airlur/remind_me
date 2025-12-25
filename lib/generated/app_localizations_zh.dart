@@ -120,6 +120,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sort => '排序 ';
 
   @override
+  String get switchView => '切换视图';
+
+  @override
   String get unpin => '取消置顶';
 
   @override
@@ -127,6 +130,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pinMode => '置顶模式';
+
+  @override
+  String get pinModeSingle => '单个置顶';
+
+  @override
+  String get pinModeCarousel => '轮播展示';
+
+  @override
+  String get detail => '详情';
 
   @override
   String get addSpecialDay => '添加特殊日';
@@ -218,10 +230,43 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reminderTime => '提醒时间';
 
   @override
+  String get none => '无';
+
+  @override
   String get endTime => '结束时间';
 
   @override
+  String get noEndTime => '无结束时间';
+
+  @override
+  String get setEndTime => '设置结束时间';
+
+  @override
   String get repeat => '重复';
+
+  @override
+  String get repeatNone => '不重复';
+
+  @override
+  String get repeatDaily => '每天';
+
+  @override
+  String get repeatWeekly => '每周';
+
+  @override
+  String get repeatMonthly => '每月';
+
+  @override
+  String get repeatYearly => '每年';
+
+  @override
+  String get repeatEveryDay => '每天重复';
+
+  @override
+  String get repeatEveryYear => '每年重复';
+
+  @override
+  String get setAsWallpaper => '设为壁纸';
 
   @override
   String get includeStartDate => '包含开始日期';

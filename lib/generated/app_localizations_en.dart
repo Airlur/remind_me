@@ -120,6 +120,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sort => 'Sort';
 
   @override
+  String get switchView => 'Switch View';
+
+  @override
   String get unpin => 'Unpin';
 
   @override
@@ -127,6 +130,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinMode => 'Pin Mode';
+
+  @override
+  String get pinModeSingle => 'Single Pin';
+
+  @override
+  String get pinModeCarousel => 'Carousel';
+
+  @override
+  String get detail => 'Details';
 
   @override
   String get addSpecialDay => 'Add Special Day';
@@ -218,10 +230,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderTime => 'Reminder Time';
 
   @override
+  String get none => 'None';
+
+  @override
   String get endTime => 'End Time';
 
   @override
+  String get noEndTime => 'No End Time';
+
+  @override
+  String get setEndTime => 'Set End Time';
+
+  @override
   String get repeat => 'Repeat';
+
+  @override
+  String get repeatNone => 'No Repeat';
+
+  @override
+  String get repeatDaily => 'Daily';
+
+  @override
+  String get repeatWeekly => 'Weekly';
+
+  @override
+  String get repeatMonthly => 'Monthly';
+
+  @override
+  String get repeatYearly => 'Yearly';
+
+  @override
+  String get repeatEveryDay => 'Repeat daily';
+
+  @override
+  String get repeatEveryYear => 'Repeat yearly';
+
+  @override
+  String get setAsWallpaper => 'Wallpaper';
 
   @override
   String get includeStartDate => 'Include Start Date';

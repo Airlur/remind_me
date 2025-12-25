@@ -80,8 +80,7 @@ class EventCard extends StatelessWidget {
             backgroundColor: AppColors.infoAction, // 紫色表示详情
             foregroundColor: AppColors.onActionColor,
             icon: Icons.info_outline,
-            // label: context.l10n.details,
-            label: '详情',
+            label: context.l10n.detail,
             spacing: 4,
             padding: EdgeInsets.zero,
             autoClose: true,
