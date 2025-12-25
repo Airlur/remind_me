@@ -20,7 +20,7 @@ void main() async {
   
   // 2. HydratedBloc 使用新目录
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: storageDir,
+    storageDirectory: HydratedStorageDirectory(storageDir.path),
   );
 
   // 更清晰的日志
