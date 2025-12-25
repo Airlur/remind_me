@@ -23,45 +23,178 @@ class ReminderService {
       LoggerUtils.i('事件没有设置提醒时间，跳过', 'ReminderService');
       return;
     }
-    
-    // 检查事件是否已过期
-    if (event.isExpired()) {
-      LoggerUtils.i('事件已过期，跳过提醒设置', 'ReminderService');
+
+    LoggerUtils.i('为事件设置提醒: ${event.title}', 'ReminderService');
+
+    final now = DateTime.now();
+    final endBoundary = _endOfDay(event.endTime);
+    if (endBoundary != null && now.isAfter(endBoundary)) {
+      LoggerUtils.i('事件已超过结束时间，跳过提醒设置', 'ReminderService');
       return;
     }
-    
-    LoggerUtils.i('为事件设置提醒: ${event.title}', 'ReminderService');
-    
-    // 对于非重复事件，直接创建一个通知
+
     if (event.repeat == null || event.repeat == Repeat.none) {
+      final reminderTime = event.reminderTime!;
+      if (endBoundary != null && reminderTime.isAfter(endBoundary)) {
+        LoggerUtils.i('提醒时间超过结束时间，跳过提醒设置', 'ReminderService');
+        return;
+      }
+      if (reminderTime.isBefore(now)) {
+        LoggerUtils.i('提醒时间已过期，跳过提醒设置', 'ReminderService');
+        return;
+      }
       await _notificationService.scheduleNotification(event);
       return;
     }
-    
-    // 对于重复事件，我们需要计算下一次提醒的时间
-    final now = DateTime.now();
-    DateTime? nextReminderTime;
-    
-    // 如果提醒时间在未来，使用设置的提醒时间
-    if (event.reminderTime!.isAfter(now)) {
-      nextReminderTime = event.reminderTime;
-    } else {
-      // 否则计算下一次重复的时间
-      nextReminderTime = event.getNextOccurrence(now);
+
+    final offset = _getReminderOffset(event);
+    if (offset == null) {
+      LoggerUtils.w('提醒时间缺失，无法计算重复提醒', 'ReminderService');
+      return;
     }
-    
-    if (nextReminderTime != null) {
-      // 创建一个临时事件对象，使用计算出的下一次提醒时间
-      final reminderEvent = Event(
-        id: event.id,
-        title: event.title,
-        targetDate: event.targetDate,
-        createdAt: event.createdAt,
-        reminderTime: nextReminderTime,
-      );
-      
-      await _notificationService.scheduleNotification(reminderEvent);
+
+    DateTime? occurrence = _nextOccurrenceDate(event, now);
+    var safety = 0;
+    while (occurrence != null && safety < 3650) {
+      final reminderTime = _applyOffset(occurrence, offset);
+      if (endBoundary != null && reminderTime.isAfter(endBoundary)) {
+        LoggerUtils.i('提醒时间超过结束时间，跳过提醒设置', 'ReminderService');
+        return;
+      }
+      if (reminderTime.isAfter(now)) {
+        final reminderEvent = event.copyWith(reminderTime: reminderTime);
+        await _notificationService.scheduleNotification(reminderEvent);
+        return;
+      }
+      occurrence = _nextOccurrenceDate(event, occurrence.add(const Duration(days: 1)));
+      safety++;
     }
+  }
+
+  DateTime _stripTime(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  DateTime? _endOfDay(DateTime? date) {
+    if (date == null) return null;
+    return DateTime(date.year, date.month, date.day, 23, 59, 59);
+  }
+
+  Duration? _getReminderOffset(Event event) {
+    final reminderTime = event.reminderTime;
+    if (reminderTime == null) return null;
+    final baseDate = _stripTime(event.targetDate);
+    return reminderTime.difference(baseDate);
+  }
+
+  DateTime _applyOffset(DateTime date, Duration offset) {
+    return _stripTime(date).add(offset);
+  }
+
+  DateTime? _nextOccurrenceDate(Event event, DateTime from) {
+    final baseDate = _stripTime(event.targetDate);
+    final fromDate = _stripTime(from);
+
+    if (event.repeat == null || event.repeat == Repeat.none) {
+      return baseDate;
+    }
+
+    final repeat = event.repeat!;
+    switch (repeat) {
+      case Repeat.daily:
+        return _nextByDays(baseDate, fromDate, 1);
+      case Repeat.weekly:
+        return _nextByDays(baseDate, fromDate, 7);
+      case Repeat.monthly:
+        return _nextByMonths(baseDate, fromDate, 1);
+      case Repeat.yearly:
+        return _nextByYears(baseDate, fromDate, 1);
+      case Repeat.custom:
+        return _nextCustomOccurrence(event, fromDate);
+      case Repeat.none:
+        return baseDate;
+    }
+  }
+
+  DateTime _nextByDays(DateTime base, DateTime from, int intervalDays) {
+    if (!from.isAfter(base)) {
+      return base;
+    }
+    final diffDays = from.difference(base).inDays;
+    final remainder = diffDays % intervalDays;
+    final addDays = remainder == 0 ? diffDays : diffDays + (intervalDays - remainder);
+    return base.add(Duration(days: addDays));
+  }
+
+  DateTime _nextByMonths(DateTime base, DateTime from, int intervalMonths) {
+    if (!from.isAfter(base)) {
+      return base;
+    }
+    final monthsDiff = (from.year - base.year) * 12 + (from.month - base.month);
+    final cycles = monthsDiff ~/ intervalMonths;
+    var candidate = _addMonths(base, cycles * intervalMonths);
+    while (candidate.isBefore(from)) {
+      candidate = _addMonths(candidate, intervalMonths);
+    }
+    return candidate;
+  }
+
+  DateTime _nextByYears(DateTime base, DateTime from, int intervalYears) {
+    if (!from.isAfter(base)) {
+      return base;
+    }
+    final yearsDiff = from.year - base.year;
+    final cycles = yearsDiff ~/ intervalYears;
+    var candidate = _addYears(base, cycles * intervalYears);
+    while (candidate.isBefore(from)) {
+      candidate = _addYears(candidate, intervalYears);
+    }
+    return candidate;
+  }
+
+  DateTime _addMonths(DateTime date, int monthsToAdd) {
+    var year = date.year;
+    var month = date.month + monthsToAdd;
+    while (month > 12) {
+      year++;
+      month -= 12;
+    }
+    while (month < 1) {
+      year--;
+      month += 12;
+    }
+    final daysInMonth = DateTime(year, month + 1, 0).day;
+    final day = date.day > daysInMonth ? daysInMonth : date.day;
+    return DateTime(year, month, day);
+  }
+
+  DateTime _addYears(DateTime date, int yearsToAdd) {
+    final year = date.year + yearsToAdd;
+    final daysInMonth = DateTime(year, date.month + 1, 0).day;
+    final day = date.day > daysInMonth ? daysInMonth : date.day;
+    return DateTime(year, date.month, day);
+  }
+
+  DateTime? _nextCustomOccurrence(Event event, DateTime fromDate) {
+    final rule = event.customRepeatRule;
+    if (rule == null) return null;
+    final baseDate = _stripTime(event.targetDate);
+    var candidate = baseDate.isAfter(fromDate) ? baseDate : fromDate;
+
+    if (!candidate.isBefore(baseDate) && rule.matches(candidate)) {
+      return candidate;
+    }
+
+    var safety = 0;
+    var next = rule.getNextOccurrence(candidate);
+    while (safety < 3650) {
+      if (!next.isBefore(baseDate) && !next.isBefore(fromDate) && rule.matches(next)) {
+        return next;
+      }
+      next = rule.getNextOccurrence(next);
+      safety++;
+    }
+    return next;
   }
   
   // 更新事件的提醒

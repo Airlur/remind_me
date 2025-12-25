@@ -45,36 +45,58 @@ class CustomRepeatRule {
       case RepeatUnit.day:
         return from.add(Duration(days: interval));
       case RepeatUnit.week:
-        // 如果没有选择星期，则简单地加上周数
         if (weekdays.isEmpty) {
           return from.add(Duration(days: interval * 7));
         }
-        
-        // 否则，找到下一个匹配的星期
+
+        final startOfWeek = DateTime(from.year, from.month, from.day)
+            .subtract(Duration(days: from.weekday - 1));
         var next = from.add(const Duration(days: 1));
-        while (!weekdays.contains((next.weekday % 7) + 1)) {
+        var safety = 0;
+        while (safety < 4000) {
+          final currentWeekStart = DateTime(next.year, next.month, next.day)
+              .subtract(Duration(days: next.weekday - 1));
+          final weekDiff = currentWeekStart.difference(startOfWeek).inDays ~/ 7;
+          if (weekDiff % interval == 0 && weekdays.contains(next.weekday)) {
+            return next;
+          }
           next = next.add(const Duration(days: 1));
+          safety++;
         }
         return next;
       
       case RepeatUnit.month:
-        // 简单实现：加上月数
-        var year = from.year;
-        var month = from.month + interval;
-        
-        while (month > 12) {
-          year++;
-          month -= 12;
+        if (monthDays.isEmpty) {
+          var year = from.year;
+          var month = from.month + interval;
+
+          while (month > 12) {
+            year++;
+            month -= 12;
+          }
+
+          var day = from.day;
+          final daysInMonth = DateTime(year, month + 1, 0).day;
+          if (day > daysInMonth) {
+            day = daysInMonth;
+          }
+
+          return DateTime(year, month, day);
         }
-        
-        // 处理月底日期
-        var day = from.day;
-        var daysInMonth = DateTime(year, month + 1, 0).day;
-        if (day > daysInMonth) {
-          day = daysInMonth;
+
+        final startMonth = DateTime(from.year, from.month, 1);
+        var candidate = from.add(const Duration(days: 1));
+        var safety = 0;
+        while (safety < 4000) {
+          final monthsDiff =
+              (candidate.year - startMonth.year) * 12 + (candidate.month - startMonth.month);
+          if (monthsDiff % interval == 0 && monthDays.contains(candidate.day)) {
+            return candidate;
+          }
+          candidate = candidate.add(const Duration(days: 1));
+          safety++;
         }
-        
-        return DateTime(year, month, day);
+        return candidate;
       
       case RepeatUnit.year:
         return DateTime(from.year + interval, from.month, from.day);
@@ -84,7 +106,7 @@ class CustomRepeatRule {
   // 检查日期是否匹配规则
   bool matches(DateTime date) {
     if (unit == RepeatUnit.week && weekdays.isNotEmpty) {
-      return weekdays.contains((date.weekday % 7) + 1);
+      return weekdays.contains(date.weekday);
     }
     
     if (unit == RepeatUnit.month && monthDays.isNotEmpty) {

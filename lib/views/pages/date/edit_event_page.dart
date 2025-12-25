@@ -4,6 +4,7 @@ import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/blocs/event/event_state.dart';
 import 'package:remind_me/models/event.dart';
+import 'package:remind_me/models/custom_repeat_rule.dart';
 import 'components/picker/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
 import 'style_settings_page.dart';
@@ -13,9 +14,9 @@ import 'package:remind_me/utils/common/icon_mapping.dart';
 import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:remind_me/utils/common/lunar_utils.dart';
 import 'package:intl/intl.dart';
+import 'package:remind_me/views/pages/date/components/picker/end_time_picker.dart';
 import 'components/picker/reminder_time_picker.dart';
-import 'components/picker/repeat_rule_picker.dart';
-import 'components/picker/end_time_picker.dart';
+import 'package:remind_me/views/pages/date/components/picker/repeat_rule_picker.dart';
 
 class EditEventPage extends StatefulWidget {
   final Event event;
@@ -43,6 +44,7 @@ class _EditEventPageState extends State<EditEventPage> {
   DateTime? _reminderTime;
   Repeat? _repeat;
   DateTime? _endTime;
+  CustomRepeatRule? _customRepeatRule;
   
   @override
   void initState() {
@@ -56,6 +58,7 @@ class _EditEventPageState extends State<EditEventPage> {
     _reminderTime = widget.event.reminderTime;
     _repeat = widget.event.repeat;
     _endTime = widget.event.endTime;
+    _customRepeatRule = widget.event.customRepeatRule;
     
     final categories = context.read<EventBloc>().state.categories;
     _categoryIconName = categories
@@ -151,9 +154,19 @@ class _EditEventPageState extends State<EditEventPage> {
       builder: (BuildContext context) {
         return RepeatRulePicker(
           initialRepeat: _repeat ?? Repeat.none,
+          initialCustomRule: _customRepeatRule,
           onRepeatChanged: (newRepeat) {
             setState(() {
               _repeat = newRepeat;
+              if (newRepeat != Repeat.custom) {
+                _customRepeatRule = null;
+              }
+            });
+          },
+          onCustomRuleChanged: (rule) {
+            setState(() {
+              _customRepeatRule = rule;
+              _repeat = Repeat.custom;
             });
           },
         );
@@ -184,7 +197,7 @@ class _EditEventPageState extends State<EditEventPage> {
   void _saveEvent() {
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请输入标题')),
+        SnackBar(content: Text(context.l10n.enterTitle)),
       );
       return;
     }
@@ -210,6 +223,7 @@ class _EditEventPageState extends State<EditEventPage> {
       reminderTime: _reminderTime,
       repeat: _repeat,
       endTime: _endTime,
+      customRepeatRule: _customRepeatRule,
       includeStartDay: _includeStartDay,
     );
 

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remind_me/blocs/event/event_bloc.dart';
 import 'package:remind_me/blocs/event/event_event.dart';
 import 'package:remind_me/models/event.dart';
+import 'package:remind_me/models/custom_repeat_rule.dart';
 import 'package:uuid/uuid.dart';
 import 'components/picker/date_picker.dart';
 import 'package:remind_me/l10n/l10n.dart';
@@ -14,9 +15,9 @@ import 'package:remind_me/utils/common/logger_utils.dart';
 import 'package:remind_me/utils/common/lunar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:remind_me/theme/app_colors.dart';
+import 'package:remind_me/views/pages/date/components/picker/end_time_picker.dart';
 import 'components/picker/reminder_time_picker.dart';
-import 'components/picker/repeat_rule_picker.dart';
-import 'components/picker/end_time_picker.dart';
+import 'package:remind_me/views/pages/date/components/picker/repeat_rule_picker.dart';
 
 class AddEventPage extends StatefulWidget {
   const AddEventPage({super.key});
@@ -43,6 +44,7 @@ class _AddEventPageState extends State<AddEventPage> {
   DateTime? _reminderTime;
   Repeat? _repeat;
   DateTime? _endTime;
+  CustomRepeatRule? _customRepeatRule;
 
   @override
   void dispose() {
@@ -53,7 +55,7 @@ class _AddEventPageState extends State<AddEventPage> {
   void _saveEvent() {
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请输入标题')),
+        SnackBar(content: Text(context.l10n.enterTitle)),
       );
       return;
     }
@@ -74,15 +76,17 @@ class _AddEventPageState extends State<AddEventPage> {
       animationType: _animationType,
       iconName: _iconName,
       fontFamily: _fontFamily,
+      reminderTime: _reminderTime,
       repeat: _repeat,
       endTime: _endTime,
+      customRepeatRule: _customRepeatRule,
     );
 
     context.read<EventBloc>().add(AddEvent(event));
     Navigator.of(context).pop();
   }
 
-  Future<void> _showDatePicker(T) async {
+  Future<void> _showDatePicker() async {
     await showModalBottomSheet(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -160,9 +164,19 @@ class _AddEventPageState extends State<AddEventPage> {
       builder: (BuildContext context) {
         return RepeatRulePicker(
           initialRepeat: _repeat ?? Repeat.none,
+          initialCustomRule: _customRepeatRule,
           onRepeatChanged: (newRepeat) {
             setState(() {
               _repeat = newRepeat;
+              if (newRepeat != Repeat.custom) {
+                _customRepeatRule = null;
+              }
+            });
+          },
+          onCustomRuleChanged: (rule) {
+            setState(() {
+              _customRepeatRule = rule;
+              _repeat = Repeat.custom;
             });
           },
         );
@@ -230,7 +244,7 @@ class _AddEventPageState extends State<AddEventPage> {
                       LunarUtils.formatDate(_targetDate, _isLunar),
                       style: const TextStyle(fontSize: 16, color: Colors.blue),
                     ),
-                    onTap: () => _showDatePicker(theme),
+                    onTap: _showDatePicker,
                   ),
                   ListTile(
                     leading: const Icon(Icons.category),
