@@ -54,6 +54,15 @@ class _EndTimePickerState extends State<EndTimePicker> {
         color: theme.colorScheme.surface,
         child: Column(
           children: [
+            Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 6),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -136,7 +145,7 @@ class _EndTimePickerState extends State<EndTimePicker> {
                         final year = DateTime.now().year + index;
                         return Center(
                           child: Text(
-                            '$year年',
+                            '$year ${context.l10n.year}',
                             style: TextStyle(
                               fontSize: 16,
                               color: theme.colorScheme.onSurface,
@@ -168,7 +177,7 @@ class _EndTimePickerState extends State<EndTimePicker> {
                       children: List.generate(12, (index) {
                         return Center(
                           child: Text(
-                            '${index + 1}月',
+                            '${index + 1} ${context.l10n.month}',
                             style: TextStyle(
                               fontSize: 16,
                               color: theme.colorScheme.onSurface,
@@ -201,7 +210,7 @@ class _EndTimePickerState extends State<EndTimePicker> {
                         (index) {
                           return Center(
                             child: Text(
-                              '${index + 1}日',
+                              '${index + 1} ${context.l10n.day}',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: theme.colorScheme.onSurface,

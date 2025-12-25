@@ -1,156 +1,173 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
-import 'package:remind_me/l10n/l10n.dart';
-import 'package:remind_me/utils/common/logger_utils.dart';
-
-class ReminderTimePicker extends StatefulWidget {
-  final DateTime? initialTime;
-  final DateTime targetDate; // 目标日期参数
-  final ValueChanged<DateTime?> onTimeChanged;
-
-  const ReminderTimePicker({
-    super.key,
-    this.initialTime,
-    required this.targetDate,
-    required this.onTimeChanged,
-  });
-
-  @override
-  State<ReminderTimePicker> createState() => _ReminderTimePickerState();
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+import 'package:remind_me/l10n/l10n.dart';
+import 'package:remind_me/utils/common/logger_utils.dart';
+
+class ReminderTimePicker extends StatefulWidget {
+  final DateTime? initialTime;
+  final DateTime targetDate; // ç®æ æ¥æåæ°
+  final ValueChanged<DateTime?> onTimeChanged;
+
+  const ReminderTimePicker({
+    super.key,
+    this.initialTime,
+    required this.targetDate,
+    required this.onTimeChanged,
+  });
+
+  @override
+  State<ReminderTimePicker> createState() => _ReminderTimePickerState();
+}
+
+enum ReminderType {
+  off,
+  sameDay,
+  oneDayBefore,
+  twoDaysBefore,
+  threeDaysBefore,
+  oneWeekBefore,
 }
 
 class _ReminderTimePickerState extends State<ReminderTimePicker> {
-  late int selectedTypeIndex;
-  late int selectedHour;
-  late int selectedMinute;
-  
-  // 提醒类型选项
-  final List<String> _reminderTypes = [
-    '不提醒',
-    '当天',
-    '提前1天',
-    '提前2天',
-    '提前3天',
-    '提前1周',
+  static const List<ReminderType> _types = [
+    ReminderType.off,
+    ReminderType.sameDay,
+    ReminderType.oneDayBefore,
+    ReminderType.twoDaysBefore,
+    ReminderType.threeDaysBefore,
+    ReminderType.oneWeekBefore,
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    
+  late ReminderType selectedType;
+  late int selectedHour;
+  late int selectedMinute;
+
+  @override
+  void initState() {
+    super.initState();
+    
     if (widget.initialTime == null) {
-      selectedTypeIndex = 0; // 不提醒
-      // 当前时间
+      selectedType = ReminderType.off;
       selectedHour = DateTime.now().hour;
       selectedMinute = DateTime.now().minute;
     } else {
-      // 根据初始时间判断类型
-      final targetDate = widget.targetDate;
-      // 计算天数差异（注意：可能为负数）
-      final diff = targetDate.difference(widget.initialTime!).inDays;
-      
-      LoggerUtils.i('【ReminderTimePicker】初始化 - 目标日期: $targetDate, 提醒时间: ${widget.initialTime}, 差异天数: $diff', 'ReminderTimePicker');
-      
-      // 修改判断逻辑，处理负数情况
+      final targetDate = DateTime(
+        widget.targetDate.year,
+        widget.targetDate.month,
+        widget.targetDate.day,
+      );
+      final reminderDate = DateTime(
+        widget.initialTime!.year,
+        widget.initialTime!.month,
+        widget.initialTime!.day,
+      );
+      final diff = targetDate.difference(reminderDate).inDays;
+      
+      LoggerUtils.i('ãReminderTimePickerãåå§å - ç®æ æ¥æ: $targetDate, æéæ¶é´: ${widget.initialTime}, å·®å¼å¤©æ°: $diff', 'ReminderTimePicker');
+      
+      // ä¿®æ¹å¤æ­é»è¾ï¼å¤çè´æ°æå?
       if (diff == 0) {
-        selectedTypeIndex = 1; // 当天
+        selectedType = ReminderType.sameDay;
       } else if (diff == 1) {
-        selectedTypeIndex = 2; // 提前1天
+        selectedType = ReminderType.oneDayBefore;
       } else if (diff == 2) {
-        selectedTypeIndex = 3; // 提前2天
+        selectedType = ReminderType.twoDaysBefore;
       } else if (diff == 3) {
-        selectedTypeIndex = 4; // 提前3天
+        selectedType = ReminderType.threeDaysBefore;
       } else if (diff == 7) {
-        selectedTypeIndex = 5; // 提前1周
+        selectedType = ReminderType.oneWeekBefore;
       } else {
-        // 如果不匹配任何预设选项，但确实有提醒时间
-        // 选择最接近的预设选项或使用自定义选项
         if (diff > 0 && diff < 7) {
-          // 选择最接近的天数
-          selectedTypeIndex = diff > 3 ? 5 : diff + 1;
+          if (diff == 1) {
+            selectedType = ReminderType.oneDayBefore;
+          } else if (diff == 2) {
+            selectedType = ReminderType.twoDaysBefore;
+          } else if (diff == 3) {
+            selectedType = ReminderType.threeDaysBefore;
+          } else {
+            selectedType = ReminderType.oneWeekBefore;
+          }
         } else {
-          // 如果差异为负数或大于7天，使用当天选项
-          selectedTypeIndex = 1;
+          selectedType = ReminderType.sameDay;
         }
       }
-      
-      selectedHour = widget.initialTime!.hour;
-      selectedMinute = widget.initialTime!.minute;
-      
-      LoggerUtils.i('【ReminderTimePicker】选择的类型索引: $selectedTypeIndex, 小时: $selectedHour, 分钟: $selectedMinute', 'ReminderTimePicker');
+      
+      selectedHour = widget.initialTime!.hour;
+      selectedMinute = widget.initialTime!.minute;
+      
+      LoggerUtils.i('ãReminderTimePickerãéæ©çç±»å? $selectedType, å°æ¶: $selectedHour, åé: $selectedMinute', 'ReminderTimePicker');
+    }
+  }
+
+  String _typeLabel(BuildContext context, ReminderType type) {
+    final l10n = context.l10n;
+    switch (type) {
+      case ReminderType.off:
+        return l10n.reminderOff;
+      case ReminderType.sameDay:
+        return l10n.reminderSameDay;
+      case ReminderType.oneDayBefore:
+        return l10n.reminder1DayBefore;
+      case ReminderType.twoDaysBefore:
+        return l10n.reminder2DayBefore;
+      case ReminderType.threeDaysBefore:
+        return l10n.reminder3DayBefore;
+      case ReminderType.oneWeekBefore:
+        return l10n.reminder1WeekBefore;
     }
   }
 
   DateTime? _getSelectedDateTime() {
-    if (selectedTypeIndex == 0) return null; // 不提醒
-    
-    // 获取当前日期
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    
-    switch (selectedTypeIndex) {
-      case 1: // 当天
-        return DateTime(
-          today.year, 
-          today.month, 
-          today.day, 
-          selectedHour, 
-          selectedMinute
-        );
-      case 2: // 提前1天
-        return DateTime(
-          widget.targetDate.year, 
-          widget.targetDate.month, 
-          widget.targetDate.day - 1, 
-          selectedHour, 
-          selectedMinute
-        );
-      case 3: // 提前2天
-        return DateTime(
-          widget.targetDate.year, 
-          widget.targetDate.month, 
-          widget.targetDate.day - 2, 
-          selectedHour, 
-          selectedMinute
-        );
-      case 4: // 提前3天
-        return DateTime(
-          widget.targetDate.year, 
-          widget.targetDate.month, 
-          widget.targetDate.day - 3, 
-          selectedHour, 
-          selectedMinute
-        );
-      case 5: // 提前1周
-        return DateTime(
-          widget.targetDate.year, 
-          widget.targetDate.month, 
-          widget.targetDate.day - 7, 
-          selectedHour, 
-          selectedMinute
-        );
-      default:
+    if (selectedType == ReminderType.off) return null;
+
+    final baseDate = DateTime(
+      widget.targetDate.year,
+      widget.targetDate.month,
+      widget.targetDate.day,
+    );
+
+    int offsetDays = 0;
+    switch (selectedType) {
+      case ReminderType.sameDay:
+        offsetDays = 0;
+        break;
+      case ReminderType.oneDayBefore:
+        offsetDays = -1;
+        break;
+      case ReminderType.twoDaysBefore:
+        offsetDays = -2;
+        break;
+      case ReminderType.threeDaysBefore:
+        offsetDays = -3;
+        break;
+      case ReminderType.oneWeekBefore:
+        offsetDays = -7;
+        break;
+      case ReminderType.off:
         return null;
     }
+
+    final date = baseDate.add(Duration(days: offsetDays));
+    return DateTime(date.year, date.month, date.day, selectedHour, selectedMinute);
   }
 
-  // 获取显示文本 - 显示完整日期
+  // è·åæ¾ç¤ºææ¬ - æ¾ç¤ºå®æ´æ¥æ
   String _getDisplayText() {
     final dateTime = _getSelectedDateTime();
-    if (dateTime == null) return '不提醒';
+    if (dateTime == null) return context.l10n.reminderOff;
     
-    // 显示完整日期和时间
+    // æ¾ç¤ºå®æ´æ¥æåæ¶é?    
     return DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
   }
-
-  void _handleConfirm() {
-    widget.onTimeChanged(_getSelectedDateTime());
-    Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
+
+  void _handleConfirm() {
+    widget.onTimeChanged(_getSelectedDateTime());
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
     return ClipRRect(
@@ -162,159 +179,169 @@ class _ReminderTimePickerState extends State<ReminderTimePicker> {
         child: Column(
           children: [
             Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 6),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Container(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(context.l10n.cancel),
-                  ),
-                  Text(
-                    _getDisplayText(),
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: theme.colorScheme.onSurface,
-                    ),
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(context.l10n.cancel),
+                  ),
+                  Text(
+                    _getDisplayText(),
+                    style: TextStyle(fontSize: 15, color: theme.colorScheme.onSurface),
                   ),
                   TextButton(
                     onPressed: _handleConfirm,
                     child: Text(context.l10n.confirm),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
-            
-            // 选择器主体
-            Expanded(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // 选中行背景
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 40,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            width: 1,
-                            color: theme.colorScheme.primary,
-                          ),
-                          bottom: BorderSide(
-                            width: 1,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      // 提醒类型选择器
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            
+            // éæ©å¨ä¸»ä½?
+            Expanded(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // éä¸­è¡èæ?
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 40,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            width: 1,
+                            color: theme.colorScheme.primary,
+                          ),
+                          bottom: BorderSide(
+                            width: 1,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      // æéç±»åéæ©å?
                       Expanded(
                         flex: 2,
                         child: CupertinoPicker(
                           itemExtent: 40,
-                          diameterRatio: 4.0,
-                          squeeze: 1.0,
-                          useMagnifier: false,
-                          selectionOverlay: null,
+                          diameterRatio: 4.0,
+                          squeeze: 1.0,
+                          useMagnifier: false,
+                          selectionOverlay: null,
                           backgroundColor: Colors.transparent,
                           scrollController: FixedExtentScrollController(
-                            initialItem: selectedTypeIndex,
+                            initialItem: _types.indexOf(selectedType),
                           ),
                           onSelectedItemChanged: (index) {
                             setState(() {
-                              selectedTypeIndex = index;
+                              selectedType = _types[index];
                             });
                           },
-                          children: _reminderTypes.map((type) {
-                            return Center(
-                              child: Text(
-                                type,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: theme.colorScheme.onSurface,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                          children: _types
+                              .map((type) => Center(
+                                    child: Text(
+                                      _typeLabel(context, type),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: theme.colorScheme.onSurface,
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
                         ),
                       ),
                       
-                      // 小时选择器
-                      if (selectedTypeIndex != 0) Expanded(
+                      if (selectedType != ReminderType.off)
+                        Expanded(
                         child: CupertinoPicker(
                           itemExtent: 40,
                           diameterRatio: 4.0,
-                          squeeze: 1.0,
-                          useMagnifier: false,
-                          selectionOverlay: null,
-                          backgroundColor: Colors.transparent,
+                          squeeze: 1.0,
+                          useMagnifier: false,
+                          selectionOverlay: null,
+                          backgroundColor: Colors.transparent,
                           scrollController: FixedExtentScrollController(
                             initialItem: selectedHour,
                           ),
                           onSelectedItemChanged: (index) {
-                            setState(() {
-                              selectedHour = index;
-                            });
+                            setState(() {
+                              selectedHour = index;
+                            });
                           },
                           children: List.generate(24, (index) {
                             return Center(
                               child: Text(
-                                '$index时',
+                                '$index${context.l10n.hour}',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: theme.colorScheme.onSurface,
                                 ),
                               ),
-                            );
-                          }),
-                        ),
+                            );
+                          }),
+                        ),
                       ),
                       
-                      // 分钟选择器
-                      if (selectedTypeIndex != 0) Expanded(
+                      if (selectedType != ReminderType.off)
+                        Expanded(
                         child: CupertinoPicker(
                           itemExtent: 40,
                           diameterRatio: 4.0,
-                          squeeze: 1.0,
-                          useMagnifier: false,
-                          selectionOverlay: null,
-                          backgroundColor: Colors.transparent,
-                          scrollController: FixedExtentScrollController(
-                            initialItem: selectedMinute,
-                          ),
-                          onSelectedItemChanged: (index) {
-                            setState(() {
-                              selectedMinute = index;
-                            });
+                          squeeze: 1.0,
+                          useMagnifier: false,
+                          selectionOverlay: null,
+                          backgroundColor: Colors.transparent,
+                          scrollController: FixedExtentScrollController(
+                            initialItem: selectedMinute,
+                          ),
+                          onSelectedItemChanged: (index) {
+                            setState(() {
+                              selectedMinute = index;
+                            });
                           },
                           children: List.generate(60, (index) {
                             return Center(
                               child: Text(
-                                '$index分',
+                                '$index${context.l10n.minute}',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: theme.colorScheme.onSurface,
                                 ),
-                              ),
-                            );
-                          }),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
+
+
+
+

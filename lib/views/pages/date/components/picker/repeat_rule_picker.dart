@@ -27,12 +27,14 @@ extension RepeatExtension on Repeat {
 
 class RepeatRulePicker extends StatefulWidget {
   final Repeat initialRepeat;
+  final CustomRepeatRule? initialCustomRule;
   final ValueChanged<Repeat> onRepeatChanged;
   final ValueChanged<CustomRepeatRule>? onCustomRuleChanged;
 
   const RepeatRulePicker({
     super.key,
     required this.initialRepeat,
+    this.initialCustomRule,
     required this.onRepeatChanged,
     this.onCustomRuleChanged,
   });
@@ -49,6 +51,7 @@ class _RepeatRulePickerState extends State<RepeatRulePicker> {
   void initState() {
     super.initState();
     selectedRepeat = widget.initialRepeat;
+    customRule = widget.initialCustomRule;
   }
 
   @override
@@ -62,6 +65,15 @@ class _RepeatRulePickerState extends State<RepeatRulePicker> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.only(top: 6, bottom: 6),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             // 标题
             Padding(
               padding:

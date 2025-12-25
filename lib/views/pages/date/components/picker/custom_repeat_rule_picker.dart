@@ -1,7 +1,7 @@
+﻿import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:remind_me/models/custom_repeat_rule.dart';
 import 'package:remind_me/l10n/l10n.dart';
+import 'package:remind_me/models/custom_repeat_rule.dart';
 
 class CustomRepeatRulePicker extends StatefulWidget {
   final CustomRepeatRule? initialRule;
@@ -22,21 +22,19 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
   late RepeatUnit _unit;
   late List<int> _weekdays;
   late List<int> _monthDays;
-  late DateTime? _endDate;
+  DateTime? _endDate;
 
   @override
   void initState() {
     super.initState();
-    
-    // 初始化值
+
     final rule = widget.initialRule;
     _interval = rule?.interval ?? 1;
-    _unit = rule?.unit ?? RepeatUnit.day; // 默认选择"日"
-    
-    // 默认选中当前星期几
+    _unit = rule?.unit ?? RepeatUnit.day;
+
     final today = DateTime.now().weekday;
-    _weekdays = List.from(rule?.weekdays ?? [today]); 
-    
+    _weekdays = List.from(rule?.weekdays ?? [today]);
+
     _monthDays = List.from(rule?.monthDays ?? []);
     _endDate = rule?.endDate;
   }
@@ -49,7 +47,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
       monthDays: _monthDays,
       endDate: _endDate,
     );
-    
+
     widget.onRuleChanged(rule);
     Navigator.pop(context, true);
   }
@@ -57,7 +55,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
@@ -67,7 +65,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
           context.l10n.custom,
           style: TextStyle(
             color: theme.colorScheme.onSurface,
-            fontWeight: FontWeight.bold
+            fontWeight: FontWeight.bold,
           ),
         ),
         leading: IconButton(
@@ -87,247 +85,317 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // 双列选择器
-          SizedBox(
-            height: 150,
-            child: Row(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          children: [
+            _buildIntervalCard(theme),
+            const SizedBox(height: 12),
+            _buildUnitCard(theme),
+            const SizedBox(height: 12),
+            _buildDynamicSection(theme),
+            const SizedBox(height: 12),
+            _buildEndDateCard(theme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIntervalCard(ThemeData theme) {
+    final initialIndex = 999 + (_interval - 1);
+
+    return Card(
+      margin: EdgeInsets.zero,
+      child: SizedBox(
+        height: 140,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Row(
               children: [
-                // 数字选择器 - 设置为循环滚动
                 Expanded(
                   child: CupertinoPicker.builder(
                     itemExtent: 40,
                     scrollController: FixedExtentScrollController(
-                      initialItem: 999, // 设置初始的“1”在中间位置
+                      initialItem: initialIndex,
                     ),
                     onSelectedItemChanged: (index) {
                       setState(() {
-                        _interval = (index % 999) + 1; // 确保值在1-999范围内
+                        _interval = (index % 999) + 1;
                       });
                     },
                     itemBuilder: (context, index) {
-                      final number = (index % 999) + 1; // 循环显示1-999
+                      final number = (index % 999) + 1;
                       return Center(
                         child: Text(
                           '$number',
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
-                            fontSize: 20,
+                            fontSize: 22,
                           ),
                         ),
                       );
                     },
-                    childCount: 10000, // 设置一个很大的数字以实现无限循环效果
+                    childCount: 10000,
                   ),
                 ),
-                
-                // 单位选择器
                 Expanded(
-                  child: CupertinoPicker(
-                    itemExtent: 40,
-                    scrollController: FixedExtentScrollController(
-                      initialItem: _unit.index,
+                  child: Center(
+                    child: Text(
+                      _unitLabel(context, _unit),
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 20,
+                      ),
                     ),
-                    onSelectedItemChanged: (index) {
-                      setState(() {
-                        _unit = RepeatUnit.values[index];
-                      });
-                    },
-                    children: [
-                      Center(child: Text('日', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20))),
-                      Center(child: Text('周', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20))),
-                      Center(child: Text('月', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20))),
-                      Center(child: Text('年', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20))),
-                    ],
                   ),
                 ),
               ],
             ),
-          ),
-          
-          const Divider(height: 1),
-          
-          // 动态内容区域
-          Expanded(
-            child: _buildDynamicContent(),
-          ),
-          
-          // 有效日期
-          ListTile(
-            title: Text(
-              '有效日期',
-              style: TextStyle(
-                color: theme.colorScheme.onSurface,
+            Positioned(
+              left: 16,
+              right: 16,
+              child: Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      width: 1,
+                      color: theme.colorScheme.primary,
+                    ),
+                    bottom: BorderSide(
+                      width: 1,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
               ),
             ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _endDate == null ? '一直' : '${_endDate!.year}年${_endDate!.month}月${_endDate!.day}日',
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ],
-            ),
-            onTap: _showEndDatePicker,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildDynamicContent() {
+  Widget _buildUnitCard(ThemeData theme) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: CupertinoSlidingSegmentedControl<RepeatUnit>(
+          groupValue: _unit,
+          onValueChanged: (value) {
+            if (value == null) return;
+            setState(() {
+              _unit = value;
+            });
+          },
+          children: {
+            RepeatUnit.day: _segmentLabel(context.l10n.day),
+            RepeatUnit.week: _segmentLabel(context.l10n.week),
+            RepeatUnit.month: _segmentLabel(context.l10n.month),
+            RepeatUnit.year: _segmentLabel(context.l10n.year),
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _segmentLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Text(text),
+    );
+  }
+
+  Widget _buildDynamicSection(ThemeData theme) {
     switch (_unit) {
       case RepeatUnit.day:
-        return Center(
-          child: Text(
-            context.l10n.repeatEveryDay,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 16,
-            ),
-          ),
-        );
-      
+        return _buildInfoCard(theme, context.l10n.repeatEveryDay);
       case RepeatUnit.week:
-        return _buildWeekdaySelector();
-      
+        return _buildWeekdaySelector(theme);
       case RepeatUnit.month:
-        return _buildMonthDaySelector();
-      
+        return _buildMonthDaySelector(theme);
       case RepeatUnit.year:
-        return Center(
-          child: Text(
-            context.l10n.repeatEveryYear,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 16,
-            ),
-          ),
-        );
+        return _buildInfoCard(theme, context.l10n.repeatEveryYear);
     }
   }
 
-  Widget _buildWeekdaySelector() {
-    final theme = Theme.of(context);
-    final weekdayNames = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
-    
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: 7,
-      separatorBuilder: (context, index) => Divider(
-        height: 1,
-        indent: 16,
-        endIndent: 16,
-        color: theme.dividerColor.withValues(alpha: 0.3), // 更浅的下划线
-      ),
-      itemBuilder: (context, index) {
-        final weekday = index + 1; // 1-7 表示周一到周日
-        final isSelected = _weekdays.contains(weekday);
-        
-        return ListTile(
-          title: Text(
-            weekdayNames[index],
-            style: TextStyle(
-              color: theme.colorScheme.onSurface,
-            ),
+  Widget _buildInfoCard(ThemeData theme, String text) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontSize: 16,
           ),
-          trailing: isSelected
-              ? Icon(
-                  Icons.check,
-                  color: theme.colorScheme.primary,
-                )
-              : null,
-          onTap: () {
-            setState(() {
-              if (isSelected) {
-                if (_weekdays.length > 1) { // 确保至少选中一天
-                  _weekdays.remove(weekday);
-                }
-              } else {
-                _weekdays.add(weekday);
-              }
-            });
-          },
-        );
-      },
+        ),
+      ),
     );
   }
 
-  Widget _buildMonthDaySelector() {
-    final theme = Theme.of(context);
-    
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
-        childAspectRatio: 1,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
+  Widget _buildWeekdaySelector(ThemeData theme) {
+    final weekdayNames = [
+      context.l10n.monday,
+      context.l10n.tuesday,
+      context.l10n.wednesday,
+      context.l10n.thursday,
+      context.l10n.friday,
+      context.l10n.saturday,
+      context.l10n.sunday,
+    ];
+
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: List.generate(7, (index) {
+            final weekday = index + 1;
+            final isSelected = _weekdays.contains(weekday);
+
+            return ChoiceChip(
+              label: Text(weekdayNames[index]),
+              selected: isSelected,
+              showCheckmark: false,
+              selectedColor: theme.colorScheme.primaryContainer,
+              labelStyle: TextStyle(
+                color: isSelected
+                    ? theme.colorScheme.onPrimaryContainer
+                    : theme.colorScheme.onSurface,
+              ),
+              side: BorderSide(
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.dividerColor,
+              ),
+              onSelected: (selected) {
+                setState(() {
+                  if (isSelected) {
+                    if (_weekdays.length > 1) {
+                      _weekdays.remove(weekday);
+                    }
+                  } else {
+                    _weekdays.add(weekday);
+                  }
+                });
+              },
+            );
+          }),
+        ),
       ),
-      itemCount: 31,
-      itemBuilder: (context, index) {
-        final day = index + 1;
-        final isSelected = _monthDays.contains(day);
-        
-        return InkWell(
-          onTap: () {
-            setState(() {
-              if (isSelected) {
-                _monthDays.remove(day);
-              } else {
-                _monthDays.add(day);
-              }
-            });
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-              border: Border.all(
-                color: isSelected 
-                    ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                '$day',
-                style: TextStyle(
-                  color: isSelected 
-                      ? theme.colorScheme.onPrimary 
-                      : theme.colorScheme.onSurface,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
+  }
+
+  Widget _buildMonthDaySelector(ThemeData theme) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: List.generate(31, (index) {
+            final day = index + 1;
+            final isSelected = _monthDays.contains(day);
+
+            return ChoiceChip(
+              label: Text('$day'),
+              selected: isSelected,
+              showCheckmark: false,
+              selectedColor: theme.colorScheme.primaryContainer,
+              labelStyle: TextStyle(
+                color: isSelected
+                    ? theme.colorScheme.onPrimaryContainer
+                    : theme.colorScheme.onSurface,
+              ),
+              side: BorderSide(
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.dividerColor,
+              ),
+              onSelected: (selected) {
+                setState(() {
+                  if (isSelected) {
+                    _monthDays.remove(day);
+                  } else {
+                    _monthDays.add(day);
+                  }
+                });
+              },
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEndDateCard(ThemeData theme) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: ListTile(
+        title: Text(
+          context.l10n.validDate,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _endDate == null
+                  ? context.l10n.always
+                  : _formatEndDate(_endDate!),
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.chevron_right,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ],
+        ),
+        onTap: _showEndDatePicker,
+      ),
+    );
+  }
+
+  String _formatEndDate(DateTime date) {
+    return '${date.year} ${context.l10n.year} ${date.month} ${context.l10n.month} ${date.day} ${context.l10n.day}';
+  }
+
+  String _unitLabel(BuildContext context, RepeatUnit unit) {
+    switch (unit) {
+      case RepeatUnit.day:
+        return context.l10n.day;
+      case RepeatUnit.week:
+        return context.l10n.week;
+      case RepeatUnit.month:
+        return context.l10n.month;
+      case RepeatUnit.year:
+        return context.l10n.year;
+    }
   }
 
   void _showEndDatePicker() async {
     final initialDate = _endDate ?? DateTime.now().add(const Duration(days: 30));
-    
+
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
     );
-    
+
     if (pickedDate != null) {
       setState(() {
         _endDate = pickedDate;
       });
     }
   }
-} 
+}
