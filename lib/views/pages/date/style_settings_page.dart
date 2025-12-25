@@ -337,7 +337,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                   width: isSelected ? 2 : 1,
                 ),
                 borderRadius: BorderRadius.circular(8),
-                color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+                color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : null,
               ),
               child: Center(
                 child: Text(
@@ -388,7 +388,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                   width: isSelected ? 2 : 1,
                 ),
                 borderRadius: BorderRadius.circular(8),
-                color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+                color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : null,
               ),
               child: Icon(
                 icon,
@@ -467,7 +467,7 @@ class _StyleSettingsPageState extends State<StyleSettingsPage> with SingleTicker
                       '${LunarUtils.getWeekDay(widget.targetDate, context, useShort: true)}',
                       style: TextStyle(
                         fontSize: 12,
-                        color: textColor.withOpacity(0.8),
+                        color: textColor.withValues(alpha: 0.8),
                       ),
                     ),
                   ],

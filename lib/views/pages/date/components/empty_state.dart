@@ -22,7 +22,7 @@ class EmptyState extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -35,14 +35,14 @@ class EmptyState extends StatelessWidget {
           Icon(
             icon ?? Icons.event_busy,
             size: 64,
-            color: iconColor ?? Theme.of(context).colorScheme.primary.withOpacity(0.5),
+            color: iconColor ?? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             message ?? '暂无事件',
             style: TextStyle(
               fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],

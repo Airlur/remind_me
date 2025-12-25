@@ -52,7 +52,7 @@ class CircleRevealRoute extends PageRouteBuilder {
           reverseTransitionDuration: const Duration(milliseconds: 500),
           opaque: false,
           barrierDismissible: false,
-          barrierColor: Colors.black.withOpacity(0),
+          barrierColor: Colors.black.withValues(alpha: 0),
         );
 
   @override

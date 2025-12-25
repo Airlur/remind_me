@@ -27,7 +27,7 @@ class SettingsListItem extends StatelessWidget {
         ),
         trailing: trailing ?? Icon(
           Icons.chevron_right,
-          color: Theme.of(context).iconTheme.color?.withOpacity(0.5),
+          color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.5),
         ),
         onTap: onTap,
       ),

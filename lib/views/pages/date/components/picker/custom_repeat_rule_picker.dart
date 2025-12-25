@@ -225,7 +225,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
         height: 1,
         indent: 16,
         endIndent: 16,
-        color: theme.dividerColor.withOpacity(0.3), // 更浅的下划线
+        color: theme.dividerColor.withValues(alpha: 0.3), // 更浅的下划线
       ),
       itemBuilder: (context, index) {
         final weekday = index + 1; // 1-7 表示周一到周日
@@ -293,7 +293,7 @@ class _CustomRepeatRulePickerState extends State<CustomRepeatRulePicker> {
               border: Border.all(
                 color: isSelected 
                     ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurfaceVariant.withOpacity(0.3),
+                    : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),

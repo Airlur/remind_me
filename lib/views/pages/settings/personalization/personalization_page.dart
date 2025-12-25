@@ -122,7 +122,7 @@ class PersonalizationPage extends StatelessWidget {
                     Text(
                       _getThemeModeName(context, state.themeMode),
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.7),
+                        color: Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -142,7 +142,7 @@ class PersonalizationPage extends StatelessWidget {
                         Text(
                           context.read<LanguageCubit>().getLanguageName(context, languageMode),
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.7),
+                            color: Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.7),
                           ),
                         ),
                         const SizedBox(width: 4),

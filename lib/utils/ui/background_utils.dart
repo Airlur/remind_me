@@ -21,7 +21,7 @@ class BackgroundUtils {
       case BackgroundType.gradient:
         return BoxDecoration(
           gradient: LinearGradient(
-            colors: gradientColors ?? [defaultColor, defaultColor.withOpacity(0.7)],
+            colors: gradientColors ?? [defaultColor, defaultColor.withValues(alpha: 0.7)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
