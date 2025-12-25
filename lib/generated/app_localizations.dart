@@ -536,11 +536,59 @@ abstract class AppLocalizations {
   /// **'Reminder Time'**
   String get reminderTime;
 
+  /// No reminder
+  ///
+  /// In en, this message translates to:
+  /// **'No Reminder'**
+  String get reminderOff;
+
+  /// Same day reminder
+  ///
+  /// In en, this message translates to:
+  /// **'Same Day'**
+  String get reminderSameDay;
+
+  /// 1 day before
+  ///
+  /// In en, this message translates to:
+  /// **'1 Day Before'**
+  String get reminder1DayBefore;
+
+  /// 2 days before
+  ///
+  /// In en, this message translates to:
+  /// **'2 Days Before'**
+  String get reminder2DayBefore;
+
+  /// 3 days before
+  ///
+  /// In en, this message translates to:
+  /// **'3 Days Before'**
+  String get reminder3DayBefore;
+
+  /// 1 week before
+  ///
+  /// In en, this message translates to:
+  /// **'1 Week Before'**
+  String get reminder1WeekBefore;
+
   /// None
   ///
   /// In en, this message translates to:
   /// **'None'**
   String get none;
+
+  /// Hour suffix
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hour;
+
+  /// Minute suffix
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minute;
 
   /// End Time
   ///
@@ -607,6 +655,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Repeat yearly'**
   String get repeatEveryYear;
+
+  /// Valid date
+  ///
+  /// In en, this message translates to:
+  /// **'Valid Date'**
+  String get validDate;
+
+  /// Always
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get always;
 
   /// Set as wallpaper
   ///

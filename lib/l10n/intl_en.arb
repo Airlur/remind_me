@@ -349,9 +349,41 @@
   "@reminderTime": {
     "description": "Reminder Time"
   },
+  "reminderOff": "No Reminder",
+  "@reminderOff": {
+    "description": "No reminder"
+  },
+  "reminderSameDay": "Same Day",
+  "@reminderSameDay": {
+    "description": "Same day reminder"
+  },
+  "reminder1DayBefore": "1 Day Before",
+  "@reminder1DayBefore": {
+    "description": "1 day before"
+  },
+  "reminder2DayBefore": "2 Days Before",
+  "@reminder2DayBefore": {
+    "description": "2 days before"
+  },
+  "reminder3DayBefore": "3 Days Before",
+  "@reminder3DayBefore": {
+    "description": "3 days before"
+  },
+  "reminder1WeekBefore": "1 Week Before",
+  "@reminder1WeekBefore": {
+    "description": "1 week before"
+  },
   "none": "None",
   "@none": {
     "description": "None"
+  },
+  "hour": "h",
+  "@hour": {
+    "description": "Hour suffix"
+  },
+  "minute": "m",
+  "@minute": {
+    "description": "Minute suffix"
   },
   "endTime": "End Time",
   "@endTime": {
@@ -396,6 +428,14 @@
   "repeatEveryYear": "Repeat yearly",
   "@repeatEveryYear": {
     "description": "Repeat every year"
+  },
+  "validDate": "Valid Date",
+  "@validDate": {
+    "description": "Valid date"
+  },
+  "always": "Always",
+  "@always": {
+    "description": "Always"
   },
   "setAsWallpaper": "Wallpaper",
   "@setAsWallpaper": {

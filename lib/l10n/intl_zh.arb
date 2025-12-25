@@ -349,9 +349,41 @@
   "@reminderTime": {
     "description": "Reminder Time"
   },
+  "reminderOff": "不提醒",
+  "@reminderOff": {
+    "description": "No reminder"
+  },
+  "reminderSameDay": "当天",
+  "@reminderSameDay": {
+    "description": "Same day reminder"
+  },
+  "reminder1DayBefore": "提前1天",
+  "@reminder1DayBefore": {
+    "description": "1 day before"
+  },
+  "reminder2DayBefore": "提前2天",
+  "@reminder2DayBefore": {
+    "description": "2 days before"
+  },
+  "reminder3DayBefore": "提前3天",
+  "@reminder3DayBefore": {
+    "description": "3 days before"
+  },
+  "reminder1WeekBefore": "提前1周",
+  "@reminder1WeekBefore": {
+    "description": "1 week before"
+  },
   "none": "无",
   "@none": {
     "description": "None"
+  },
+  "hour": "时",
+  "@hour": {
+    "description": "Hour suffix"
+  },
+  "minute": "分",
+  "@minute": {
+    "description": "Minute suffix"
   },
   "repeat": "重复",
   "@repeat": {
@@ -384,6 +416,14 @@
   "repeatEveryYear": "每年重复",
   "@repeatEveryYear": {
     "description": "Repeat every year"
+  },
+  "validDate": "有效日期",
+  "@validDate": {
+    "description": "Valid date"
+  },
+  "always": "一直",
+  "@always": {
+    "description": "Always"
   },
   "endTime": "结束时间",
   "@endTime": {

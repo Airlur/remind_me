@@ -230,7 +230,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderTime => 'Reminder Time';
 
   @override
+  String get reminderOff => 'No Reminder';
+
+  @override
+  String get reminderSameDay => 'Same Day';
+
+  @override
+  String get reminder1DayBefore => '1 Day Before';
+
+  @override
+  String get reminder2DayBefore => '2 Days Before';
+
+  @override
+  String get reminder3DayBefore => '3 Days Before';
+
+  @override
+  String get reminder1WeekBefore => '1 Week Before';
+
+  @override
   String get none => 'None';
+
+  @override
+  String get hour => 'h';
+
+  @override
+  String get minute => 'm';
 
   @override
   String get endTime => 'End Time';
@@ -264,6 +288,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get repeatEveryYear => 'Repeat yearly';
+
+  @override
+  String get validDate => 'Valid Date';
+
+  @override
+  String get always => 'Always';
 
   @override
   String get setAsWallpaper => 'Wallpaper';

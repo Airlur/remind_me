@@ -230,7 +230,31 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reminderTime => '提醒时间';
 
   @override
+  String get reminderOff => '不提醒';
+
+  @override
+  String get reminderSameDay => '当天';
+
+  @override
+  String get reminder1DayBefore => '提前1天';
+
+  @override
+  String get reminder2DayBefore => '提前2天';
+
+  @override
+  String get reminder3DayBefore => '提前3天';
+
+  @override
+  String get reminder1WeekBefore => '提前1周';
+
+  @override
   String get none => '无';
+
+  @override
+  String get hour => '时';
+
+  @override
+  String get minute => '分';
 
   @override
   String get endTime => '结束时间';
@@ -264,6 +288,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get repeatEveryYear => '每年重复';
+
+  @override
+  String get validDate => '有效日期';
+
+  @override
+  String get always => '一直';
 
   @override
   String get setAsWallpaper => '设为壁纸';
